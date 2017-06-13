@@ -253,6 +253,7 @@ __ASM void __set_CONTROL(uint32_t control)
 
 
 #elif (defined (__ICCARM__)) /*------------------ ICC Compiler -------------------*/
+#error __LINE__
 /* IAR iccarm specific functions */
 #pragma diag_suppress=Pe940
 

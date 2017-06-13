@@ -3,9 +3,9 @@
 #****************************************************************************
 ROOT_DIR := .
 
-#GCC_PATH=c:\tools\arm2013.05
+GCC_PATH = ~/gcc-arm-none-eabi-5_4-2016q3
 
-#CROSS_COMPILE=$(GCC_PATH)\bin\arm-none-eabi-
+CROSS_COMPILE = $(GCC_PATH)/bin/arm-none-eabi-
 
 CC     := $(CROSS_COMPILE)gcc
 CXX    := $(CROSS_COMPILE)g++
@@ -42,8 +42,8 @@ OBJS := $(OBJ_C) $(OBJ_S)
 #****************************************************************************
 # Libs
 #****************************************************************************
-LIB_C         := $(GCC_PATH)\arm-none-eabi\lib\libc.a
-LIB_GCC       := $(GCC_PATH)\lib\gcc\arm-none-eabi\4.7.3\libgcc.a
+LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/libc.a
+LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
 LIBS = $(LIB_C) $(LIB_GCC)
 INCS = -I$(ROOT_DIR)/HARDWARE/LED -I$(ROOT_DIR)/SYSTEM/delay -I $(ROOT_DIR)/SYSTEM/sys -I $(ROOT_DIR)/SYSTEM/usart -I$(ROOT_DIR)/USER -I $(ROOT_DIR)/STM32F10x_FWLib/inc -I$(ROOT_DIR)/CORE  
 # OBJS	= stm32f10x_gpio.o stm32f10x_rcc.o isr.o
