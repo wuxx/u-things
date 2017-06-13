@@ -11,7 +11,8 @@ CC     := $(CROSS_COMPILE)gcc
 CXX    := $(CROSS_COMPILE)g++
 AS	   := $(CROSS_COMPILE)as
 AR     := $(CROSS_COMPILE)ar rc
-LD     := $(CROSS_COMPILE)ld
+#LD     := $(CROSS_COMPILE)ld
+LD     := $(CROSS_COMPILE)gcc
 RANLIB := $(CROSS_COMPILE)ranlib
 OBJDUMP:= $(CROSS_COMPILE)objdump
 OBJCOPY:= $(CROSS_COMPILE)objcopy
@@ -19,16 +20,17 @@ STRIP  := $(CROSS_COMPILE)strip
 
 BINARY	= main
 
-CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles  -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER 
+CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER 
 ASFLAG= -g -mcpu=cortex-m3 -mthumb 
 
 LDSCRIPT	= stm32f103VET6.ld
-LDFLAGS	=   -Llib -T $(LDSCRIPT) 
+#LDFLAGS	=   -Llib -T $(LDSCRIPT) 
+LDFLAGS	=   -T $(LDSCRIPT) -nostartfiles $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
 
 #****************************************************************************
 # Targets of the build
 #****************************************************************************
-TARGET   	:= ./Output/A303_GJXF
+TARGET   	:= $(ROOT_DIR)/Output/utloader
 
 all: prebuild $(TARGET).elf
 
@@ -42,9 +44,9 @@ OBJS := $(OBJ_C) $(OBJ_S)
 #****************************************************************************
 # Libs
 #****************************************************************************
-LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/libc.a
+LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a
 LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
-LIBS = $(LIB_C) $(LIB_GCC)
+#LIBS = $(LIB_C) $(LIB_GCC)
 INCS = -I$(ROOT_DIR)/HARDWARE/LED -I$(ROOT_DIR)/SYSTEM/delay -I $(ROOT_DIR)/SYSTEM/sys -I $(ROOT_DIR)/SYSTEM/usart -I$(ROOT_DIR)/USER -I $(ROOT_DIR)/STM32F10x_FWLib/inc -I$(ROOT_DIR)/CORE  
 # OBJS	= stm32f10x_gpio.o stm32f10x_rcc.o isr.o
 
@@ -59,8 +61,8 @@ prebuild:
 	@echo Building app...
 
 $(TARGET).elf : $(OBJS) $(LIBS)
-	@echo (LD) $@: $^
-	-${LD}  -o $@ $^ ${LDFLAGS} 
+	@echo $(LD) $@: $^
+	-${LD} $(LIBS) $^ $(LDFLAGS) -o $@
 	@echo Generating bin...
 	@$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 	@echo Generating hex...
