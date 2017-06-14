@@ -36,9 +36,9 @@ Linker subscript for STM32F10x definitions with 1024K Flash and 1024K External S
 
 MEMORY
 {
-  RAM (xrw) : ORIGIN = 0x60000000, LENGTH = 512K
-  FLASH (rx) : ORIGIN = 0x8000000, LENGTH = 512K
-  FLASHB1 (rx) : ORIGIN = 0x00000000, LENGTH = 0
+  RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 64K
+  FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 512K
+  FLASHB1 (rx)  : ORIGIN = 0x00000000, LENGTH = 0
   EXTMEMB0 (rx) : ORIGIN = 0x00000000, LENGTH = 0
   EXTMEMB1 (rx) : ORIGIN = 0x00000000, LENGTH = 0
   EXTMEMB2 (rx) : ORIGIN = 0x00000000, LENGTH = 0
@@ -46,7 +46,7 @@ MEMORY
 }
 
 /* higher address of the user mode stack */
-_estack = 0x60080000;
+_estack = 0x20010000;
 
 
 
