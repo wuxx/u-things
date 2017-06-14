@@ -12,9 +12,9 @@ enum LOG_LEVEL_E {
     LOG_MAX,
 };
 
-s32 set_log_level(u32 log_level);
-s32 log(u32 log_level, const char *format, ...);
-s32 dump_log();
+__s32 set_log_level(__u32 log_level);
+__s32 log(__u32 log_level, const char *format, ...);
+__s32 dump_log();
 
 #define PRINT_EMG(fmt, ...)     log(LOG_EMG,   fmt, ##__VA_ARGS__)
 #define PRINT_ERR(fmt, ...)     log(LOG_ERR,   fmt, ##__VA_ARGS__)

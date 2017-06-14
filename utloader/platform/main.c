@@ -3,7 +3,7 @@
 #include "log.h"
 #include "libc.h"
 
-s32 _assert(const char *file_name, const char *func_name, u32 line_num, char *desc)
+int _assert(const char *file_name, const char *func_name, unsigned int line_num, char *desc)
 {
     PRINT_EMG("[%s][%s][%d]: %s\n", file_name, func_name, line_num, desc);
     while(1);
@@ -39,36 +39,19 @@ s32 _assert(const char *file_name, const char *func_name, u32 line_num, char *de
 
 int main(void)
 {	
-#if 0
-    USART_Config();
-
-    Usart_SendString( DEBUG_USARTx,"test1111111111\n");
-    printf("welcome\n\n\n");
-
-    while(1)
-    {   
-        printf("test123\n");
-        printf("%d %d \n", g_1, g_2);
-    }   
-#endif
-
-    // 开启GPIOB 端口时钟
     RCC_APB2ENR |= (1<<3);
 
-    //清空控制PB0的端口位
     GPIOB_CRL &= ~( 0x0F<< (4*0));  
-    // 配置PB0为通用推挽输出，速度为10M
     GPIOB_CRL |= (1<<4*0);
 
-    // PB0 输出 低电平
     GPIOB_ODR &= ~(1<<0);
     
     USART_Config();
 
     Usart_SendString( DEBUG_USARTx,"test1111111111\n");
 
+    PRINT_EMG("hello, world!\n");
     while(1) {
-        
     }
 
     while(1);

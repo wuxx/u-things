@@ -3,12 +3,12 @@
 #include "log.h"
 #include "usart.h"
 
-PRIVATE u32 default_log_level = LOG_INFO;
+PRIVATE __u32 default_log_level = LOG_INFO;
 
-u8 log_buffer[64*1024] = {0};
-u32 lbindex = 0;
+u8 log_buffer[1*1024] = {0};
+__u32 lbindex = 0;
 
-u32 is_printable(u8 c)
+__u32 is_printable(u8 c)
 {
     /* man ascii */
     if (c == '\n') {
@@ -22,11 +22,11 @@ u32 is_printable(u8 c)
     }
 }
 
-void dumpb(void *buf, u32 size)
+void dumpb(void *buf, __u32 size)
 {
 #if 0
-    u32 i, j;
-    u32 line_nr;
+    __u32 i, j;
+    __u32 line_nr;
     u8 *b = (u8 *)buf;
 
     char sbuf[3];
@@ -63,7 +63,7 @@ void dumpb(void *buf, u32 size)
         uart_printf("  %s\n[%X]:", cbuf, &b[16*i + j]);
     }
 #else
-    u32 i;
+    __u32 i;
     u8 *b = (u8 *)buf;
 
     for (i = 0; i < size; i++) {
@@ -78,7 +78,7 @@ void dumpb(void *buf, u32 size)
 #endif
 }
 
-PUBLIC s32 set_log_level(u32 log_level)
+PUBLIC __s32 set_log_level(__u32 log_level)
 {
     if ((log_level >= LOG_EMG) && (log_level <= LOG_DEBUG)) {
         default_log_level = log_level;
@@ -90,9 +90,9 @@ PUBLIC s32 set_log_level(u32 log_level)
     return 0;
 }
 
-PUBLIC s32 log(u32 log_level, const char *format, ...)
+PUBLIC __s32 log(__u32 log_level, const char *format, ...)
 {
-    u32 len;
+    __u32 len;
     va_list args;
     char format_buf[FORMAT_BUF_SIZE] = {0};
 
@@ -116,7 +116,7 @@ PUBLIC s32 log(u32 log_level, const char *format, ...)
     return 0;
 }
 
-PUBLIC s32 dump_log()
+PUBLIC __s32 dump_log()
 {
     dumpb(log_buffer, sizeof(log_buffer));
     return 0;

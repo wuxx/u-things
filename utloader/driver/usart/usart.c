@@ -154,18 +154,50 @@ void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
 	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);	
 }
 
-void DEBUG_USART_IRQHandler(void)
+#include "log.h"
+#define UART_IO_SIZE 256
+__u32  uart_recv_buf_index = 0;
+char   uart_recv_buf[UART_IO_SIZE] = {0};
+
+void uart_putc(__u8 byte) 
 {
-	uint16_t data;
-	data = USART_ReceiveData(DEBUG_USARTx);
-
-	Usart_SendString( DEBUG_USARTx, "recv:\n");
+	Usart_SendByte(DEBUG_USARTx, byte);
 }
-
 
 int uart_puts(const char *str)
 {
 	Usart_SendString(DEBUG_USARTx, str);
+}
+void DEBUG_USART_IRQHandler(void)
+{
+	uint16_t ch;
+	ch = (__u8)USART_ReceiveData(DEBUG_USARTx);
+
+    if (ch == '\n') {   /* sscom will send '\r\n' we ignore the '\n' */
+        return;
+    }
+    if (uart_recv_buf_index == (UART_IO_SIZE - 1) && ch != '\r') {
+        uart_puts("cmd too long!\n");
+        uart_recv_buf_index = 0;
+        return;
+
+    }
+
+    if (ch == '\r') {
+        uart_recv_buf[uart_recv_buf_index] = '\0';  /* terminate the string. */
+        shell(uart_recv_buf);
+
+        uart_recv_buf_index = 0;
+        uart_puts("\nutloader>");
+        return;
+    } else {
+        uart_recv_buf[uart_recv_buf_index] = ch;
+        uart_recv_buf_index++;
+    }
+
+    /* echo */
+    uart_putc(ch);
+
 }
 
 #if 0
