@@ -31,7 +31,7 @@ LDFLAGS	=   -T $(LDSCRIPT) -nostartfiles -Xlinker --gc-sections $(GCC_PATH)/arm-
 #****************************************************************************
 # Targets of the build
 #****************************************************************************
-TARGET   	:= $(ROOT_DIR)/Output/utloader
+TARGET   	:= $(ROOT_DIR)/output/utloader
 
 all: prebuild $(TARGET).elf
 
@@ -48,7 +48,7 @@ OBJS := $(OBJ_C) $(OBJ_S)
 LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a
 LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
 #LIBS = $(LIB_C) $(LIB_GCC)
-INCS = -I$(ROOT_DIR)/HARDWARE/LED -I$(ROOT_DIR)/USER -I $(ROOT_DIR)/STM32F10x_FWLib/inc -I$(ROOT_DIR)/CORE -I$(ROOT_DIR)/USER/usart
+INCS = -I$(ROOT_DIR)/platform -I $(ROOT_DIR)/stm32f10x_fwlib/inc -I$(ROOT_DIR)/core -I$(ROOT_DIR)/include
 # OBJS	= stm32f10x_gpio.o stm32f10x_rcc.o isr.o
 
 # OBJS	+= $(BINARY).o 

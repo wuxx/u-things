@@ -1,5 +1,13 @@
 #include "stm32f10x.h"
-#include "bsp_usart.h"
+#include "usart.h"
+#include "log.h"
+#include "libc.h"
+
+s32 _assert(const char *file_name, const char *func_name, u32 line_num, char *desc)
+{
+    PRINT_EMG("[%s][%s][%d]: %s\n", file_name, func_name, line_num, desc);
+    while(1);
+}
 
 
 /*本文件用于添加寄存器地址及结构体定义*/
@@ -60,7 +68,7 @@ int main(void)
     Usart_SendString( DEBUG_USARTx,"test1111111111\n");
 
     while(1) {
-        Usart_SendString( DEBUG_USARTx,"test1111111111\n");
+        
     }
 
     while(1);

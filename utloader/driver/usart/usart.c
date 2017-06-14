@@ -15,7 +15,7 @@
   ******************************************************************************
   */ 
 	
-#include "bsp_usart.h"
+#include "usart.h"
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC
@@ -152,6 +152,20 @@ void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
 	/* 发送低八位 */
 	USART_SendData(pUSARTx,temp_l);	
 	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);	
+}
+
+void DEBUG_USART_IRQHandler(void)
+{
+	uint16_t data;
+	data = USART_ReceiveData(DEBUG_USARTx);
+
+	Usart_SendString( DEBUG_USARTx, "recv:\n");
+}
+
+
+int uart_puts(const char *str)
+{
+	Usart_SendString(DEBUG_USARTx, str);
 }
 
 #if 0
