@@ -48,7 +48,7 @@ OBJS := $(OBJ_C) $(OBJ_S)
 LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a
 LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
 #LIBS = $(LIB_C) $(LIB_GCC)
-INCS = -I$(ROOT_DIR)/HARDWARE/LED -I$(ROOT_DIR)/SYSTEM/delay -I $(ROOT_DIR)/SYSTEM/sys -I $(ROOT_DIR)/SYSTEM/usart -I$(ROOT_DIR)/USER -I $(ROOT_DIR)/STM32F10x_FWLib/inc -I$(ROOT_DIR)/CORE -I$(ROOT_DIR)/USER/usart
+INCS = -I$(ROOT_DIR)/HARDWARE/LED -I$(ROOT_DIR)/USER -I $(ROOT_DIR)/STM32F10x_FWLib/inc -I$(ROOT_DIR)/CORE -I$(ROOT_DIR)/USER/usart
 # OBJS	= stm32f10x_gpio.o stm32f10x_rcc.o isr.o
 
 # OBJS	+= $(BINARY).o 
