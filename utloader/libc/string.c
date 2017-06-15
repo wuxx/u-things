@@ -1,18 +1,18 @@
 #include <libc.h>
 
-u32 strlen(const char *str)
+__u32 strlen(const char *str)
 {
-    u32 i = 0;
+    __u32 i = 0;
     while(str[i] != '\0') {
         i++;
     }
     return i;
 }
 
-s32 strcmp(char *s1, char *s2)
+__s32 strcmp(char *s1, char *s2)
 {
-    u32 i;
-    s32 delta;
+    __u32 i;
+    __s32 delta;
 
     if (s1 == NULL && s2 == NULL) {
         return 0;
@@ -37,11 +37,11 @@ s32 strcmp(char *s1, char *s2)
     return s1[i] - s2[i];
 }
 
-u32 atoi(char *str)
+__u32 atoi(char *str)
 {
-    u32 i;
-    u32 len;
-    u32 sum = 0;
+    __u32 i;
+    __u32 len;
+    __u32 sum = 0;
 
     len = strlen(str);
     if (len == 0) {
@@ -93,9 +93,9 @@ u32 atoi(char *str)
     return sum;
 }
 
-void *memset(void *s, s32 c, u32 size)
+void *memset(void *s, __s32 c, __u32 size)
 {
-    u32 i;
+    __u32 i;
     char *_s = (char*)s;
     for(i=0;i<size;i++) {
         _s[i] = c;
@@ -103,11 +103,11 @@ void *memset(void *s, s32 c, u32 size)
     return s;
 }
 
-s32 memcmp(void *s1, void *s2, u32 n)
+__s32 memcmp(void *s1, void *s2, __u32 n)
 {
-    u8 *c1, *c2;
-    u32 i;
-    s32 rv = 0;
+    __u8 *c1, *c2;
+    __u32 i;
+    __s32 rv = 0;
 
     c1 = s1;
     c2 = s2;
@@ -121,13 +121,13 @@ s32 memcmp(void *s1, void *s2, u32 n)
     return rv;
 }
 
-void *memcpy(void *dst, void *src, u32 size)
+void *memcpy(void *dst, void *src, __u32 size)
 {
-    u32 i;
-    u8 *_dst, *_src;
+    __u32 i;
+    __u8 *_dst, *_src;
 
-    _dst = (u8 *)dst;
-    _src = (u8 *)src;
+    _dst = (__u8 *)dst;
+    _src = (__u8 *)src;
     for(i=0;i<size;i++) {
         _dst[i] = _src[i];
     }
@@ -135,9 +135,9 @@ void *memcpy(void *dst, void *src, u32 size)
 }
 
 /* find first 1, ffs(0) = 0, ffs(1) = 1, ffs(0x80000010) = 5 */
-u32 ffs(u32 x)
+__u32 ffs(__u32 x)
 {
-    u32 i;
+    __u32 i;
     for(i = 0; i < 32; i++) {
         if (x & (1 << i)) {
             return i + 1;
@@ -148,9 +148,9 @@ u32 ffs(u32 x)
 }
 
 /* find last 1, fls(0) = 0, fls(1) = 1, fls(0x80000010) = 32 */
-u32 fls(u32 x)
+__u32 fls(__u32 x)
 {
-    s32 i;
+    __s32 i;
     for(i = 31; i >= 0; i--) {
         if (x & (1 << i)) {
             return i + 1;

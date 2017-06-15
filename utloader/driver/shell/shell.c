@@ -4,6 +4,7 @@
 #include "log.h"
 #include "mmio.h"
 #include "shell.h"
+#include "xyzmodem.h"
 
 u32 argc;
 char *argv[SHELL_ARGS_MAX] = {NULL};
@@ -12,6 +13,7 @@ s32 cmd_read();
 s32 cmd_write();
 s32 cmd_exec();
 s32 cmd_dump();
+s32 cmd_loady();
 s32 cmd_help();
 
 struct shell_cmd_info ci[] = {
@@ -19,6 +21,7 @@ struct shell_cmd_info ci[] = {
     { .name = "w",       .func = cmd_write,   .desc = "w    [addr] [data]        write   any addr"},
     { .name = "x",       .func = cmd_exec,    .desc = "x    [addr]               execute any addr"},
     { .name = "dump",    .func = cmd_dump,    .desc = "dump [addr] [word_num]    dump    any addr"},
+    { .name = "loady",      .func = cmd_loady,   .desc = "loady [addr]              load data to any addr with ymodem"},
     { .name = "help",    .func = cmd_help,    .desc = "help                      print cmd info"  },
 };
 
@@ -80,6 +83,50 @@ PRIVATE s32 cmd_dump()
     }
 
     return 0;
+}
+
+static int getcxmodem(void) {
+    if (tstc())
+        return (getc());
+    return -1;
+}
+
+PRIVATE s32 cmd_loady()
+{
+    int size;
+    int err;
+    int res;
+    int offset;
+    connection_info_t info;
+    char ymodemBuf[1024];
+    u32 store_addr = ~0;
+    u32 addr = 0;
+
+    offset = atoi(argv[1]);
+
+    size = 0;
+    info.mode = xyzModem_ymodem;
+    res = xyzModem_stream_open(&info, &err);
+    if (!res) {
+
+        while ((res =
+            xyzModem_stream_read(ymodemBuf, 1024, &err)) > 0) {
+            store_addr = addr + offset;
+            size += res;
+            addr += res;
+            memcpy((char *)(store_addr), ymodemBuf, res);
+
+        }
+    } else {
+        uart_printf("%s\n", xyzModem_error(err));
+    }
+
+    xyzModem_stream_close(&err);
+    xyzModem_stream_terminate(false, &getcxmodem);
+
+    uart_printf("## Total Size      = 0x%08x = %d Bytes\n", size, size);
+
+    return offset;
 }
 
 PRIVATE s32 cmd_reset()

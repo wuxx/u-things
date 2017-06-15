@@ -2,9 +2,9 @@
 #include <types.h>
 #include <string.h>
 
-PRIVATE u32 buf_putc(char *buf, u32 size, u32 *offset, u8 c)
+PRIVATE __u32 buf_putc(char *buf, __u32 size, __u32 *offset, __u8 c)
 {
-    u32 off = *offset;
+    __u32 off = *offset;
     if (off < size) {
         buf[off] = c;
         *offset = off + 1;
@@ -12,9 +12,9 @@ PRIVATE u32 buf_putc(char *buf, u32 size, u32 *offset, u8 c)
     return 0;
 }
 
-PRIVATE u32 buf_puts(char *buf, u32 size, u32 *offset, char *s)
+PRIVATE __u32 buf_puts(char *buf, __u32 size, __u32 *offset, char *s)
 {
-    u32 i;
+    __u32 i;
     for(i=0;s[i]!='\0';i++) {
         buf_putc(buf, size, offset, s[i]);
     }
@@ -22,9 +22,9 @@ PRIVATE u32 buf_puts(char *buf, u32 size, u32 *offset, char *s)
 }
 
 /* buf size: 10 if radix == 10; 8 if radix == 16 */
-PUBLIC char * itoa(char *buf, u32 x, u32 radix)
+PUBLIC char * itoa(char *buf, __u32 x, __u32 radix)
 {
-    s32 i;
+    __s32 i;
     memset(buf, 0, 10);
 
     for(i=9;i>=0;i--) {
@@ -59,11 +59,11 @@ PUBLIC char * itoa(char *buf, u32 x, u32 radix)
 /* as simple as possible, only support %c %d %x %X(not omit the high '0') %s, and don't care the negative num */
 /* of course, I don't care the efficiency as well */
 /* return: the strlen(string), that is, not include the '\0' */
-PUBLIC int vsnprintf(char *buf, u32 size, const char *fmt, va_list args)
+PUBLIC int vsnprintf(char *buf, __u32 size, const char *fmt, va_list args)
 {
-    u32 i, offset, len;
-    u8  c;
-    u32 d, x;
+    __u32 i, offset, len;
+    __u8  c;
+    __u32 d, x;
     char *s, *b;
 
     char num[11]; /* 2^32 = 4294967296 + '\0' */
@@ -81,21 +81,21 @@ PUBLIC int vsnprintf(char *buf, u32 size, const char *fmt, va_list args)
             } else {
                 switch (fmt[i+1]) {
                     case ('c'):
-                        c = va_arg(args, u32);
+                        c = va_arg(args, __u32);
                         buf_putc(buf, size, &offset, c);
                         i++;
                         break;
                     case ('d'):
-                        d = va_arg(args, u32);
+                        d = va_arg(args, __u32);
                         b = itoa(num, d, 10);
                         buf_puts(buf, size, &offset, b);
                         i++;
                         break;
                     case ('x'):
                     case ('X'):
-                        x = va_arg(args, u32);
+                        x = va_arg(args, __u32);
                         b = itoa(num, x, 16);
-                        if (fmt[i+1] == 'X') { b = &num[2]; };
+                        /* if (fmt[i+1] == 'X') */ { b = &num[2]; };
                         buf_puts(buf, size, &offset, b);
                         i++;
                         break;
@@ -125,9 +125,9 @@ PUBLIC int vsnprintf(char *buf, u32 size, const char *fmt, va_list args)
 }
 
 
-PUBLIC int snprintf(char *buf, u32 size, const char *fmt, ...)
+PUBLIC int snprintf(char *buf, __u32 size, const char *fmt, ...)
 {
-    u32 len;
+    __u32 len;
     va_list args;
 
     va_start(args, fmt);

@@ -154,10 +154,16 @@ void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
 	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);	
 }
 
+#include <libc.h>
 #include "log.h"
 #define UART_IO_SIZE 256
-__u32  uart_recv_buf_index = 0;
-char   uart_recv_buf[UART_IO_SIZE] = {0};
+/* SHELL_MODE */
+volatile __u32 uart_recv_buf_index = 0;
+/* YMODEM_MODE */
+volatile __u32 first = 0; 
+volatile __u32 last  = 0;
+
+char uart_recv_buf[UART_IO_SIZE] = {0};
 
 void uart_putc(__u8 byte) 
 {
@@ -168,36 +174,99 @@ int uart_puts(const char *str)
 {
 	Usart_SendString(DEBUG_USARTx, str);
 }
+
+int uart_printf(const char *format, ...)
+{
+    u32 len;
+    va_list args;
+    static char format_buf[UART_IO_SIZE] = {0};
+
+    va_start(args, format);
+    len = vsnprintf(format_buf, sizeof(format_buf), format, args);
+    va_end(args);
+
+    uart_puts(format_buf);
+
+    return len;
+}
+
+enum USART_WORK_MODE {
+    SHELL_MODE  = 0,
+    YMODEM_MODE,
+};
+
+int work_mode = SHELL_MODE;
+
 void DEBUG_USART_IRQHandler(void)
 {
 	uint16_t ch;
 	ch = (__u8)USART_ReceiveData(DEBUG_USARTx);
 
-    if (ch == '\n') {   /* sscom will send '\r\n' we ignore the '\n' */
-        return;
+    switch (work_mode) {
+        case (SHELL_MODE):
+            if (ch == '\n') {   /* sscom will send '\r\n' we ignore the '\n' */
+                return;
+            }
+            if (uart_recv_buf_index == (UART_IO_SIZE - 1) && ch != '\r') {
+                uart_puts("cmd too long!\n");
+                uart_recv_buf_index = 0;
+                return;
+
+            }
+
+            if (ch == '\r') {
+                uart_recv_buf[uart_recv_buf_index] = '\0';  /* terminate the string. */
+                shell(uart_recv_buf);
+
+                uart_recv_buf_index = 0;
+                uart_puts("\nutloader>");
+                return;
+            } else {
+                uart_recv_buf[uart_recv_buf_index] = ch;
+                uart_recv_buf_index++;
+            }
+
+            /* echo */
+            uart_putc(ch);
+            break;
+        case (YMODEM_MODE):
+            if ((last + 1) % UART_IO_SIZE == first) {
+                uart_puts("buf full!\n");
+            }
+            uart_recv_buf[last++] = ch;
+
+            if (last == UART_IO_SIZE) {
+                last = 0;
+            }
+            break;
+        default:    /* FIXME: panic() */
+            break;
     }
-    if (uart_recv_buf_index == (UART_IO_SIZE - 1) && ch != '\r') {
-        uart_puts("cmd too long!\n");
-        uart_recv_buf_index = 0;
-        return;
+}
 
-    }
+/* only for YMODEM_MODE */
 
-    if (ch == '\r') {
-        uart_recv_buf[uart_recv_buf_index] = '\0';  /* terminate the string. */
-        shell(uart_recv_buf);
-
-        uart_recv_buf_index = 0;
-        uart_puts("\nutloader>");
-        return;
+/* 0: no data; 1: has data; */ 
+int uart_fifo_status()
+{
+    if (first == last) {
+        return 0;
     } else {
-        uart_recv_buf[uart_recv_buf_index] = ch;
-        uart_recv_buf_index++;
+        return 1;
     }
+}
 
-    /* echo */
-    uart_putc(ch);
-
+char uart_recv()
+{
+    char ch;
+    if (uart_fifo_status() == 1) {
+        ch = uart_recv_buf[first++];
+        if (first == UART_IO_SIZE) {
+            first = 0;
+        }
+    } else {
+        return 0;
+    }
 }
 
 #if 0
