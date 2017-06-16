@@ -2,6 +2,7 @@
 #include "usart.h"
 #include "log.h"
 #include "libc.h"
+#include "flash.h"
 
 int _assert(const char *file_name, const char *func_name, unsigned int line_num, char *desc)
 {
@@ -37,6 +38,10 @@ int _assert(const char *file_name, const char *func_name, unsigned int line_num,
 /*RCC的AHB1时钟使能寄存器地址,强制转换成指针*/
 #define RCC_APB2ENR      *(unsigned int*)(RCC_BASE+0x18)
 
+char sys_banner[] = {"utloader system buildtime [" __TIME__ " " __DATE__ "]"};
+
+int flag = 0xf00dbeef;
+
 int main(void)
 {	
     RCC_APB2ENR |= (1<<3);
@@ -48,10 +53,14 @@ int main(void)
     
     USART_Config();
 
-    Usart_SendString( DEBUG_USARTx,"test1111111111\n");
+    PRINT_EMG("%s\n", sys_banner);
 
-    PRINT_EMG("hello, world!\n");
+
     while(1) {
+		if (flag == 0xf11dbeef) {
+        	flash_write(0x08000150, &flag, 4);
+			flag = 0xf00dbeef;
+    	}
     }
 
     while(1);

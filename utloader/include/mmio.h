@@ -3,14 +3,14 @@
 
 #include <types.h>
 
-#define readb(addr)  (*((u8*)addr))
-#define writeb(addr, data) (*((volatile u8*)addr) = data)
+#define readb(addr)  (*((__u8*)addr))
+#define writeb(addr, data) (*((volatile __u8*)addr) = data)
 
 #define get_bit(x, bit_index) ((x >> bit_index) & 0x1)
 
-static inline void set_bit(u32 *x, u32 bit_index, u32 b) {
-    u32 _x;
-    u32 bit_mask;
+static inline void set_bit(__u32 *x, __u32 bit_index, __u32 b) {
+    __u32 _x;
+    __u32 bit_mask;
     _x = *x;
     if (get_bit(_x, bit_index) != b) {
         if (b == 0) {
@@ -23,16 +23,16 @@ static inline void set_bit(u32 *x, u32 bit_index, u32 b) {
     }
 }
 
-static inline void writel(u32 addr, u32 data) {
-    u32 *ptr = (u32*)addr;
+static inline void writel(__u32 addr, __u32 data) {
+    __u32 *ptr = (__u32*)addr;
     asm volatile("str %[data], [%[addr]]"
             :
             : [addr]"r"(ptr), [data]"r"(data));
 }
 
-static inline u32 readl(u32 addr) {
-    u32 *ptr = (u32*)addr;
-    u32 data;
+static inline __u32 readl(__u32 addr) {
+    __u32 *ptr = (__u32*)addr;
+    __u32 data;
     asm volatile("ldr %[data], [%[addr]]"
             : [data]"=r"(data)
             : [addr]"r"(ptr));
