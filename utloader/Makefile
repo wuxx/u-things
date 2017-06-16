@@ -24,7 +24,7 @@ BINARY	= main
 CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER 
 ASFLAG= -g -mcpu=cortex-m3 -mthumb 
 
-LDSCRIPT	= stm32f103VET6.ld
+LDSCRIPT	= stm32f103vet6.ld
 #LDFLAGS	=   -Llib -T $(LDSCRIPT) 
 LDFLAGS	=   -T $(LDSCRIPT) -nostartfiles -Xlinker --gc-sections $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
 

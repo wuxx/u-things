@@ -103,6 +103,13 @@
 //#define  DEBUG_USART_IRQ                UART5_IRQn
 //#define  DEBUG_USART_IRQHandler         UART5_IRQHandler
 
+enum USART_WORK_MODE {
+    SHELL_MODE  = 0,
+    YMODEM_MODE,
+};
+
+extern int work_mode;
+
 
 void USART_Config(void);
 void Usart_SendByte( USART_TypeDef * pUSARTx, uint8_t ch);

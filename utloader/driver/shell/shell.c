@@ -6,30 +6,30 @@
 #include "shell.h"
 #include "xyzmodem.h"
 
-u32 argc;
+__u32 argc;
 char *argv[SHELL_ARGS_MAX] = {NULL};
 
-s32 cmd_read();
-s32 cmd_write();
-s32 cmd_exec();
-s32 cmd_dump();
-s32 cmd_loady();
-s32 cmd_help();
+__s32 cmd_read();
+__s32 cmd_write();
+__s32 cmd_exec();
+__s32 cmd_dump();
+__s32 cmd_loady();
+__s32 cmd_help();
 
 struct shell_cmd_info ci[] = {
     { .name = "r",       .func = cmd_read,    .desc = "r    [addr]               read    any addr"},
     { .name = "w",       .func = cmd_write,   .desc = "w    [addr] [data]        write   any addr"},
     { .name = "x",       .func = cmd_exec,    .desc = "x    [addr]               execute any addr"},
     { .name = "dump",    .func = cmd_dump,    .desc = "dump [addr] [word_num]    dump    any addr"},
-    { .name = "loady",      .func = cmd_loady,   .desc = "loady [addr]              load data to any addr with ymodem"},
+    { .name = "loady",   .func = cmd_loady,   .desc = "loady [addr]              load data to any addr with ymodem"},
     { .name = "help",    .func = cmd_help,    .desc = "help                      print cmd info"  },
 };
 
 
-PRIVATE s32 cmd_read()
+PRIVATE __s32 cmd_read()
 {
-    u32 addr;
-    u32 data;
+    __u32 addr;
+    __u32 data;
 
     addr = atoi(argv[1]);
     data = readl(addr);
@@ -37,9 +37,9 @@ PRIVATE s32 cmd_read()
     return 0;
 }
 
-PRIVATE s32 cmd_write()
+PRIVATE __s32 cmd_write()
 {
-    u32 addr, data;
+    __u32 addr, data;
 
     addr = atoi(argv[1]);
     data = atoi(argv[2]);
@@ -49,10 +49,10 @@ PRIVATE s32 cmd_write()
     return 0;
 }
 
-PRIVATE s32 cmd_exec()
+PRIVATE __s32 cmd_exec()
 {
-    s32 ret;
-    u32 addr, para1, para2, para3, para4;
+    __s32 ret;
+    __u32 addr, para1, para2, para3, para4;
     func_4 func;
 
     addr  = atoi(argv[1]);
@@ -68,15 +68,15 @@ PRIVATE s32 cmd_exec()
     return ret;
 }
 
-PRIVATE s32 cmd_dump()
+PRIVATE __s32 cmd_dump()
 {
-    u32 i;
-    u32 *p;
-    u32 addr, word_nr;
+    __u32 i;
+    __u32 *p;
+    __u32 addr, word_nr;
 
     addr    = atoi(argv[1]);
     word_nr = atoi(argv[2]);
-    p       = (u32*)addr;
+    p       = (__u32*)addr;
 
     for(i=0;i<word_nr;i++) {
         PRINT_EMG("[0x%X]: 0x%X\r\n", &p[i], p[i]);
@@ -91,7 +91,7 @@ static int getcxmodem(void) {
     return -1;
 }
 
-PRIVATE s32 cmd_loady()
+PRIVATE __s32 cmd_loady()
 {
     int size;
     int err;
@@ -99,12 +99,13 @@ PRIVATE s32 cmd_loady()
     int offset;
     connection_info_t info;
     char ymodemBuf[1024];
-    u32 store_addr = ~0;
-    u32 addr = 0;
+    __u32 store_addr = ~0;
+    __u32 addr = 0;
 
     offset = atoi(argv[1]);
 
     size = 0;
+	work_mode = YMODEM_MODE;
     info.mode = xyzModem_ymodem;
     res = xyzModem_stream_open(&info, &err);
     if (!res) {
@@ -125,28 +126,29 @@ PRIVATE s32 cmd_loady()
     xyzModem_stream_terminate(false, &getcxmodem);
 
     uart_printf("## Total Size      = 0x%08x = %d Bytes\n", size, size);
+	work_mode = SHELL_MODE;
 
     return offset;
 }
 
-PRIVATE s32 cmd_reset()
+PRIVATE __s32 cmd_reset()
 {
     assert(0);
     return 0;
 }
 
-PRIVATE s32 cmd_help()
+PRIVATE __s32 cmd_help()
 {
-    u32 i;
+    __u32 i;
     for(i=0; i<(sizeof(ci)/sizeof(ci[0])); i++) {
         PRINT_EMG("%s:\t\t\t%s\n", ci[i].name, ci[i].desc);
     }
     return 0;
 }
 
-PRIVATE s32 parse_cmd(char *cmd)
+PRIVATE __s32 parse_cmd(char *cmd)
 {
-    u32 i,j;
+    __u32 i,j;
 
     memset(argv, 0, SHELL_ARGS_MAX*sizeof(argv[0]));
 
@@ -179,9 +181,9 @@ PRIVATE s32 parse_cmd(char *cmd)
     return 0;
 }
 
-PRIVATE static s32 get_cmd_index(char *cmd)
+PRIVATE static __s32 get_cmd_index(char *cmd)
 {
-    u32 i;
+    __u32 i;
     for(i=0; i<(sizeof(ci)/sizeof(ci[0])); i++) {
         if (strcmp(ci[i].name, cmd) == 0) {
             return i;
@@ -190,10 +192,10 @@ PRIVATE static s32 get_cmd_index(char *cmd)
     return -1;
 }
 
-PUBLIC s32 shell(char *cmd)
+PUBLIC __s32 shell(char *cmd)
 {
-    u32 i, len;
-    s32 ret;
+    __u32 i, len;
+    __s32 ret;
 
     if ((len = strlen(cmd)) == 0) {
         return 0;

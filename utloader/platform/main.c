@@ -1,5 +1,6 @@
 #include "stm32f10x.h"
 #include "usart.h"
+#include "timer.h"
 #include "log.h"
 #include "libc.h"
 #include "flash.h"
@@ -53,14 +54,18 @@ int main(void)
     
     USART_Config();
 
-    PRINT_EMG("%s\n", sys_banner);
+    timer_init();
 
+    PRINT_EMG("%s\n", sys_banner);
 
     while(1) {
 		if (flag == 0xf11dbeef) {
         	flash_write(0x08000150, &flag, 4);
 			flag = 0xf00dbeef;
+            mdelay(1);
     	}
+        mdelay(1000);
+        /* PRINT_EMG("%s\n", sys_banner); */
     }
 
     while(1);

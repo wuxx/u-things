@@ -7,4 +7,4 @@ struct shell_cmd_info {
     char *desc;
 };
 
-s32 shell(char *cmd);
+__s32 shell(char *cmd);
