@@ -7,17 +7,16 @@ volatile __u64 time = 0;
 
 void udelay(__u32 tick)
 {
-#if 0
-    __u32 old_time = time;
+    volatile __u32 t, i, x;
 
-    tick = tick <= 1000000 ? 1000000 : tick;
+	for(t = 0; t < tick; t++) {
+		for(i = 0; i < 1; i++) {
 
-    while(1) {
-        if ((time - old_time) >= tick) {
-            break;
-        }
-    }
-#endif
+			for(x = 0; x < 10; x++) {
+				asm volatile ("nop");
+			}
+		}
+	}
 }
 
 void mdelay(__u32 tick)

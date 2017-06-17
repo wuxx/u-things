@@ -6,6 +6,8 @@
 #include "shell.h"
 #include "xyzmodem.h"
 
+volatile __u8 *shell_cmd = NULL;
+
 __u32 argc;
 char *argv[SHELL_ARGS_MAX] = {NULL};
 
@@ -129,7 +131,7 @@ PRIVATE __s32 cmd_loady()
     xyzModem_stream_close(&err);
     xyzModem_stream_terminate(false, &getcxmodem);
 
-    uart_printf("## Total Size      = 0x%08x = %d Bytes\n", size, size);
+    uart_printf("## Total Size      = 0x%X = %d Bytes\n", size, size);
 	work_mode = SHELL_MODE;
 
     return offset;
@@ -199,10 +201,11 @@ PRIVATE static __s32 get_cmd_index(char *cmd)
 PUBLIC __s32 shell(char *cmd)
 {
     __u32 i, len;
-    __s32 ret;
+    __s32 ret = 0;
 
     if ((len = strlen(cmd)) == 0) {
-        return 0;
+        ret = 0;
+        goto exit;
     }
 
     PRINT_EMG("\n");
@@ -219,10 +222,14 @@ PUBLIC __s32 shell(char *cmd)
 
     if ((i=get_cmd_index(argv[0])) == -1) {
         PRINT_EMG("illegal cmd [%s] \n", argv[0]);
-        return EINVAL;
+        ret = EINVAL;
+        goto exit;
     }
 
     ret = ci[i].func();
     PRINT_EMG("return 0x%x\n", ret);
-    return 0;
+
+exit:
+    PRINT_EMG("\nutloader>");
+    return ret;
 }

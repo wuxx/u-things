@@ -4,6 +4,8 @@
 #include "log.h"
 #include "libc.h"
 #include "flash.h"
+#include "shell.h"
+
 
 int _assert(const char *file_name, const char *func_name, unsigned int line_num, char *desc)
 {
@@ -56,7 +58,7 @@ int main(void)
 
     timer_init();
 
-    PRINT_EMG("%s\n", sys_banner);
+    PRINT_EMG("\n%s\n", sys_banner);
 
     while(1) {
 		if (flag == 0xf11dbeef) {
@@ -64,8 +66,11 @@ int main(void)
 			flag = 0xf00dbeef;
             mdelay(1);
     	}
-        mdelay(1000);
-        /* PRINT_EMG("%s\n", sys_banner); */
+		if (shell_cmd != NULL) {
+			shell(shell_cmd);
+			shell_cmd = NULL;
+
+		}        
     }
 
     while(1);

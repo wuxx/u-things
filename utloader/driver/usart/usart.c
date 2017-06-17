@@ -16,6 +16,7 @@
   */ 
 	
 #include "usart.h"
+#include "watchdog.h"
 #include "shell.h"
 
 int work_mode = SHELL_MODE;
@@ -129,6 +130,11 @@ void Usart_SendString( USART_TypeDef * pUSARTx, char *str)
 	unsigned int k=0;
   do 
   {
+      if (*(str + k) == '\n') {
+          /* unix style, we send the extra '\r' */
+        Usart_SendByte( pUSARTx, '\r');
+      }
+
       Usart_SendByte( pUSARTx, *(str + k) );
       k++;
   } while(*(str + k)!='\0');
@@ -196,8 +202,25 @@ int uart_printf(const char *format, ...)
 
 void DEBUG_USART_IRQHandler(void)
 {
+    static __u8 i, magic_cmd[5];
+
 	uint16_t ch;
 	ch = (__u8)USART_ReceiveData(DEBUG_USARTx);
+
+    for(i = 0; i < 4; i++) {
+        magic_cmd[i] = magic_cmd[i + 1];
+    }
+    magic_cmd[4] = ch;
+
+    if (magic_cmd[0] == 'r' && 
+        magic_cmd[1] == 'e' &&
+        magic_cmd[2] == 's' &&
+        magic_cmd[3] == 'e' &&
+        magic_cmd[4] == 't') {
+        watchdog_reset();
+    }
+
+	/* uart_printf("enter %s-%d %x \n", __func__, __LINE__, ch); */
 
     switch (work_mode) {
         case (SHELL_MODE):
@@ -213,10 +236,12 @@ void DEBUG_USART_IRQHandler(void)
 
             if (ch == '\r') {
                 uart_recv_buf[uart_recv_buf_index] = '\0';  /* terminate the string. */
-                shell(uart_recv_buf);
+				
+                shell_cmd = uart_recv_buf;
+                /* shell(uart_recv_buf); */
 
                 uart_recv_buf_index = 0;
-                uart_puts("\nutloader>");
+                /* uart_puts("\nutloader>"); */
                 return;
             } else {
                 uart_recv_buf[uart_recv_buf_index] = ch;
@@ -230,6 +255,7 @@ void DEBUG_USART_IRQHandler(void)
             if ((last + 1) % UART_IO_SIZE == first) {
                 uart_puts("buf full!\n");
             }
+            uart_printf("uart produce %x\n", ch);
             uart_recv_buf[last++] = ch;
 
             if (last == UART_IO_SIZE) {
@@ -258,6 +284,7 @@ char uart_recv()
     char ch;
     if (uart_fifo_status() == 1) {
         ch = uart_recv_buf[first++];
+        PRINT_EMG("uart consume %x\n", ch);
         if (first == UART_IO_SIZE) {
             first = 0;
         }
