@@ -16,6 +16,9 @@
   */ 
 	
 #include "usart.h"
+#include "shell.h"
+
+int work_mode = SHELL_MODE;
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC
@@ -190,12 +193,6 @@ int uart_printf(const char *format, ...)
     return len;
 }
 
-enum USART_WORK_MODE {
-    SHELL_MODE  = 0,
-    YMODEM_MODE,
-};
-
-int work_mode = SHELL_MODE;
 
 void DEBUG_USART_IRQHandler(void)
 {
