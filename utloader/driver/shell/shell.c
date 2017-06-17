@@ -80,13 +80,15 @@ PRIVATE __s32 cmd_dump()
     word_nr = atoi(argv[2]);
     p       = (__u32*)addr;
 
-    PRINT_EMG("[0x%X]: ", &p[i]);
-    for(i = 0; i < word_nr; i++) {
-        PRINT_EMG("0x%X ", p[i]);
-        if (i % 4 == 0) {
+    PRINT_EMG("[0x%X]: ", &p[0]);
+    for(i = 0; i < word_nr;) {
+        PRINT_EMG("0x%X ", p[i++]);
+        if ((i > 0) && (i % 4 == 0)) {
             PRINT_EMG("\r\n[0x%X]: ", &p[i]);
         }
     }
+
+	PRINT_EMG("\n");
 
     return 0;
 }

@@ -53,9 +53,10 @@ int main(void)
     GPIOB_CRL |= (1<<4*0);
 
     GPIOB_ODR &= ~(1<<0);
-    
-    USART_Config();
 
+    //USART_Config(); /* uart1 */
+
+	uart2_init();
     timer_init();
 
     PRINT_EMG("\n%s\n", sys_banner);
@@ -70,7 +71,10 @@ int main(void)
 			shell(shell_cmd);
 			shell_cmd = NULL;
 
-		}        
+		}   
+		
+		//mdelay(1000);
+		//uart2_printf("\n%s\n", sys_banner);	
     }
 
     while(1);
