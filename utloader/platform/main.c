@@ -57,10 +57,14 @@ int main(void)
     //USART_Config(); /* uart1 */
 
 	uart2_init();
+	uart2_printf("uart2 ready\n");
     timer_init();
 
     PRINT_EMG("\n%s\n", sys_banner);
 
+	uart1_init();
+	uart1_printf("uart1 ready\n");
+	
     while(1) {
 		if (flag == 0xf11dbeef) {
         	flash_write(0x08000150, &flag, 4);
@@ -72,9 +76,8 @@ int main(void)
 			shell_cmd = NULL;
 
 		}   
-		
-		//mdelay(1000);
-		//uart2_printf("\n%s\n", sys_banner);	
+		//uart1_printf("11111111111111\n");
+
     }
 
     while(1);
