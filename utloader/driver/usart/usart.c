@@ -19,6 +19,8 @@
 #include "watchdog.h"
 #include "shell.h"
 
+int uart1_printf(const char *format, ...);
+
 int work_mode = SHELL_MODE;
 
  /**
@@ -206,6 +208,7 @@ void DEBUG_USART_IRQHandler(void)
 
 	uint16_t ch;
 	ch = (__u8)USART_ReceiveData(DEBUG_USARTx);
+	uart1_printf("%s-%d %x \n", __func__, __LINE__, ch);
 
     for(i = 0; i < 4; i++) {
         magic_cmd[i] = magic_cmd[i + 1];
@@ -255,8 +258,9 @@ void DEBUG_USART_IRQHandler(void)
         case (YMODEM_MODE):
             if ((last + 1) % UART_IO_SIZE == first) {
                 uart_puts("buf full!\n");
+				return;
             }
-            uart_printf("uart produce %x\n", ch);
+            uart1_printf("uart produce %x\n", ch);
             uart_recv_buf[last++] = ch;
 
             if (last == UART_IO_SIZE) {
@@ -285,10 +289,11 @@ char uart_recv()
     char ch;
     if (uart_fifo_status() == 1) {
         ch = uart_recv_buf[first++];
-        PRINT_EMG("uart consume %x\n", ch);
+        uart1_printf("uart consume %x\n", ch);
         if (first == UART_IO_SIZE) {
             first = 0;
         }
+		return ch;
     } else {
         return 0;
     }
@@ -297,6 +302,7 @@ char uart_recv()
 #if 1
 /* for uart1 */
 
+int uart1_status = 0;
 
 void uart1_init()
 {
@@ -361,6 +367,7 @@ void uart1_init()
 	  
 	  // Ê¹ÄÜ´®¿Ú
 	  USART_Cmd(DEBUG_USART1, ENABLE);	  
+	  uart1_status = 1;
 
 }
 
@@ -369,6 +376,10 @@ int uart1_printf(const char *format, ...)
     __u32 len;
     va_list args;
     static char format_buf[UART_IO_SIZE] = {0};
+	
+	if (uart1_status == 0) {
+		return 0;
+	}
 	
     va_start(args, format);
     len = vsnprintf(format_buf, sizeof(format_buf), format, args);

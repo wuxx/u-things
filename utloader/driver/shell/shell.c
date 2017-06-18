@@ -19,10 +19,10 @@ __s32 cmd_loady();
 __s32 cmd_help();
 
 struct shell_cmd_info ci[] = {
-    { .name = "r",       .func = cmd_read,    .desc = "r    [addr]               read    any addr"},
-    { .name = "w",       .func = cmd_write,   .desc = "w    [addr] [data]        write   any addr"},
-    { .name = "x",       .func = cmd_exec,    .desc = "x    [addr]               execute any addr"},
-    { .name = "dump",    .func = cmd_dump,    .desc = "dump [addr] [word_num]    dump    any addr"},
+    { .name = "r",       .func = cmd_read,    .desc = "r     [addr]              read    any addr"},
+    { .name = "w",       .func = cmd_write,   .desc = "w     [addr] [data]       write   any addr"},
+    { .name = "x",       .func = cmd_exec,    .desc = "x     [addr]              execute any addr"},
+    { .name = "dump",    .func = cmd_dump,    .desc = "dump  [addr] [word_num]   dump    any addr"},
     { .name = "loady",   .func = cmd_loady,   .desc = "loady [addr]              load data to any addr with ymodem"},
     { .name = "help",    .func = cmd_help,    .desc = "help                      print cmd info"  },
 };

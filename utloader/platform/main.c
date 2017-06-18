@@ -62,8 +62,8 @@ int main(void)
 
     PRINT_EMG("\n%s\n", sys_banner);
 
-	uart1_init();
-	uart1_printf("uart1 ready\n");
+	//uart1_init();
+	//uart1_printf("uart1 ready\n");
 	
     while(1) {
 		if (flag == 0xf11dbeef) {
