@@ -25,7 +25,7 @@ PROVIDE ( _Stack_Init = __Stack_Init ) ;
 /*
 There will be a link error if there is not this amount of RAM free at the end.
 */
-_Minimum_Stack_Size = 0x100 ;
+_Minimum_Stack_Size = 0x2800 ; /* 10K */
 
 
 /* include the memory spaces definitions sub-script */
@@ -46,7 +46,7 @@ MEMORY
 }
 
 /* higher address of the user mode stack */
-_estack = 0x20010000;
+/* _estack = 0x20010000; */
 
 
 
@@ -144,6 +144,7 @@ SECTIONS
         
         . = ALIGN(4);
         _eusrstack = . ;
+        _estack = . ;
     } >RAM
     
 
@@ -193,8 +194,6 @@ SECTIONS
         *(.eb3rodata)                 /* read-only data (constants) */
         *(.eb3rodata*)
     } >EXTMEMB3
-    
-    
     
     /* after that it's only debugging information. */
     

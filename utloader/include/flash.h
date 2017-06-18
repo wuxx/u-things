@@ -11,7 +11,6 @@
 #define PAGE_BASE(addr)   ((addr) - ((addr) % FLASH_PAGE_SIZE))
 #define PAGE_OFFSET(addr) ((addr) % FLASH_PAGE_SIZE)
 
-__u32 is_flashaddr(__u32 addr);
 
 __s32 flash_write(__u32 addr, void *buf, __u32 size);
 __s32 flash_read(__u32 addr, void *buf, __u32 size);

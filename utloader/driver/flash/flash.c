@@ -10,15 +10,6 @@
 
 /* internal flash access */
 
-__u32 is_flashaddr(__u32 addr)
-{
-    if ((addr >= FLASH_BASE) && (addr < (FLASH_BASE + FLASH_SIZE))) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
 __s32 flash_write(__u32 addr, void *buf, __u32 size)
 {
     __u32 i, x;
@@ -35,10 +26,12 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
 
     PRINT_EMG("%s-%d %x %x %x\n", __func__, __LINE__, addr, buf, size);
 
+#if 0
     if ((size % 4) != 0) {
         PRINT_ERR("size must align by word (%x)\n", size);
         return -1;     
     }
+#endif
 
     if (!((addr >= FLASH_BASE) && ((addr + size) < (FLASH_BASE + FLASH_SIZE)))) {
         PRINT_ERR("illegal addr interval [%x, %x], must belong to [%x, %x]\n", 
@@ -46,10 +39,9 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
         return -1;    
     }
 
-	PRINT_EMG("%s-%d\n", __func__, __LINE__);
     FLASH_Unlock();
 	FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPRTERR);	
-	PRINT_EMG("%s-%d\n", __func__, __LINE__);	
+
 	/* we always cut the addr interval in 3 part: head, body, tail */
 	/* TODO: DRY. there is too much duplicate code*/
 	
@@ -59,19 +51,18 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
 		wpage = (__u32 *)&page[0];
 		bpage = (__u8  *)&page[0];
 		bbuf = (__u8  *)buf;
-		PRINT_EMG("%s-%d\n", __func__, __LINE__);	
+
 		for(i = 0; i < (FLASH_PAGE_SIZE / 4); i++) {
 			wpage[i] = readl(PAGE_BASE(addr) + i * 4);
 		}
-		PRINT_EMG("%s-%d %x\n", __func__, __LINE__, PAGE_BASE(addr));	
+		//PRINT_EMG("%s-%d %x\n", __func__, __LINE__, PAGE_BASE(addr));	
 		/* erase */
 		status = FLASH_ErasePage(PAGE_BASE(addr));
-		PRINT_EMG("%s-%d\n", __func__, __LINE__);	
 		/* merge */
 		for(i = 0; i < (FLASH_PAGE_SIZE - offset); i++) {
 			bpage[offset + i] = bbuf[i];
 		}
-		PRINT_EMG("%s-%d\n", __func__, __LINE__);	
+
 		/* write back */
 		for (i = 0; i < (FLASH_PAGE_SIZE / 4); i++) {
 			status = FLASH_ProgramWord(PAGE_BASE(addr) + i * 4, wpage[i]);
@@ -91,7 +82,7 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
 
 		
 	}
-	PRINT_EMG("%s-%d\n", __func__, __LINE__);	
+
 	/* tail */
 	if ((offset = PAGE_OFFSET(addr + size)) != 0) {
 		/* read */
@@ -103,6 +94,7 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
 			wpage[i] = readl(PAGE_BASE(addr + size) + i * 4);
 		}
 
+		//PRINT_EMG("%s-%d %x\n", __func__, __LINE__, PAGE_BASE(addr + size));	
 		/* erase */
 		status = FLASH_ErasePage(PAGE_BASE(addr + size));
 
@@ -129,11 +121,10 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
 		}
 
 	}
-	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+
 	page_start = PAGE_OFFSET(addr) == 0 ? addr : addr + (FLASH_PAGE_SIZE - PAGE_OFFSET(addr));
 	page_num   = (PAGE_BASE(addr + size) - page_start) / FLASH_PAGE_SIZE;
 	wpage  = (__u32 *)((__u32)buf + FLASH_PAGE_SIZE - PAGE_OFFSET(addr));
-	PRINT_EMG("%s-%d %x\n", __func__, __LINE__, page_num);
 	/* body */
 	for(x = 0; x < page_num; x++) {
 		/* erase */
@@ -155,7 +146,6 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
 
 		}
 	}
-	PRINT_EMG("%s-%d\n", __func__, __LINE__);
 
     FLASH_Lock();
 

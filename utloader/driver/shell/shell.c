@@ -5,6 +5,8 @@
 #include "mmio.h"
 #include "shell.h"
 #include "xyzmodem.h"
+#include "flash.h"
+#include "config.h"
 
 volatile char *shell_cmd = NULL;
 
@@ -106,7 +108,7 @@ PRIVATE __s32 cmd_loady()
     int res;
     int offset;
     connection_info_t info;
-    char ymodemBuf[1024];
+    char ymodemBuf[2048];
     __u32 store_addr = ~0;
     __u32 addr = 0;
 
@@ -119,11 +121,16 @@ PRIVATE __s32 cmd_loady()
     if (!res) {
 
         while ((res =
-            xyzModem_stream_read(ymodemBuf, 1024, &err)) > 0) {
+            xyzModem_stream_read(ymodemBuf, sizeof(ymodemBuf), &err)) > 0) {
             store_addr = addr + offset;
             size += res;
             addr += res;
-            memcpy((char *)(store_addr), ymodemBuf, res);
+
+			if (IS_SRAMADDR(store_addr)) {
+				memcpy((char *)(store_addr), ymodemBuf, res);
+			} else if (IS_FLASHADDR(store_addr)) {
+				flash_write(store_addr, ymodemBuf, res);
+			}
 
         }
     } else {

@@ -19,9 +19,9 @@ STRIP  := $(CROSS_COMPILE)strip
 
 UT_REV = $(shell git log --oneline -1 | awk '{print $$1}')
 
-CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -fstack-usage -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
+CFLAGS = -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -fstack-usage -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
 
-ASFLAG= -g -mcpu=cortex-m3 -mthumb
+ASFLAG = -g -mcpu=cortex-m3 -mthumb
 
 LDSCRIPT	= stm32f103vet6.ld
 #LDFLAGS	=   -Llib -T $(LDSCRIPT) 
@@ -54,19 +54,14 @@ INCS = -I$(ROOT_DIR)/platform -I $(ROOT_DIR)/stm32f10x_fwlib/inc -I$(ROOT_DIR)/c
 #****************************************************************************
 prebuild:
 	@echo Building app...
-	#@mkdir -p $(ROOT_DIR)/output/obj
 
 $(TARGET).elf : $(OBJS)
-	@echo $(LD) $@: $^
 	-${LD} $^ $(LDFLAGS) -o $@
-	@echo Generating bin...
 	@$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 	@$(NM) $(TARGET).elf > $(TARGET).map
-	@echo Generating hex...
 	@$(OBJCOPY) -O ihex $@ $(TARGET).hex
-	@echo Generating asm...
 	@$(OBJDUMP) -d -S $@ > $(TARGET).asm
-	@echo OK!
+	@echo "\033[32mbuild ok!\033[0"
 
 stack_check :
 	@rm -rf $(ROOT_DIR)/output/obj

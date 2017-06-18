@@ -5,7 +5,7 @@
 
 PRIVATE __u32 default_log_level = LOG_INFO;
 
-u8 log_buffer[1*1024] = {0};
+__u8 log_buffer[1*1024] = {0};
 __u32 lbindex = 0;
 
 __u32 is_printable(u8 c)

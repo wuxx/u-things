@@ -5,6 +5,7 @@
 #include "libc.h"
 #include "flash.h"
 #include "shell.h"
+#include "config.h"
 
 
 int _assert(const char *file_name, const char *func_name, unsigned int line_num, char *desc)
@@ -30,8 +31,14 @@ char sys_banner[] = {"utloader system buildtime [" __TIME__ " " __DATE__ "] " "r
 
 int flag = 0xf00dbeef;
 
-int main(void)
-{	
+extern int _estack;
+extern int _etext;
+extern int _edata;
+
+__s32 main(void)
+{
+	__u32 free_flash_base, free_sram_base;
+
     RCC_APB2ENR |= (1<<3);
 
     GPIOB_CRL &= ~( 0x0F<< (4*0));  
@@ -46,6 +53,12 @@ int main(void)
     timer_init();
 
     PRINT_EMG("\n%s\n", sys_banner);
+
+	free_flash_base = (__u32)(&_etext) + (__u32)(&_edata) - SRAM_BASE;
+	free_sram_base  = (__u32)(&_estack);
+
+    PRINT_EMG("free flash memory [0x%X, 0x%X]\n", free_flash_base, FLASH_BASE + FLASH_SIZE);
+    PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE + SRAM_SIZE);
 
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
