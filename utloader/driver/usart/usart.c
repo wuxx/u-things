@@ -181,7 +181,7 @@ void uart_putc(__u8 byte)
 	Usart_SendByte(DEBUG_USARTx, byte);
 }
 
-int uart_puts(const char *str)
+void uart_puts(char *str)
 {
 	Usart_SendString(DEBUG_USARTx, str);
 }
@@ -490,6 +490,11 @@ void DEBUG_USART2_IRQHandler(void)
 }
 
 #endif
+void uart_init()
+{
+	uart2_init();
+}
+
 #if 0
 ///重定向c库函数printf到串口，重定向后可使用printf函数
 int fputc(int ch, FILE *f)

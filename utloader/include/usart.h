@@ -153,9 +153,12 @@ void Usart_SendByte( USART_TypeDef * pUSARTx, uint8_t ch);
 void Usart_SendString( USART_TypeDef * pUSARTx, char *str);
 void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch);
 
-int uart_puts(const char *str);
-int uart_printf(const char *format, ...);
+void uart_init();
+void uart_puts(char *str);
+int  uart_printf(const char *format, ...);
 
+int uart1_printf(const char *format, ...);
+int uart2_printf(const char *format, ...);
 
 
 #endif /* __USART_H */

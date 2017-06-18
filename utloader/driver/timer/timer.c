@@ -21,7 +21,6 @@ void udelay(__u32 tick)
 
 void mdelay(__u32 tick)
 {
-    __u32 i;
     __u32 old_time = time;
 
     tick = tick <= 1000000 ? tick : 1000000;

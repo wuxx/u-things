@@ -13,21 +13,6 @@ int _assert(const char *file_name, const char *func_name, unsigned int line_num,
     while(1);
 }
 
-
-/*本文件用于添加寄存器地址及结构体定义*/
-
-/*片上外设基地址  */
-#define PERIPH_BASE           ((unsigned int)0x40000000)
-
-/*APB2 总线基地址 */
-#define APB2PERIPH_BASE       (PERIPH_BASE + 0x10000)
-/* AHB总线基地址 */
-#define AHBPERIPH_BASE        (PERIPH_BASE + 0x20000)
-
-/*GPIOB外设基地址*/
-#define GPIOB_BASE            (APB2PERIPH_BASE + 0x0C00)
-
-/* GPIOB寄存器地址,强制转换成指针 */
 #define GPIOB_CRL           *(unsigned int*)(GPIOB_BASE+0x00)
 #define GPIOB_CRH           *(unsigned int*)(GPIOB_BASE+0x04)
 #define GPIOB_IDR           *(unsigned int*)(GPIOB_BASE+0x08)
@@ -56,8 +41,8 @@ int main(void)
 
     //USART_Config(); /* uart1 */
 
-	uart2_init();
-	uart2_printf("uart2 ready\n");
+	uart_init();
+	uart_printf("uart2 ready\n");
     timer_init();
 
     PRINT_EMG("\n%s\n", sys_banner);
@@ -72,7 +57,7 @@ int main(void)
             mdelay(1);
     	}
 		if (shell_cmd != NULL) {
-			shell(shell_cmd);
+			shell((char *)shell_cmd);
 			shell_cmd = NULL;
 
 		}   

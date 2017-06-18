@@ -56,7 +56,8 @@
  */
 #include <libc.h>
 #include "usart.h"
-#include <xyzmodem.h>
+#include "timer.h"
+#include "xyzmodem.h"
 
 /* Assumption - run xyzModem protocol over the console port */
 
@@ -97,6 +98,11 @@ static struct
 #define xyzModem_CAN_COUNT                3	/* Wait for 3 CAN before quitting */
 
 /* hal start */
+extern int uart_fifo_status();
+extern int uart1_printf(const char *format, ...);
+extern char uart_recv();
+extern void uart_putc(__u8 byte);
+
 int tstc()
 {
     /* 0: no data; 1: has data; */

@@ -21,7 +21,7 @@ STRIP  := $(CROSS_COMPILE)strip
 
 BINARY	= main
 
-CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER 
+CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER 
 ASFLAG= -g -mcpu=cortex-m3 -mthumb 
 
 LDSCRIPT	= stm32f103vet6.ld

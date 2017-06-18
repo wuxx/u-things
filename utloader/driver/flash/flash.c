@@ -1,10 +1,11 @@
-#include <config.h>
+
 #include <libc.h>
+#include "stm32f10x_flash.h"
 
 #include "mmio.h"
 #include "log.h"
 
-#include "stm32f10x_flash.h"
+#include "config.h"
 #include "flash.h"
 
 /* internal flash access */
@@ -20,7 +21,7 @@ __u32 is_flashaddr(__u32 addr)
 
 __s32 flash_write(__u32 addr, void *buf, __u32 size)
 {
-    __u32 i, x, word_num;
+    __u32 i, x;
     __s32 status;
 	__u8  page[FLASH_PAGE_SIZE];
 	
@@ -44,8 +45,6 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
                 addr, addr + size, FLASH_BASE, FLASH_BASE + FLASH_SIZE);
         return -1;    
     }
-
-    word_num = size / 4;
 
 	PRINT_EMG("%s-%d\n", __func__, __LINE__);
     FLASH_Unlock();
@@ -170,7 +169,6 @@ error:
 __s32 flash_read(__u32 addr, void *buf, __u32 size)
 {
     __u32 i, word_num;
-    __s32 status;
     __u32 *b = buf;
 
     if ((size % 4) != 0) {
@@ -188,5 +186,6 @@ __s32 flash_read(__u32 addr, void *buf, __u32 size)
     for (i = 0; i < word_num; i++) {
         b[i] = readl(addr + i * 4);
     }
-
+    
+	return 0;
 }

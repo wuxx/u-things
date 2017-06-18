@@ -6,5 +6,6 @@
 #include <string.h>
 #include <types.h>
 #include <assert.h>
+#include <crc.h>
 
 #endif /* __LIBC_H__ */

@@ -6,7 +6,7 @@
 #include "shell.h"
 #include "xyzmodem.h"
 
-volatile __u8 *shell_cmd = NULL;
+volatile char *shell_cmd = NULL;
 
 __u32 argc;
 char *argv[SHELL_ARGS_MAX] = {NULL};
