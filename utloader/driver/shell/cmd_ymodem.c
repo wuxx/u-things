@@ -111,7 +111,6 @@ int tstc()
 
 int getc()
 {
-    uart1_printf("%s-%d\n", __func__, __LINE__);
     return uart_recv();
 }
 

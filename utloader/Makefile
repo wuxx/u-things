@@ -3,9 +3,7 @@
 #****************************************************************************
 ROOT_DIR := .
 
-GCC_PATH = ~/gcc-arm-none-eabi-5_4-2016q3
-
-CROSS_COMPILE = $(GCC_PATH)/bin/arm-none-eabi-
+CROSS_COMPILE = arm-none-eabi-
 
 CC     := $(CROSS_COMPILE)gcc
 CXX    := $(CROSS_COMPILE)g++
@@ -19,14 +17,15 @@ OBJDUMP:= $(CROSS_COMPILE)objdump
 OBJCOPY:= $(CROSS_COMPILE)objcopy
 STRIP  := $(CROSS_COMPILE)strip
 
-BINARY	= main
+UT_REV = $(shell git log --oneline -1 | awk '{print $$1}')
 
-CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER 
+CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
+
 ASFLAG= -g -mcpu=cortex-m3 -mthumb 
 
 LDSCRIPT	= stm32f103vet6.ld
 #LDFLAGS	=   -Llib -T $(LDSCRIPT) 
-LDFLAGS	=   -T $(LDSCRIPT) -nostartfiles -Xlinker --gc-sections $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
+LDFLAGS	=   -T $(LDSCRIPT) -nostartfiles -Xlinker --gc-sections 
 
 #****************************************************************************
 # Targets of the build
@@ -49,11 +48,6 @@ LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a
 LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
 #LIBS = $(LIB_C) $(LIB_GCC)
 INCS = -I$(ROOT_DIR)/platform -I $(ROOT_DIR)/stm32f10x_fwlib/inc -I$(ROOT_DIR)/core -I$(ROOT_DIR)/include
-# OBJS	= stm32f10x_gpio.o stm32f10x_rcc.o isr.o
-
-# OBJS	+= $(BINARY).o 
-# OBJS	+= core_cm3.o
-# OBJS	+= system_stm32f10x.o
 
 #****************************************************************************
 # TARGET

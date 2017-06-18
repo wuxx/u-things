@@ -113,7 +113,7 @@ PRIVATE __s32 cmd_loady()
     offset = atoi(argv[1]);
 
     size = 0;
-	work_mode = YMODEM_MODE;
+	uart_work_mode = YMODEM_MODE;
     info.mode = xyzModem_ymodem;
     res = xyzModem_stream_open(&info, &err);
     if (!res) {
@@ -134,7 +134,7 @@ PRIVATE __s32 cmd_loady()
     xyzModem_stream_terminate(false, &getcxmodem);
 
     uart_printf("## Total Size      = 0x%X = %d Bytes\n", size, size);
-	work_mode = SHELL_MODE;
+	uart_work_mode = SHELL_MODE;
 
     return offset;
 }

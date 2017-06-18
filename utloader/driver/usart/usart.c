@@ -21,7 +21,7 @@
 
 int uart1_printf(const char *format, ...);
 
-int work_mode = SHELL_MODE;
+int uart_work_mode = SHELL_MODE;
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC
@@ -226,7 +226,7 @@ void DEBUG_USART_IRQHandler(void)
 
 	/* uart_printf("enter %s-%d %x \n", __func__, __LINE__, ch); */
 
-    switch (work_mode) {
+    switch (uart_work_mode) {
         case (SHELL_MODE):
             if (ch == '\n') {   /* sscom will send '\r\n' we ignore the '\n' */
                 return;

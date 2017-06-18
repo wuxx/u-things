@@ -26,6 +26,22 @@
 #include "log.h"
 #include "watchdog.h"
 
+/* CPU CONTEXT */
+#define R0		(0)
+#define R1		(1)
+#define R2		(2)
+#define R3		(3)
+#define R12		(4)
+#define LR		(5)
+#define PC		(6)
+#define XPSR	(7)
+
+
+
+
+
+
+#define DUMP_VAR(v) PRINT_EMG(#v": 0x%X\n", v)
 
  
 void NMI_Handler(void)
@@ -34,10 +50,34 @@ void NMI_Handler(void)
     watchdog_reset();
 }
  
-void HardFault_Handler(void)
+__attribute__((naked)) void HardFault_Handler(void)
 {
-    /* Go to infinite loop when Hard Fault exception occurs */
-    PRINT_EMG("%s-%d \n", __func__, __LINE__);
+	register unsigned int *sp __asm ("sp");
+    unsigned int mfsr, bfsr, ufsr;
+
+    PRINT_EMG("%s:\n", __func__);
+	PRINT_EMG("XPSR: 0x%X \n", sp[XPSR]);
+	PRINT_EMG("PC:   0x%X \n", sp[PC]);
+	PRINT_EMG("LR:   0x%X \n", sp[LR]);
+	PRINT_EMG("R12:  0x%X \n", sp[R12]);
+	PRINT_EMG("R3:   0x%X \n", sp[R3]);
+	PRINT_EMG("R2:   0x%X \n", sp[R2]);
+	PRINT_EMG("R1:   0x%X \n", sp[R1]);
+	PRINT_EMG("R0:   0x%X \n\n", sp[R0]);
+
+	PRINT_EMG("HFSR: 0x%X \n", SCB->HFSR);
+	PRINT_EMG("CFSR: 0x%X \n", SCB->CFSR);
+	
+	mfsr = ((SCB->CFSR) & 0x000000FF);
+	bfsr = ((SCB->CFSR) & 0x0000FF00) >> 8;
+	ufsr = ((SCB->CFSR) & 0xFFFF0000) >> 16;
+	PRINT_EMG("MFSR: 0x%X \n", mfsr);
+	PRINT_EMG("BFSR: 0x%X \n", bfsr);
+	PRINT_EMG("UFSR: 0x%X \n", ufsr);
+	
+	PRINT_EMG("MMAR: 0x%X \n", SCB->MMFAR);
+	PRINT_EMG("BFAR: 0x%X \n", SCB->BFAR);
+	
     watchdog_reset();
     while (1)
     {

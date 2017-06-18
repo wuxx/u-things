@@ -145,7 +145,7 @@ enum USART_WORK_MODE {
     YMODEM_MODE,
 };
 
-extern int work_mode;
+extern int uart_work_mode;
 
 
 void USART_Config(void);
