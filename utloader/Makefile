@@ -19,9 +19,9 @@ STRIP  := $(CROSS_COMPILE)strip
 
 UT_REV = $(shell git log --oneline -1 | awk '{print $$1}')
 
-CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
+CFLAGS= -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -fstack-usage -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
 
-ASFLAG= -g -mcpu=cortex-m3 -mthumb 
+ASFLAG= -g -mcpu=cortex-m3 -mthumb
 
 LDSCRIPT	= stm32f103vet6.ld
 #LDFLAGS	=   -Llib -T $(LDSCRIPT) 
@@ -54,18 +54,27 @@ INCS = -I$(ROOT_DIR)/platform -I $(ROOT_DIR)/stm32f10x_fwlib/inc -I$(ROOT_DIR)/c
 #****************************************************************************
 prebuild:
 	@echo Building app...
+	#@mkdir -p $(ROOT_DIR)/output/obj
 
-$(TARGET).elf : $(OBJS) $(LIBS)
+$(TARGET).elf : $(OBJS)
 	@echo $(LD) $@: $^
-	-${LD} $(LIBS) $^ $(LDFLAGS) -o $@
+	-${LD} $^ $(LDFLAGS) -o $@
 	@echo Generating bin...
 	@$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 	@$(NM) $(TARGET).elf > $(TARGET).map
 	@echo Generating hex...
 	@$(OBJCOPY) -O ihex $@ $(TARGET).hex
 	@echo Generating asm...
-	@$(OBJDUMP) -D -S $@ > $(TARGET).asm
+	@$(OBJDUMP) -d -S $@ > $(TARGET).asm
 	@echo OK!
+
+stack_check :
+	@rm -rf $(ROOT_DIR)/output/obj
+	@mkdir -p $(ROOT_DIR)/output/obj
+	@touch $(ROOT_DIR)/core/startup_stm32f10x_hd.su
+	@find . | grep "\.o$$"  | xargs -i mv -f {} $(ROOT_DIR)/output/obj
+	@find . | grep "\.su$$" | xargs -i mv -f {} $(ROOT_DIR)/output/obj
+	@./tools/avstack.pl $(ROOT_DIR)/output/obj/*.o > $(ROOT_DIR)/output/stack.info
 
 %.o : %.c
 	${CC} -c ${CFLAGS} ${INCS} -o $@ $<
@@ -77,4 +86,5 @@ clean:
 	@echo The following files:
 	rm  -f  $(TARGET) *.o
 	find . -name "*.[od]" |xargs rm
+	find . -name "*.su" |xargs rm
 	@echo Removed!
