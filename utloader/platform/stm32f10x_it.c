@@ -26,6 +26,7 @@
 #include "log.h"
 #include "watchdog.h"
 
+#if 0
 /* CPU CONTEXT */
 #define R0		(0)
 #define R1		(1)
@@ -35,10 +36,30 @@
 #define LR		(5)
 #define PC		(6)
 #define XPSR	(7)
+#endif
 
+struct cpu_context
+{
+    __u32 R4;
+    __u32 R5;
+    __u32 R6;
+    __u32 R7;
+    __u32 R8;
+    __u32 R9;
+    __u32 R10;
+    __u32 R11;
+    __u32 R14;
 
-
-
+    /* cpu auto-save */
+    __u32 R0;
+    __u32 R1;
+    __u32 R2;
+    __u32 R3;
+    __u32 R12;
+    __u32 LR;
+    __u32 PC;
+    __u32 XPSR;
+};
 
 
 #define DUMP_VAR(v) PRINT_EMG(#v": 0x%X\n", v)
@@ -52,18 +73,34 @@ void NMI_Handler(void)
  
 __attribute__((naked)) void HardFault_Handler(void)
 {
+	__asm ("push {r4-r11, r14}");
 	register unsigned int *sp __asm ("sp");
+
+	struct cpu_context *cc;
+
     unsigned int mfsr, bfsr, ufsr;
 
+    cc = (struct cpu_context *)sp;
+
     PRINT_EMG("%s:\n", __func__);
-	PRINT_EMG("XPSR: 0x%X \n", sp[XPSR]);
-	PRINT_EMG("PC:   0x%X \n", sp[PC]);
-	PRINT_EMG("LR:   0x%X \n", sp[LR]);
-	PRINT_EMG("R12:  0x%X \n", sp[R12]);
-	PRINT_EMG("R3:   0x%X \n", sp[R3]);
-	PRINT_EMG("R2:   0x%X \n", sp[R2]);
-	PRINT_EMG("R1:   0x%X \n", sp[R1]);
-	PRINT_EMG("R0:   0x%X \n\n", sp[R0]);
+	PRINT_EMG("XPSR: 0x%X \n", cc->XPSR);
+	PRINT_EMG("PC:   0x%X \n", cc->PC);
+	PRINT_EMG("LR:   0x%X \n", cc->LR);
+	PRINT_EMG("R12:  0x%X \n", cc->R12);
+	PRINT_EMG("R3:   0x%X \n", cc->R3);
+	PRINT_EMG("R2:   0x%X \n", cc->R2);
+	PRINT_EMG("R1:   0x%X \n", cc->R1);
+	PRINT_EMG("R0:   0x%X \n", cc->R0);
+
+	PRINT_EMG("R14:  0x%X \n", cc->R14);
+	PRINT_EMG("R11:  0x%X \n", cc->R11);
+	PRINT_EMG("R10:  0x%X \n", cc->R10);
+	PRINT_EMG("R9:   0x%X \n", cc->R9);
+	PRINT_EMG("R8:   0x%X \n", cc->R8);
+	PRINT_EMG("R7:   0x%X \n", cc->R7);
+	PRINT_EMG("R6:   0x%X \n", cc->R6);
+	PRINT_EMG("R5:   0x%X \n", cc->R5);
+	PRINT_EMG("R4:   0x%X \n\n", cc->R4);
 
 	PRINT_EMG("HFSR: 0x%X \n", SCB->HFSR);
 	PRINT_EMG("CFSR: 0x%X \n", SCB->CFSR);
