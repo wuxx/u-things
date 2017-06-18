@@ -239,6 +239,6 @@ PUBLIC __s32 shell(char *cmd)
     PRINT_EMG("return 0x%x\n", ret);
 
 exit:
-    PRINT_EMG("\nutloader>");
+    PRINT_EMG("\nutos>");
     return ret;
 }

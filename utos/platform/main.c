@@ -5,6 +5,7 @@
 #include "libc.h"
 #include "flash.h"
 #include "shell.h"
+#include "mmio.h"
 #include "config.h"
 
 
@@ -29,12 +30,15 @@ int _assert(const char *file_name, const char *func_name, unsigned int line_num,
 
 char sys_banner[] = {"utloader system buildtime [" __TIME__ " " __DATE__ "] " "rev " UT_REV};
 
-int flag = 0xf00dbeef;
-
 extern int _estack;
 extern int _etext;
 extern int _edata;
 
+void print_chipid()
+{
+	PRINT_EMG("chipid: %X%X%X\n", 
+		 __REV(readl(0X1FFFF7E8)), __REV(readl(0X1FFFF7EC)), __REV(readl(0X1FFFF7F0)));
+}
 __s32 main(void)
 {
 	__u32 free_flash_base, free_sram_base;
@@ -53,6 +57,8 @@ __s32 main(void)
     timer_init();
 
     PRINT_EMG("\n%s\n", sys_banner);
+	print_chipid();
+		
 
 	free_flash_base = (__u32)(&_etext) + (__u32)(&_edata) - SRAM_BASE;
 	free_sram_base  = (__u32)(&_estack);
@@ -64,11 +70,6 @@ __s32 main(void)
 	//uart1_printf("uart1 ready\n");
 	
     while(1) {
-		if (flag == 0xf11dbeef) {
-        	flash_write(0x08000150, &flag, 4);
-			flag = 0xf00dbeef;
-            mdelay(1);
-    	}
 		if (shell_cmd != NULL) {
 			shell((char *)shell_cmd);
 			shell_cmd = NULL;
