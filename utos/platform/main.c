@@ -42,6 +42,8 @@ void print_chipid()
 __s32 main(void)
 {
 	__u32 free_flash_base, free_sram_base;
+	__u32 i, len;
+	static __u8 buf[200] = {0};
 
     RCC_APB2ENR |= (1<<3);
 
@@ -55,6 +57,7 @@ __s32 main(void)
 	uart_init();
 	uart_printf("uart2 ready\n");
     timer_init();
+	USB_Config();
 
     PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
@@ -65,7 +68,6 @@ __s32 main(void)
 
     PRINT_EMG("free flash memory [0x%X, 0x%X]\n", free_flash_base, FLASH_BASE + FLASH_SIZE);
     PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE + SRAM_SIZE);
-
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
 	
@@ -74,7 +76,17 @@ __s32 main(void)
 			shell((char *)shell_cmd);
 			shell_cmd = NULL;
 
-		}   
+		}
+
+        len = USB_RxRead(buf, sizeof(buf));
+				for(i = 0; i < len; i++) {
+					uart_printf("read [%x]\n", buf[i]);
+				}
+        if (len > 0)
+        {
+            USB_TxWrite(buf, len);
+        }
+
 		//uart1_printf("11111111111111\n");
 
     }

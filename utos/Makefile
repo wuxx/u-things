@@ -47,8 +47,9 @@ OBJS := $(OBJ_C) $(OBJ_S)
 LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a
 LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
 #LIBS = $(LIB_C) $(LIB_GCC)
-INCS = -I$(ROOT_DIR)/platform -I $(ROOT_DIR)/stm32f10x_fwlib/inc -I$(ROOT_DIR)/core -I$(ROOT_DIR)/include
+INCS = -I$(ROOT_DIR)/platform -I $(ROOT_DIR)/stm32f10x_fwlib/inc -I$(ROOT_DIR)/core -I$(ROOT_DIR)/include 
 
+INCS += -I$(ROOT_DIR)/driver/usb/lib -I$(ROOT_DIR)/driver/usb/src -I$(ROOT_DIR)/driver/usb
 #****************************************************************************
 # TARGET
 #****************************************************************************
