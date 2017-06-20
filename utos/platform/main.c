@@ -6,6 +6,7 @@
 #include "flash.h"
 #include "shell.h"
 #include "mmio.h"
+#include "hw_config.h"
 #include "config.h"
 
 
@@ -28,7 +29,7 @@ int _assert(const char *file_name, const char *func_name, unsigned int line_num,
 /*RCC的AHB1时钟使能寄存器地址,强制转换成指针*/
 #define RCC_APB2ENR      *(unsigned int*)(RCC_BASE+0x18)
 
-char sys_banner[] = {"utloader system buildtime [" __TIME__ " " __DATE__ "] " "rev " UT_REV};
+char sys_banner[] = {"utos system buildtime [" __TIME__ " " __DATE__ "] " "rev " UT_REV};
 
 extern int _estack;
 extern int _etext;
@@ -80,7 +81,7 @@ __s32 main(void)
 
         len = USB_RxRead(buf, sizeof(buf));
 				for(i = 0; i < len; i++) {
-					uart_printf("read [%x]\n", buf[i]);
+					uart_printf("read [0x%x][%c]\n", buf[i], buf[i]);
 				}
         if (len > 0)
         {

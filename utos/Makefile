@@ -30,7 +30,7 @@ LDFLAGS	=   -T $(LDSCRIPT) -nostartfiles -Xlinker --gc-sections
 #****************************************************************************
 # Targets of the build
 #****************************************************************************
-TARGET   	:= $(ROOT_DIR)/output/utloader
+TARGET   	:= $(ROOT_DIR)/output/utos
 
 all: prebuild $(TARGET).elf
 

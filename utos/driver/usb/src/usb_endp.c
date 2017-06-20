@@ -88,16 +88,16 @@ void EP1_IN_Callback (void)
 *******************************************************************************/
 void EP3_OUT_Callback(void)
 {
-  static uint8_t buffter[VIRTUAL_COM_PORT_DATA_SIZE] = {0};
+  static uint8_t buffer[VIRTUAL_COM_PORT_DATA_SIZE] = {0};
 
   uint16_t USB_Rx_Cnt;
   
   /* Get the received data buffer and update the counter */
-  USB_Rx_Cnt = USB_SIL_Read(EP3_OUT, buffter);
+  USB_Rx_Cnt = USB_SIL_Read(EP3_OUT, buffer);
   
   /* USB data will be immediately processed, this allow next USB traffic being 
   NAKed till the end of the USART Xfer */
-  USB_RxWrite(buffter, USB_Rx_Cnt);
+  USB_RxWrite(buffer, USB_Rx_Cnt);
 
   /* Enable the receive of data on EP3 */
   SetEPRxValid(ENDP3);
