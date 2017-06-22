@@ -40,6 +40,9 @@ void print_chipid()
 	PRINT_EMG("chipid: %X%X%X\n", 
 		 __REV(readl(0X1FFFF7E8)), __REV(readl(0X1FFFF7EC)), __REV(readl(0X1FFFF7F0)));
 }
+
+int g_flag = 0xf00dbeef;
+
 __s32 main(void)
 {
 	__u32 free_flash_base, free_sram_base;
@@ -58,7 +61,9 @@ __s32 main(void)
 	uart_init();
 	uart_printf("uart2 ready\n");
     timer_init();
+#if CONFIG_USB
 	USB_Config();
+#endif
 
     PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
@@ -71,6 +76,13 @@ __s32 main(void)
     PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE + SRAM_SIZE);
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
+	//i2c_Stop();
+	i2c_test();
+    //ee_Test();
+#include "../i2c/bsp_i2c_gpio.h"
+
+    //EEPROM_I2C_SDA_0();
+  	//EEPROM_I2C_SCL_0();
 	
     while(1) {
 		if (shell_cmd != NULL) {
@@ -78,7 +90,7 @@ __s32 main(void)
 			shell_cmd = NULL;
 
 		}
-
+#if CONFIG_USB
         len = USB_RxRead(buf, sizeof(buf));
 				for(i = 0; i < len; i++) {
 					uart_printf("read [0x%x][%c]\n", buf[i], buf[i]);
@@ -87,7 +99,14 @@ __s32 main(void)
         {
             USB_TxWrite(buf, len);
         }
-
+#endif
+		if (g_flag == 0xf11dbeef) {
+			
+			void i2c_scl(int x);
+			void i2c_sda(int x);
+			i2c_scl(0);
+			i2c_sda(0);
+		}
 		//uart1_printf("11111111111111\n");
 
     }
