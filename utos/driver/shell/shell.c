@@ -8,6 +8,27 @@
 #include "flash.h"
 #include "config.h"
 
+struct symbol_table_head
+{
+    __u32 symbol_addr_table_base;
+    __u32 symbol_addr_table_size;
+
+    __u32 symbol_name_table_base;
+    __u32 symbol_name_table_size;
+};
+
+struct symbol_addr_info
+{
+    __u32 addr;
+    __u32 name_offset;
+};
+
+struct symbol_table_head *sth;
+struct symbol_addr_info  *sai;
+char *symbol_name_table;
+
+extern int _edata;
+
 volatile char *shell_cmd = NULL;
 
 __u32 argc;
@@ -52,6 +73,44 @@ PRIVATE __s32 cmd_write()
     PRINT_EMG("(0x%x) ->[0x%x]\n", data, addr);
     return 0;
 }
+PRIVATE __u32 is_symbol(char *s)
+{
+    char c;
+    if (s == NULL) {
+        return 0;
+    }
+
+    c = *s;
+    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_') {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
+PRIVATE __u32 get_symbol_addr(char *s)
+{
+    __u32 i, num;
+    __u32 symbol_table;
+
+    symbol_table = (__u32)(&_edata);
+
+    sth = (struct symbol_table_head *)(symbol_table);
+    sai = (struct symbol_addr_info  *)(symbol_table + sizeof(struct symbol_table_head));
+    symbol_name_table = (char *)(symbol_table + sth->symbol_name_table_base);
+    
+    num = sth->symbol_addr_table_size / sizeof(struct symbol_addr_info);
+
+    for(i = 0; i < num; i++) {
+        if (strcmp(s, &symbol_name_table[sai[i].name_offset]) == 0) {
+            PRINT_EMG("%s-%d %s 0x%x\n", __func__, __LINE__, s, sai[i].addr);
+            return sai[i].addr;
+        }
+    }
+    return 0;
+
+}
 
 PRIVATE __s32 cmd_exec()
 {
@@ -59,7 +118,12 @@ PRIVATE __s32 cmd_exec()
     __u32 addr, para1, para2, para3, para4;
     func_4 func;
 
-    addr  = atoi(argv[1]);
+	if (is_symbol(argv[1])) {
+        addr  = get_symbol_addr(argv[1]);
+    } else {
+        addr  = atoi(argv[1]);
+    }
+
     para1 = atoi(argv[2]);
     para2 = atoi(argv[3]);
     para3 = atoi(argv[4]);
@@ -229,7 +293,7 @@ PUBLIC __s32 shell(char *cmd)
     }
 #endif
 
-    if ((i=get_cmd_index(argv[0])) == -1) {
+    if ((i = get_cmd_index(argv[0])) == -1) {
         PRINT_EMG("illegal cmd [%s] \n", argv[0]);
         ret = EINVAL;
         goto exit;

@@ -34,8 +34,8 @@ TARGET   	:= $(ROOT_DIR)/output/utos
 
 all: prebuild $(TARGET).elf
 
-SRC_C=$(shell find . -name "*.c")
-SRC_S=$(shell find . -name "*.s")
+SRC_C=$(shell find . -name "*.c" | grep -v tools)
+SRC_S=$(shell find . -name "*.s" | grep -v tools)
 
 OBJ_C=$(patsubst %.c, %.o, $(SRC_C))
 OBJ_S=$(patsubst %.s, %.o, $(SRC_S))

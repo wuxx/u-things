@@ -79,7 +79,7 @@ __s32 main(void)
 	//i2c_Stop();
 	i2c_test();
     //ee_Test();
-#include "../i2c/bsp_i2c_gpio.h"
+#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
 
     //EEPROM_I2C_SDA_0();
   	//EEPROM_I2C_SCL_0();
