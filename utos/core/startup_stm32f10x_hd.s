@@ -100,6 +100,19 @@ LoopFillZerobss:
   bx  lr    
 .size  Reset_Handler, .-Reset_Handler
 
+  .global i2c_delay
+  .type  i2c_delay, %function
+i2c_delay:
+    movs r0, #0
+    b    aa4
+aa3:
+    adds r1,r0,#1
+    uxtb r0,r1
+aa4:
+    cmp  r0,#0xa
+    blt  aa3
+    bx   lr
+.size  i2c_delay, .-i2c_delay
 /**
  * @brief  This is the code that gets called when the processor receives an 
  *         unexpected interrupt.  This simply enters an infinite loop, preserving

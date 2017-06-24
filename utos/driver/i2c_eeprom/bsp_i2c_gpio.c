@@ -65,10 +65,12 @@ void i2c_sda_write(int x)
 *	返 回 值: 无
 *********************************************************************************************************
 */
+extern void i2c_delay();
+
 static void i2c_Delay(void)
 {
-	uint8_t i;
-
+	//uint8_t i;
+	i2c_delay();
 	/*　
 	 	下面的时间是通过逻辑分析仪测试得到的。
     工作条件：CPU主频72MHz ，MDK编译环境，1级优化
@@ -77,7 +79,20 @@ static void i2c_Delay(void)
 		循环次数为7时，SCL频率 = 347KHz， SCL高电平时间1.5us，SCL低电平时间2.87us 
 	 	循环次数为5时，SCL频率 = 421KHz， SCL高电平时间1.25us，SCL低电平时间2.375us 
 	*/
-	for (i = 0; i < 100; i++);
+	/* for (i = 0; i < 10; i++); */
+    /* asm volatile (
+             "aa1: \n\t"
+             "MOVS r0, #0\n\t"
+             "aa2: \n\t"
+             "B        aa4\n\t"
+             "aa3: \n\t"
+             "ADDS     r1,r0,#1\n\t"
+             "UXTB     r0,r1\n\t"
+             "aa4: \n\t"
+             "CMP      r0,#0xa\n\t"
+             "BLT      aa3\n\t"
+             );
+     */
 }
 
 /*
