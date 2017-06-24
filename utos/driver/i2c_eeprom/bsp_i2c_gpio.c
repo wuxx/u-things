@@ -147,7 +147,7 @@ void i2c_SendByte(uint8_t _ucByte)
 		
 		if (i == 7)
 		{
-			 //EEPROM_I2C_SDA_1(); // 释放总线
+			 EEPROM_I2C_SDA_1(); // 释放总线
 		}
 		_ucByte <<= 1;	/* 左移一个bit */
 		i2c_Delay();

@@ -7,7 +7,7 @@
 
 #define BMP180_ADDR		(0x77)
 
-#define AM3212_ADDR		(0x5C)
+#define AM2321_ADDR		(0x5C)
 
 
 void i2c_Start(void);
@@ -44,6 +44,7 @@ __u32 i2c_test()
 {
 	__u8 data;
 	
+	/* EEPROM */
 	if (i2c_checkdevice(0xA0) == 0)
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
@@ -58,10 +59,39 @@ __u32 i2c_test()
 	}
 	//return 0;
 
-	if (i2c_checkdevice(AM3212_ADDR) == 0)
+	if (i2c_checkdevice(AM2321_ADDR) == 0)
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
-		return 1;
+		//return 1;
+		i2c_Start();
+		
+		i2c_SendByte(AM2321_ADDR);
+		if (i2c_WaitAck() != 0)
+		{
+			PRINT_EMG("%s-%d\n", __func__, __LINE__);
+			goto cmd_fail;	/* EEPROM器件无应答 */
+		}
+		
+		i2c_SendByte(0x00);
+		if (i2c_WaitAck() != 0)
+		{
+			goto cmd_fail;	/* EEPROM器件无应答 */
+		}
+		
+		i2c_Start();
+		i2c_SendByte(AM2321_ADDR | 0x1); /* READ */
+		
+		if (i2c_WaitAck() != 0)
+		{
+			PRINT_EMG("%s-%d\n", __func__, __LINE__);
+			goto cmd_fail;	/* EEPROM器件无应答 */
+		}
+		data = i2c_ReadByte();
+		PRINT_EMG("data: 0x%x \n", data);
+		i2c_Ack();
+		i2c_Stop();
+		
+
 	}
 	else
 	{
@@ -74,7 +104,7 @@ __u32 i2c_test()
 	if (i2c_checkdevice(TSL2561_ADDR) == 0)
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
-		return 1;
+		//return 1;
 	}
 	else
 	{
@@ -87,7 +117,7 @@ __u32 i2c_test()
 	if (i2c_checkdevice(BMP180_ADDR) == 0)
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
-		return 1;
+		//return 1;
 	}
 	else
 	{
@@ -97,7 +127,19 @@ __u32 i2c_test()
 		//return 0;
 	}
 
-	//return 0;
+
+	if (i2c_checkdevice(0xEE) == 0)	/* BMP180 read 0xEF write 0xEE */
+	{
+		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
+		//return 1;
+	}
+	else
+	{
+		/* 失败后，切记发送I2C总线停止信号 */
+		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);
+		i2c_Stop(); 	
+		//return 0;
+	}
 
 	if (i2c_checkdevice(0xB8) == 0)	/* AM2312 */
 	{

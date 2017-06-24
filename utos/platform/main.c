@@ -72,9 +72,9 @@ __s32 main(void)
 	USB_Config();
 #endif
 	
-	//SysTick_Init();
-	//DS18B20_Init();	
-	//PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
+	SysTick_Init();
+	DS18B20_Init();	
+	PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
 
 	free_flash_base = (__u32)(&_etext) + (__u32)(&_edata) - SRAM_BASE;
 	free_sram_base  = (__u32)(&_estack);
@@ -85,7 +85,7 @@ __s32 main(void)
 	//uart1_printf("uart1 ready\n");
 	//i2c_Stop();
 	//i2c_test();
-    //ee_Test();
+    ee_Test();
 	//#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
     //EEPROM_I2C_SDA_0();
   	//EEPROM_I2C_SCL_0();
