@@ -61,10 +61,6 @@ struct cpu_context
     __u32 XPSR;
 };
 
-
-#define DUMP_VAR(v) PRINT_EMG(#v": 0x%X\n", v)
-
- 
 void NMI_Handler(void)
 {
     PRINT_EMG("%s-%d \n", __func__, __LINE__);

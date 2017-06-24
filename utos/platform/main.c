@@ -84,8 +84,9 @@ __s32 main(void)
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
 	//i2c_Stop();
-	//i2c_test();
+	
     ee_Test();
+	i2c_test();
 
 	//#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
     //EEPROM_I2C_SDA_0();

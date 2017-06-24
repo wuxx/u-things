@@ -25,4 +25,6 @@ __s32 dump_log();
 #define PRINT_STAMP()           PRINT_EMG("%s:%s:%d\n", __FILE__, __func__, __LINE__)
 #define SHOW_VAR(var)           PRINT_EMG(#var"\t 0x%x\n", var)
 
+#define DUMP_VAR(v) PRINT_EMG(#v": 0x%X\n", v)
+
 #endif /* __LOG_H__ */
