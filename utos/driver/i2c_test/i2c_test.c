@@ -23,6 +23,7 @@ __u8 i2c_CheckDevice(__u8 _Address);
 __u8 i2c_checkdevice(__u8 _Address)
 {
 	__u8 ucAck;
+	void i2c_CfgGpio(void);
 
 	i2c_CfgGpio();		/* ≈‰÷√GPIO */
 
@@ -55,7 +56,7 @@ __u32 i2c_test()
 		i2c_Stop(); 	
 		//return 0;
 	}
-	return 0;
+	//return 0;
 
 	if (i2c_checkdevice(AM3212_ADDR) == 0)
 	{

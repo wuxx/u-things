@@ -95,7 +95,7 @@ PUBLIC int vsnprintf(char *buf, __u32 size, const char *fmt, va_list args)
                     case ('X'):
                         x = va_arg(args, __u32);
                         b = itoa(num, x, 16);
-                        /* if (fmt[i+1] == 'X') */ { b = &num[2]; };
+                        if (fmt[i+1] == 'X') { b = &num[2]; };
                         buf_puts(buf, size, &offset, b);
                         i++;
                         break;

@@ -26,7 +26,12 @@
 
 void i2c_CfgGpio(void);
 
-void i2c_scl(int x)
+uint8_t i2c_scl_read()
+{
+	return 0;
+}
+
+void i2c_scl_write(int x)
 {
 	PRINT_EMG("%s-%d %d \n", __func__, __LINE__, x);
 	if (x == 0) {
@@ -36,7 +41,12 @@ void i2c_scl(int x)
 	}
 }
 
-void i2c_sda(int x)
+uint8_t i2c_sda_read()
+{
+	return (EEPROM_GPIO_PORT_I2C->IDR & EEPROM_I2C_SDA_PIN) != 0;
+}
+
+void i2c_sda_write(int x)
 {
 	PRINT_EMG("%s-%d %d \n", __func__, __LINE__, x);
 
@@ -67,7 +77,7 @@ static void i2c_Delay(void)
 		循环次数为7时，SCL频率 = 347KHz， SCL高电平时间1.5us，SCL低电平时间2.87us 
 	 	循环次数为5时，SCL频率 = 421KHz， SCL高电平时间1.25us，SCL低电平时间2.375us 
 	*/
-	for (i = 0; i < 10; i++);
+	for (i = 0; i < 100; i++);
 }
 
 /*
@@ -134,9 +144,10 @@ void i2c_SendByte(uint8_t _ucByte)
 		EEPROM_I2C_SCL_1();
 		i2c_Delay();	
 		EEPROM_I2C_SCL_0();
+		
 		if (i == 7)
 		{
-			 EEPROM_I2C_SDA_1(); // 释放总线
+			 //EEPROM_I2C_SDA_1(); // 释放总线
 		}
 		_ucByte <<= 1;	/* 左移一个bit */
 		i2c_Delay();

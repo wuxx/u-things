@@ -7,7 +7,12 @@
 #include "shell.h"
 #include "mmio.h"
 #include "hw_config.h"
+#include "systick.h"
+#include "ds18b20.h"
+
+
 #include "config.h"
+
 
 
 int _assert(const char *file_name, const char *func_name, unsigned int line_num, char *desc)
@@ -46,8 +51,7 @@ int g_flag = 0xf00dbeef;
 __s32 main(void)
 {
 	__u32 free_flash_base, free_sram_base;
-	__u32 i, len;
-	static __u8 buf[200] = {0};
+	//static __u8 buf[200] = {0};
 
     RCC_APB2ENR |= (1<<3);
 
@@ -60,14 +64,17 @@ __s32 main(void)
 
 	uart_init();
 	uart_printf("uart2 ready\n");
+	PRINT_EMG("\n%s\n", sys_banner);
+	print_chipid();
     timer_init();
+	
 #if CONFIG_USB
 	USB_Config();
 #endif
-
-    PRINT_EMG("\n%s\n", sys_banner);
-	print_chipid();
-		
+	
+	//SysTick_Init();
+	//DS18B20_Init();	
+	//PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
 
 	free_flash_base = (__u32)(&_etext) + (__u32)(&_edata) - SRAM_BASE;
 	free_sram_base  = (__u32)(&_estack);
@@ -77,10 +84,9 @@ __s32 main(void)
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
 	//i2c_Stop();
-	i2c_test();
+	//i2c_test();
     //ee_Test();
-#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
-
+	//#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
     //EEPROM_I2C_SDA_0();
   	//EEPROM_I2C_SCL_0();
 	
@@ -90,6 +96,13 @@ __s32 main(void)
 			shell_cmd = NULL;
 
 		}
+		mdelay(1);
+		//PRINT_EMG("%s-%d\n", __func__, __LINE__);
+#if 0
+		uint32_t DS18B20_GetTemp();
+		PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
+		mdelay(1000);
+#endif
 #if CONFIG_USB
         len = USB_RxRead(buf, sizeof(buf));
 				for(i = 0; i < len; i++) {
@@ -102,10 +115,15 @@ __s32 main(void)
 #endif
 		if (g_flag == 0xf11dbeef) {
 			
-			void i2c_scl(int x);
-			void i2c_sda(int x);
-			i2c_scl(0);
-			i2c_sda(0);
+			void i2c_scl_write(int x);
+			void i2c_sda_write(int x);
+			__u8 i2c_sda_read();
+			i2c_scl_write(0);
+			i2c_sda_write(0);
+			g_flag = i2c_sda_read();
+
+			PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
+			mdelay(1000);
 		}
 		//uart1_printf("11111111111111\n");
 

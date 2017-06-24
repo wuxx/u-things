@@ -19,7 +19,7 @@ STRIP  := $(CROSS_COMPILE)strip
 
 UT_REV = $(shell git log --oneline -1 | awk '{print $$1}')
 
-CFLAGS = -O0  -g -mcpu=cortex-m3 -mthumb -nostartfiles -nostdlib -fno-builtin -ffunction-sections -fstack-usage -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
+CFLAGS = -O3  -g -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -nostartfiles -nostdlib -fno-builtin -ffunction-sections -fstack-usage -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
 
 ASFLAG = -g -mcpu=cortex-m3 -mthumb
 

@@ -169,7 +169,9 @@ void PendSV_Handler(void)
  
 void SysTick_Handler(void)
 {
-  PRINT_EMG("%s-%d \n", __func__, __LINE__);
+  //PRINT_EMG("%s-%d \n", __func__, __LINE__);
+  void TimingDelay_Decrement(void);
+  TimingDelay_Decrement();
 }
 
 /******************************************************************************/
