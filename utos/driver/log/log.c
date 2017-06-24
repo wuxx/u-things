@@ -105,14 +105,13 @@ PUBLIC __s32 log(__u32 log_level, const char *format, ...)
         uart_puts(format_buf);
         /*unlock_irq();*/
     }
-
-    if (len > (sizeof(log_buffer) - (lbindex + 1))) {
-        lbindex = 0;
+	
+    if ((len + 1) >= (sizeof(log_buffer) - lbindex)) {
+        lbindex = 0;	/* we don't use the last slot even it is enough. just keep simple */
     }
 
     memcpy(&log_buffer[lbindex], format_buf, len + 1);
     lbindex += len + 1;
-
     return 0;
 }
 

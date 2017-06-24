@@ -230,7 +230,6 @@ static void ee_Delay(__IO uint32_t nCount)	 //简单的延时函数
 	for(; nCount != 0; nCount--);
 }
 
-
 /*
  * eeprom AT24C02 读写测试
  * 正常返回1，异常返回0
@@ -286,6 +285,7 @@ uint8_t ee_Test(void)
 		PRINT_EMG("读eeprom成功，数据如下：\r\n");
 	}
 /*-----------------------------------------------------------------------------------*/  
+
   for (i = 0; i < EEPROM_SIZE; i++)
 	{
 		if(read_buf[i] != write_buf[i])
@@ -294,13 +294,14 @@ uint8_t ee_Test(void)
 			PRINT_EMG("错误:EEPROM读出与写入的数据不一致");
 			return 0;
 		}
-    PRINT_EMG(" 0x%X", read_buf[i]);
+    	PRINT_EMG(" 0x%x", read_buf[i]);
 		
 		if ((i & 15) == 15)
 		{
 			PRINT_EMG("\r\n");	
 		}		
 	}
+
   PRINT_EMG("eeprom读写测试成功\r\n");
   return 1;
 }

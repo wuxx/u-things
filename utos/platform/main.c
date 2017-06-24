@@ -67,11 +67,11 @@ __s32 main(void)
 	PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
     timer_init();
-	
+
 #if CONFIG_USB
 	USB_Config();
 #endif
-	
+
 	SysTick_Init();
 	DS18B20_Init();	
 	PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
@@ -86,6 +86,7 @@ __s32 main(void)
 	//i2c_Stop();
 	//i2c_test();
     ee_Test();
+
 	//#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
     //EEPROM_I2C_SDA_0();
   	//EEPROM_I2C_SCL_0();
