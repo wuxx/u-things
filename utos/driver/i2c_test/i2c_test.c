@@ -2,10 +2,16 @@
 
 #include "log.h"
 
-
+#if 0
 #define TSL2561_ADDR	(0x39)
 
 #define BMP180_ADDR		(0x77)
+
+#define AM2321_ADDR		(0x5C)
+#endif
+#define TSL2561_ADDR	(0x39)
+
+#define BMP180_ADDR		(0xEE)
 
 #define AM2321_ADDR		(0x5C)
 
@@ -131,7 +137,7 @@ __u32 i2c_test()
 		ee_ReadByte(0xA0, 0x1);
 		ee_ReadByte(0xA0, 0x2);
 
-		i2c_write(0xA0, 0x0, 0x55);
+		i2c_write(0xA0, 0x0, 0xFA);
 		mdelay(1000);
 		i2c_read(0xA0, 0x0);
 #if 0
@@ -155,6 +161,8 @@ __u32 i2c_test()
 	if (i2c_checkdevice(AM2321_ADDR) == 0)
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);	
+		i2c_read(AM2321_ADDR, 0x02);
+		i2c_read(AM2321_ADDR, 0x03);
 	}
 	else
 	{
@@ -167,6 +175,7 @@ __u32 i2c_test()
 	if (i2c_checkdevice(TSL2561_ADDR) == 0)
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
+		i2c_read(TSL2561_ADDR, 0xA); /* ID register */
 		//return 1;
 	}
 	else
@@ -180,8 +189,8 @@ __u32 i2c_test()
 	if (i2c_checkdevice(0xEE) == 0)	/* BMP180 read 0xEF write 0xEE */
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
-		ee_ReadByte(0xEE, 0xD0);
-		i2c_read(0xEE, 0xD0);
+		//ee_ReadByte(0xEE, 0xD0);
+		i2c_read(0xEE, 0xD0); /* 0x55 expected */
 		{
 			__u16 AC1, AC2, AC3, AC4, AC5, AC6;
 			__u16 B1, B2;
@@ -191,7 +200,7 @@ __u32 i2c_test()
 			
 			AC1 = i2c_read(0xEE, 0xAA) << 8 | i2c_read(0xEE, 0xAB);
 			AC2 = i2c_read(0xEE, 0xAC) << 8 | i2c_read(0xEE, 0xAD);
-			AC3 = i2c_read(0xEE, 0xAD) << 8 | i2c_read(0xEE, 0xAF);
+			AC3 = i2c_read(0xEE, 0xAE) << 8 | i2c_read(0xEE, 0xAF);
 			AC4 = i2c_read(0xEE, 0xB0) << 8 | i2c_read(0xEE, 0xB1);
 			AC5 = i2c_read(0xEE, 0xB2) << 8 | i2c_read(0xEE, 0xB3);
 			AC6 = i2c_read(0xEE, 0xB4) << 8 | i2c_read(0xEE, 0xB5);
