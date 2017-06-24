@@ -29,7 +29,7 @@ char *symbol_name_table;
 
 extern int _edata;
 
-volatile char *shell_cmd = NULL;
+volatile char * volatile shell_cmd = NULL;
 
 __u32 argc;
 char *argv[SHELL_ARGS_MAX] = {NULL};

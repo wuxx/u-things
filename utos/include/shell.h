@@ -7,6 +7,6 @@ struct shell_cmd_info {
     char *desc;
 };
 
-extern volatile char *shell_cmd;
+extern volatile char * volatile shell_cmd;
 
 __s32 shell(char *cmd);

@@ -174,7 +174,7 @@ volatile __u32 uart_recv_buf_index = 0;
 volatile __u32 first = 0; 
 volatile __u32 last  = 0;
 
-char uart_recv_buf[UART_IO_SIZE] = {0};
+volatile char uart_recv_buf[UART_IO_SIZE] = {0};
 
 void uart_putc(__u8 byte) 
 {

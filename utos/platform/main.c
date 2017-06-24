@@ -89,14 +89,13 @@ __s32 main(void)
 	//#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
     //EEPROM_I2C_SDA_0();
   	//EEPROM_I2C_SCL_0();
-	
     while(1) {
 		if (shell_cmd != NULL) {
 			shell((char *)shell_cmd);
 			shell_cmd = NULL;
 
 		}
-		mdelay(1);
+		//mdelay(1);
 		//PRINT_EMG("%s-%d\n", __func__, __LINE__);
 #if 0
 		uint32_t DS18B20_GetTemp();
