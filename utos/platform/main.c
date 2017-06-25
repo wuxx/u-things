@@ -64,6 +64,9 @@ __s32 main(void)
 
 	uart_init();
 	uart_printf("uart2 ready\n");
+    //extern int printf(const char *format, ...);
+    //printf("hello\n");
+
 	PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
     timer_init();

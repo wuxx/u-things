@@ -1,0 +1,2 @@
+1. use fromelf disassembly the elf file in windows.
+fromelf -c utos.axf -o utos.txt

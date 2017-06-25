@@ -258,17 +258,17 @@ void Read_CalibrationData(void)
     MB = BMP180_ReadTwoByte(0xba);
     MC = BMP180_ReadTwoByte(0xbc);
     MD = BMP180_ReadTwoByte(0xbe);
-    PRINT_EMG("AC1:%d \r\n",AC1);
-    PRINT_EMG("AC2:%d \r\n",AC2);
-    PRINT_EMG("AC3:%d \r\n",AC3);
-    PRINT_EMG("AC4:%d \r\n",AC4);
-    PRINT_EMG("AC5:%d \r\n",AC5);
-    PRINT_EMG("AC6:%d \r\n",AC6);
-    PRINT_EMG("B1:%d \r\n",B1);
-    PRINT_EMG("B2:%d \r\n",B2);
-    PRINT_EMG("MB:%d \r\n",MB);
-    PRINT_EMG("MC:%d \r\n",MC);
-    PRINT_EMG("MD:%d \r\n",MD);  
+    PRINT_EMG("AC1=0x%X;\r\n",AC1);
+    PRINT_EMG("AC2=0x%X;\r\n",AC2);
+    PRINT_EMG("AC3=0x%X;\r\n",AC3);
+    PRINT_EMG("AC4=0x%X;\r\n",AC4);
+    PRINT_EMG("AC5=0x%X;\r\n",AC5);
+    PRINT_EMG("AC6=0x%X;\r\n",AC6);
+    PRINT_EMG("B1 =0x%X;\r\n",B1);
+    PRINT_EMG("B2 =0x%X;\r\n",B2);
+    PRINT_EMG("MB =0x%X;\r\n",MB);
+    PRINT_EMG("MC =0x%X;\r\n",MC);
+    PRINT_EMG("MD =0x%X;\r\n",MD);  
 }
  
 /*读BMP180没有经过补偿的温度值*/
@@ -279,7 +279,7 @@ long Get_BMP180UT(void)
     Write_OneByteToBMP180(0xf4,0x2e);       //write 0x2E into reg 0xf4
     mdelay(10);                                   //wait 4.5ms
     UT = BMP180_ReadTwoByte(0xf6);          //read reg 0xF6(MSB),0xF7(LSB)
-    PRINT_EMG("UT:%d \r\n",UT);
+    PRINT_EMG("UT=%d;\r\n",UT);
  
     return UT;
 }
@@ -293,7 +293,7 @@ long Get_BMP180UP(void)
     mdelay(10);                                    //wait 4.5ms
     UP = BMP180_ReadTwoByte(0xf6); 
     UP &= 0x0000FFFF;
-    PRINT_EMG("UP:%d \r\n",UP);
+    PRINT_EMG("UP=%d;\r\n",UP);
      
     return UP;      
 }
@@ -315,7 +315,6 @@ void Convert_UncompensatedToTrue(long UT,long UP)
     T = (B5+8)>>4;                      //PRINT_EMG(\"T:%ld \r\n\",T);
     PRINT_EMG("temp: %d \n", T);
     //True_Temp = T/10.0;            //PRINT_EMG(\"Temperature:%.1f \r\n\",True_Temp); panic !!!!!
- 	PRINT_EMG("%s-%d\n", __func__, __LINE__);
 	
     B6 = B5-4000;                       //PRINT_EMG(\"B6:%ld \r\n\",B6);
     X1 = (B2*B6*B6)>>23;              //PRINT_EMG(\"X1:%ld \r\n\",X1);
@@ -328,8 +327,6 @@ void Convert_UncompensatedToTrue(long UT,long UP)
     B4 = AC4*(unsigned long)(X3+32768)>>15;   //PRINT_EMG(\"B4:%lu \r\n\",B4);
     B7 = ((unsigned long)UP-B3)*50000;        //PRINT_EMG(\"B7:%lu \r\n\",B7);
     
- 	PRINT_EMG("%s-%d\n", __func__, __LINE__);
-
     if (B7 < 0x80000000)
     {
         P = (B7*2)/B4;  
@@ -337,25 +334,18 @@ void Convert_UncompensatedToTrue(long UT,long UP)
 		P=(B7/B4)*2;				   //PRINT_EMG(\"P:%ld \r\n\",P);		  
 	}
     
- 	PRINT_EMG("%s-%d\n", __func__, __LINE__);
     //X1 = (P/256.0)*(P/256.0);       //PRINT_EMG(\"X1:%ld \r\n\",X1);
-    X1 = (P/256)*(P/256);       //PRINT_EMG(\"X1:%ld \r\n\",X1);
- 	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+    X1 = (P/256.0)*(P/256.0);       //PRINT_EMG(\"X1:%ld \r\n\",X1);
+    /* printf("hello, world!\n"); */
 
     X1 = (X1*3038)>>16;               //PRINT_EMG(\"X1:%ld \r\n\",X1);
- 	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+ 	PRINT_EMG("%s-%d %d\n", __func__, __LINE__, X1);
 
     X2 = (-7357*P)>>16;               //PRINT_EMG(\"X2:%ld \r\n\",X2);
- 	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+ 	PRINT_EMG("%s-%d %d\n", __func__, __LINE__, X2);
 
     P = P+((X1+X2+3791)>>4);      //PRINT_EMG(\"P:%ld \r\n\",P);
-    PRINT_EMG("%s-%d %d\n", __func__, __LINE__, P);
-    //True_Press = P;                 
-    //PRINT_EMG("Press:%.1fPa \r\n",True_Press);
-    PRINT_EMG("%s-%d\n", __func__, __LINE__);
-	//True_Press_1 = True_Press;
- 	PRINT_EMG("Press:%d Pa \r\n", True_Press_1);
-    PRINT_EMG("%s-%d\n", __func__, __LINE__);
+    PRINT_EMG("%s-%d press %d\n", __func__, __LINE__, P);
 
 #if 0	
     True_Altitude = 44330*(1-pow((P/101325.0),(1.0/5.255)));            
@@ -372,7 +362,7 @@ int bmp180_main()
 	IIC_PortInit();
     Read_CalibrationData();         //读取BMP180的校准系数
 	BMP180_ID = BMP180_ReadOneByte(0xd0);	   //读取ID地址
-	PRINT_EMG("BMP180_ID:0x%x \r\n",BMP180_ID);
+	PRINT_EMG("BMP180_ID=0x%x;\r\n",BMP180_ID);
 	
 	UT = Get_BMP180UT();		   
 	UP = Get_BMP180UP();								
@@ -382,7 +372,7 @@ int bmp180_main()
      while(0)
      {            
          BMP180_ID = BMP180_ReadOneByte(0xd0);      //读取ID地址
-         PRINT_EMG("BMP180_ID:0x%x \r\n",BMP180_ID);
+         PRINT_EMG("BMP180_ID=0x%x;\r\n",BMP180_ID);
  
          UT = Get_BMP180UT();           
          UP = Get_BMP180UP();                                

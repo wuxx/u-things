@@ -9,28 +9,33 @@ CC     := $(CROSS_COMPILE)gcc
 CXX    := $(CROSS_COMPILE)g++
 AS	   := $(CROSS_COMPILE)as
 AR     := $(CROSS_COMPILE)ar rc
-#LD     := $(CROSS_COMPILE)ld
-LD     := $(CROSS_COMPILE)gcc
+LD     := $(CROSS_COMPILE)ld
+#LD     := $(CROSS_COMPILE)gcc
 NM     := $(CROSS_COMPILE)nm
 RANLIB := $(CROSS_COMPILE)ranlib
 OBJDUMP:= $(CROSS_COMPILE)objdump
 OBJCOPY:= $(CROSS_COMPILE)objcopy
 STRIP  := $(CROSS_COMPILE)strip
 
+GCC_PATH = $(dir $(shell which $(CC)))..
+LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a
+LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7e-m/libgcc.a
+#$(warning LIBC   [$(LIB_C)])
+#$(warning LIBGCC [$(LIB_GCC)])
+
 UT_REV = $(shell git log --oneline -1 | awk '{print $$1}')
 
-CFLAGS = -O3  -g -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -nostartfiles -nostdlib -fno-builtin -ffunction-sections -fstack-usage -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
+CFLAGS = -O3 -g -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -nostartfiles -nostdlib -fno-builtin -ffunction-sections -fstack-usage -Wall -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DUT_REV=\"$(UT_REV)\"
 
 ASFLAG = -g -mcpu=cortex-m3 -mthumb
 
-LDSCRIPT	= stm32f103vet6.ld
-#LDFLAGS	=   -Llib -T $(LDSCRIPT) 
-LDFLAGS	=   -T $(LDSCRIPT) -nostartfiles -Xlinker --gc-sections 
+LDSCRIPT = stm32f103vet6.ld
+LDFLAGS	 = -T $(LDSCRIPT) -nostartfiles --gc-sections -L$(GCC_PATH)/arm-none-eabi/lib/armv7-m/ -L$(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7e-m/ -lc -lgcc
 
 #****************************************************************************
 # Targets of the build
 #****************************************************************************
-TARGET   	:= $(ROOT_DIR)/output/utos
+TARGET := $(ROOT_DIR)/output/utos
 
 all: prebuild $(TARGET).elf
 
@@ -41,12 +46,8 @@ OBJ_C=$(patsubst %.c, %.o, $(SRC_C))
 OBJ_S=$(patsubst %.s, %.o, $(SRC_S))
 
 OBJS := $(OBJ_C) $(OBJ_S)
-#****************************************************************************
-# Libs
-#****************************************************************************
-LIB_C         := $(GCC_PATH)/arm-none-eabi/lib/armv7-m/libc.a
-LIB_GCC       := $(GCC_PATH)/lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a
-#LIBS = $(LIB_C) $(LIB_GCC)
+
+LIBS = $(LIB_C) $(LIB_GCC)
 INCS = -I$(ROOT_DIR)/platform -I $(ROOT_DIR)/stm32f10x_fwlib/inc -I$(ROOT_DIR)/core -I$(ROOT_DIR)/include 
 
 INCS += -I$(ROOT_DIR)/driver/usb/lib -I$(ROOT_DIR)/driver/usb/src -I$(ROOT_DIR)/driver/usb
@@ -54,10 +55,10 @@ INCS += -I$(ROOT_DIR)/driver/usb/lib -I$(ROOT_DIR)/driver/usb/src -I$(ROOT_DIR)/
 # TARGET
 #****************************************************************************
 prebuild:
-	@echo Building app...
-
+	@echo building utos...
+#
 $(TARGET).elf : $(OBJS)
-	-${LD} $^ $(LDFLAGS) -o $@
+	-${LD} $^ $(LDFLAGS) $(LIB_GCC) $(LIB_C) -o $@
 	@$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 	@$(NM) $(TARGET).elf > $(TARGET).map
 	@$(OBJCOPY) -O ihex $@ $(TARGET).hex
