@@ -1,0 +1,9 @@
+u-things version 0.1 软件设计
+
+主要功能:
+1. I2C 驱动
+2. USB 驱动 虚拟串口
+
+TODO: badusb
+
+

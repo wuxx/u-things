@@ -1,6 +1,9 @@
 #include <libc.h>
+#include "timer.h"
 
 #include "log.h"
+
+extern uint8_t ee_ReadByte(uint8_t device_addr, uint16_t _usAddress);
 
 #if 0
 #define TSL2561_ADDR	(0x39)

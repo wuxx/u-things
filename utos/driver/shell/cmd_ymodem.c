@@ -57,6 +57,7 @@
 #include <libc.h>
 #include "usart.h"
 #include "timer.h"
+#include "systick.h"
 #include "xyzmodem.h"
 
 /* Assumption - run xyzModem protocol over the console port */
