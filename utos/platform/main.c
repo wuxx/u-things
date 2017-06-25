@@ -13,8 +13,6 @@
 
 #include "config.h"
 
-
-
 int _assert(const char *file_name, const char *func_name, unsigned int line_num, char *desc)
 {
     PRINT_EMG("[%s][%s][%d]: %s\n", file_name, func_name, line_num, desc);
@@ -88,6 +86,8 @@ __s32 main(void)
 	//uart1_printf("uart1 ready\n");
 	//i2c_Stop();
 	bmp180_main();
+	am2321_main();
+	//tsl2561_main();
     //ee_Test();
 	//i2c_test();
 

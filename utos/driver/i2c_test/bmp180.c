@@ -1,6 +1,7 @@
 //#include "iic.h"
 #include "stm32f10x.h"
 
+#include "timer.h"
 #include "systick.h"       //调用了延时函数
 #include "log.h"
 
@@ -48,37 +49,6 @@ float True_Press=0;      //实际气压,单位:Pa
 int True_Press_1=0;      //实际气压,单位:Pa
 
 float True_Altitude=0;   //实际高度,单位:m
- 
-/*外部芯片IIC引脚初始化
- *SCL:PC1
- *SDA:PC2
-*/
-void IIC_PortInit(void)
-{
-#if 0
-    GPIO_InitTypeDef GPIO_InitStructure;  //定义一个GPIO_InitTypeDef类型的结构体
- 
-    GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_1|GPIO_Pin_2);    //PC1,PC2
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;           //漏极开漏
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
- 
-    GPIO_SetBits(GPIOC, GPIO_Pin_1|GPIO_Pin_2);    //拉高
-#else
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);	/* 打开GPIO时钟 */
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;	/* 开漏输出 */
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	/* 给一个停止信号, 复位I2C总线上的所有设备到待机模式 */
-	IIC_Stop();
-
-#endif
-}
  
 void IIC_Init(void)
 {
@@ -128,7 +98,8 @@ unsigned char IIC_ReceiveACK(void)
      
     return ACK;                 
 }
- 
+
+/* ack: 0 ACK; 1 NACK */
 void IIC_SendACK(unsigned char ack)
 {
     if (ack == 1)SDA_H();
@@ -161,13 +132,50 @@ unsigned char IIC_SendByte(unsigned char dat)
     }
  
     bResult=IIC_ReceiveACK(); //发送完一个字节的数据,等待接受应答信号
- 
+ 	if (bResult) {
+		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);
+	}
     return bResult;  //返回应答信号
 }
+
+unsigned char IIC_SendByte_Nak(unsigned char dat)
+{
+    unsigned char i;
+    unsigned char bResult=1;
+     
+    SCL_L();     //SCL = 0;//拉低时钟线
+    udelay(5);        
  
+    for( i=0;i<8;i++ ) //一个SCK,把dat一位一位的移送到SDA上
+    {
+        if( (dat<<i)&0x80 )SDA_H();   //SDA = 1;//先发高位
+        else SDA_L();  //SDA = 0;
+        udelay(5);
+ 
+        SCL_H();  //SCL = 1;
+        udelay(5);
+        SCL_L();  //SCL = 0;
+        udelay(5);
+    }
+ 
+	IIC_SendACK(1);
+#if 0
+	SCL_L();
+	SDA_H();
+	udelay(10);
+	SCL_H();
+	udelay(10);
+	/* check the SDA */
+	SCL_L();
+#endif	
+	//SDA_L();
+	//SCL_L();
+    return 0;  //返回应答信号
+}
+
 unsigned char IIC_ReadByte(void)
 {
-    unsigned char dat;
+    unsigned char dat = 0;
     unsigned char i;
      
     SCL_H();     //SCL = 1;//始终线拉高为读数据做准备
@@ -186,7 +194,39 @@ unsigned char IIC_ReadByte(void)
     }
     return dat;
 }
+
+/*外部芯片IIC引脚初始化
+ *SCL:PC1
+ *SDA:PC2
+*/
+void IIC_PortInit(void)
+{
+#if 0
+    GPIO_InitTypeDef GPIO_InitStructure;  //定义一个GPIO_InitTypeDef类型的结构体
  
+    GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_1|GPIO_Pin_2);    //PC1,PC2
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;           //漏极开漏
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+ 
+    GPIO_SetBits(GPIOC, GPIO_Pin_1|GPIO_Pin_2);    //拉高
+#else
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);	/* 打开GPIO时钟 */
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;	/* 开漏输出 */
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	/* 给一个停止信号, 复位I2C总线上的所有设备到待机模式 */
+	IIC_Stop();
+
+#endif
+}
+
+
 /*从BMP180中读1个字节的数据*/
 u8 BMP180_ReadOneByte(u8 ReadAddr)
 {
@@ -355,7 +395,7 @@ void Convert_UncompensatedToTrue(long UT,long UP)
 #endif
 }
 
-int bmp180_main()
+void bmp180_main()
 {
     long UT,UP;
 	
@@ -387,4 +427,139 @@ int bmp180_main()
          mdelay(1000);
 
      }
+}
+
+//#define AM2321_ADDR		(0x5C)
+#define AM2321_ADDR		(0xB8)
+
+#define AM2321_FUNC_CODE    (0x03)
+
+#define AM2321_REG_START	(0x00)
+#define AM2321_REG_COUNT	(0x04)
+
+void am2321_wakeup()
+{
+	u8 IIC_ComFlag = 1;   //IIC通信标志,为0标志正常,1表示通信错误
+
+	IIC_Start();
+	IIC_ComFlag = IIC_SendByte_Nak(AM2321_ADDR | 0x0);
+	if (IIC_ComFlag == 0)
+	{
+		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
+	} else {
+		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);	/* expected */
+	}
+
+	mdelay(1);
+	IIC_Stop();
+}
+
+void am2321_main()
+{
+	u32 i;
+	u8 data[7] = {0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA};
+	u8 IIC_ComFlag = 1;   //IIC通信标志,为0标志正常,1表示通信错误
+	u8 MSB,LSB;
+	short temp;
+	IIC_PortInit();
+
+	am2321_wakeup();
+	
+	IIC_Start();
+	
+	IIC_ComFlag = IIC_SendByte(AM2321_ADDR | 0x0);
+	if (IIC_ComFlag == 0)
+	{
+		IIC_SendByte(AM2321_FUNC_CODE);
+		IIC_SendByte(AM2321_REG_START);
+		IIC_SendByte(AM2321_REG_COUNT);
+		IIC_Stop();
+		
+	} else {
+		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);
+	}
+	
+	mdelay(2);
+	
+	IIC_Start();
+	
+	IIC_ComFlag = IIC_SendByte(AM2321_ADDR | 0x1);
+	udelay(30);
+	if (IIC_ComFlag == 0)
+	{
+		for(i = 0; i < 7; i++) {
+			data[i] = IIC_ReadByte();
+			if (i < 6) {
+				IIC_SendACK(0); /* ACK */
+			} else {
+				IIC_SendACK(1); /* NACK */
+			}
+
+		}
+		
+		IIC_Stop();
+		
+	} else {
+		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);
+	}
+
+	for(i = 0; i < 7; i++) {
+		PRINT_EMG("data[%d]: 0x%x\n", i, data[i]);
+	}
+	
+	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+	mdelay(2000);
+	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+
+	am2321_wakeup();
+	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+
+	IIC_Start();
+	PRINT_EMG("%s-%d\n", __func__, __LINE__);
+	
+	IIC_ComFlag = IIC_SendByte(AM2321_ADDR | 0x0);
+
+	if (IIC_ComFlag == 0)
+	{
+		IIC_SendByte(AM2321_FUNC_CODE);
+		IIC_SendByte(AM2321_REG_START);
+		IIC_SendByte(AM2321_REG_COUNT);
+		IIC_Stop();
+		
+	} else {
+		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);
+	}
+	
+	mdelay(2);
+
+	IIC_Start();
+
+	IIC_ComFlag = IIC_SendByte(AM2321_ADDR | 0x1);
+	udelay(40);
+	if (IIC_ComFlag == 0)
+	{
+		for(i = 0; i < 7; i++) {
+			data[i] = IIC_ReadByte();
+			if (i < 6) {
+				IIC_SendACK(0); /* ACK */
+			} else {
+				IIC_SendACK(1); /* NACK */
+			}
+			
+		}
+		
+		IIC_Stop();
+		
+	} else {
+		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);
+	}
+	
+	for(i = 0; i < 7; i++) {
+		PRINT_EMG("data[%d]: 0x%x\n", i, data[i]);
+	}
+
+}
+
+void tsl2561_main()
+{
 }
