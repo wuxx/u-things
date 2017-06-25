@@ -125,6 +125,58 @@ cmd_fail:
 
 }
 
+__u32 i2c_am2321_dump()
+{
+	/* step 1. wakeup am2321 */
+	i2c_Start();
+    i2c_SendByte(AM2321_ADDR | 0x0);
+
+	mdelay(1);
+	i2c_Stop();
+	
+	/* step 2. send request */
+	i2c_Start();
+	
+    i2c_SendByte(AM2321_ADDR | 0x0);
+    if (i2c_WaitAck() != 0)
+    {
+        PRINT_EMG("%s-%d\n", __func__, __LINE__);
+        goto cmd_fail;
+    }
+	
+    i2c_SendByte(0x03);
+    if (i2c_WaitAck() != 0)
+    {
+        PRINT_EMG("%s-%d\n", __func__, __LINE__);
+        goto cmd_fail;
+    }
+	
+    i2c_SendByte(0x00);
+    if (i2c_WaitAck() != 0)
+    {
+        PRINT_EMG("%s-%d\n", __func__, __LINE__);
+        goto cmd_fail;
+    }
+	
+    i2c_SendByte(0x04);
+    if (i2c_WaitAck() != 0)
+    {
+        PRINT_EMG("%s-%d\n", __func__, __LINE__);
+        goto cmd_fail;
+    }
+
+	i2c_Stop();
+
+	mdelay(2);
+	
+	return 0;
+cmd_fail:
+	i2c_Stop();
+	PRINT_EMG("cmd fail!\n");
+	return 1;
+
+}
+
 __u32 i2c_test()
 {
 	__u8 data;
@@ -157,12 +209,12 @@ __u32 i2c_test()
 		//return 0;
 	}
 	//return 0;
+	//i2c_am2321_dump();
 
 	if (i2c_checkdevice(AM2321_ADDR) == 0)
 	{
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);	
-		i2c_read(AM2321_ADDR, 0x02);
-		i2c_read(AM2321_ADDR, 0x03);
+		i2c_am2321_dump();
 	}
 	else
 	{
@@ -191,6 +243,8 @@ __u32 i2c_test()
 		PRINT_EMG("%s-%d succ\n", __func__, __LINE__);
 		//ee_ReadByte(0xEE, 0xD0);
 		i2c_read(0xEE, 0xD0); /* 0x55 expected */
+		i2c_Stop();
+		i2c_read(0xEE, 0xAA);
 		{
 			__u16 AC1, AC2, AC3, AC4, AC5, AC6;
 			__u16 B1, B2;
