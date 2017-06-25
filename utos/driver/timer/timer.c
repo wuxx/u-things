@@ -5,6 +5,7 @@
 /* 1ms counter */
 volatile __u64 time = 0;
 
+#if 0
 void udelay(__u32 tick)
 {
     volatile __u32 t, i, x;
@@ -18,6 +19,7 @@ void udelay(__u32 tick)
 		}
 	}
 }
+#endif
 
 void mdelay(__u32 tick)
 {

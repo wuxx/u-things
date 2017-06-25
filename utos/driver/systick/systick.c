@@ -50,7 +50,7 @@ void SysTick_Init(void)
   *		@arg nTime: Delay_us( 1 ) 则实现的延时为 1 * 10us = 10us
   * @retval  无
   */
-void Delay_us(volatile u32 nTime)
+void udelay(volatile u32 nTime)
 { 
 	TimingDelay = nTime;	
 
