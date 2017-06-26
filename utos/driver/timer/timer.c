@@ -102,6 +102,11 @@ void  ADVANCE_TIM_IRQHandler (void)
     }           
 }
 
+__u64 get_time()
+{
+	return time;
+}
+
 void timer_init()
 {
 	ADVANCE_TIM_NVIC_Config();

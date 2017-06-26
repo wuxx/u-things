@@ -12,7 +12,7 @@
 #define ADVANCE_TIM_IRQHandler        TIM1_UP_IRQHandler
 
 void  timer_init();
-//void udelay(__u32 us);
 void mdelay(__u32 ms);
+__u64 get_time();
 
 #endif /* __TIMER_H__ */

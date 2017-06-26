@@ -85,7 +85,7 @@ __s32 main(void)
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
 	//i2c_Stop();
-	bmp180_main();
+	//bmp180_main();
 	am2321_main();
 	//tsl2561_main();
     //ee_Test();

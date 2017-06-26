@@ -398,8 +398,13 @@ void Convert_UncompensatedToTrue(long UT,long UP)
 void bmp180_main()
 {
     long UT,UP;
-	
+	__u64 t = get_time();
+	PRINT_EMG("time: %d\n", (__u32)t);
 	IIC_PortInit();
+
+	SCL_H();
+	mdelay(1000);
+	
     Read_CalibrationData();         //读取BMP180的校准系数
 	BMP180_ID = BMP180_ReadOneByte(0xd0);	   //读取ID地址
 	PRINT_EMG("BMP180_ID=0x%x;\r\n",BMP180_ID);
@@ -450,7 +455,7 @@ void am2321_wakeup()
 		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);	/* expected */
 	}
 
-	mdelay(1);
+	mdelay(2);
 	IIC_Stop();
 }
 
@@ -461,7 +466,11 @@ void am2321_main()
 	u8 IIC_ComFlag = 1;   //IIC通信标志,为0标志正常,1表示通信错误
 	u8 MSB,LSB;
 	short temp;
+	
+	PRINT_EMG("time: %d\n", (__u32)get_time());
 	IIC_PortInit();
+	SCL_H();
+	mdelay(1000);
 
 	am2321_wakeup();
 	
