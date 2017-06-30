@@ -44,12 +44,6 @@ void SysTick_Init(void)
 	SysTick->CTRL &= ~ SysTick_CTRL_ENABLE_Msk;
 }
 
-/**
-  * @brief   us延时程序,10us为一个单位
-  * @param  
-  *		@arg nTime: Delay_us( 1 ) 则实现的延时为 1 * 10us = 10us
-  * @retval  无
-  */
 void udelay(volatile u32 nTime)
 { 
 	TimingDelay = nTime;	

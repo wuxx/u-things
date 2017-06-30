@@ -213,7 +213,7 @@ static uint8_t DS18B20_ReadBit(void)
 	
 	/* 设置成输入，释放总线，由外部上拉电阻将总线拉高 */
 	DS18B20_Mode_IPU();
-	//udelay(2);
+	udelay(2);
 	
 	if( DS18B20_DQ_IN() == SET )
 		dat = 1;

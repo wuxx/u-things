@@ -4,6 +4,7 @@
 #include "log.h"
 #include "libc.h"
 #include "flash.h"
+#include "gpio.h"
 #include "shell.h"
 #include "mmio.h"
 #include "hw_config.h"
@@ -86,7 +87,7 @@ __s32 main(void)
 	//uart1_printf("uart1 ready\n");
 	//i2c_Stop();
 	//bmp180_main();
-	am2321_main();
+	//am2321_main();
 	//tsl2561_main();
     //ee_Test();
 	//i2c_test();
@@ -127,6 +128,9 @@ __s32 main(void)
 			g_flag = i2c_sda_read();
 
 			PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
+			gpio_init(GROUPA, 0x1);
+			gpio_read(GROUPA, 0x1);
+			gpio_write(GROUPA, 0x1, 0x1);
 			mdelay(1000);
 		}
 		//uart1_printf("11111111111111\n");
