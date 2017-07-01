@@ -131,6 +131,8 @@ __s32 main(void)
 			gpio_init(GROUPA, 0x1);
 			gpio_read(GROUPA, 0x1);
 			gpio_write(GROUPA, 0x1, 0x1);
+			extern __u32 hcsr04();
+			hcsr04();
 			mdelay(1000);
 		}
 		//uart1_printf("11111111111111\n");
