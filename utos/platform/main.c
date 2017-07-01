@@ -85,6 +85,10 @@ __s32 main(void)
     PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE + SRAM_SIZE);
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
+	
+	uart4_init();
+	uart4_printf("uart4 ready\n");
+
 	//i2c_Stop();
 	//bmp180_main();
 	//am2321_main();

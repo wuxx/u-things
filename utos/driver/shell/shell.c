@@ -164,6 +164,7 @@ static int getcxmodem(void) {
         return (getc());
     return -1;
 }
+int g_store_addr;
 
 PRIVATE __s32 cmd_loady()
 {
@@ -189,12 +190,15 @@ PRIVATE __s32 cmd_loady()
             store_addr = addr + offset;
             size += res;
             addr += res;
-
+			
+			g_store_addr = store_addr;
+			uart4_printf(" %d store_addr : 0x%x\n", __LINE__, g_store_addr);
 			if (IS_SRAMADDR(store_addr)) {
 				memcpy((char *)(store_addr), ymodemBuf, res);
 			} else if (IS_FLASHADDR(store_addr)) {
 				flash_write(store_addr, ymodemBuf, res);
 			}
+			uart4_printf(" %d store_addr : 0x%x\n", __LINE__, g_store_addr);
 
         }
     } else {

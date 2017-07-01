@@ -43,7 +43,6 @@ else
     echo -e "\033[31mbuild failed!\033[0"
 fi
 
-cd tools && make test
-#./tools/build_symbol_table -i ./output/utos.map -o ./output/symbol_table.bin
+./tools/build_symbol_table -i ./output/utos.map -o ./output/symbol_table.bin
 #cat output/utos.bin ./output/symbol_table.bin > output/utos.img
 

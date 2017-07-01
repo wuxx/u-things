@@ -6,4 +6,6 @@ u-things version 0.1 软件设计
 
 TODO: badusb
 
-
+参考资料
+1. ymodem 协议
+	http://www.cnblogs.com/hiker-blogs/archive/2013/03/17/stm32.html

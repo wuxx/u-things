@@ -64,6 +64,8 @@ struct cpu_context
 void NMI_Handler(void)
 {
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
+	uart4_printf("%s-%d \n", __func__, __LINE__);
+
     watchdog_reset();
 }
  
@@ -110,6 +112,42 @@ __attribute__((naked)) void HardFault_Handler(void)
 	
 	PRINT_EMG("MMAR: 0x%X \n", SCB->MMFAR);
 	PRINT_EMG("BFAR: 0x%X \n", SCB->BFAR);
+
+
+
+    uart4_printf("%s:\n", __func__);
+	uart4_printf("XPSR: 0x%X \n", cc->XPSR);
+	uart4_printf("PC:   0x%X \n", cc->PC);
+	uart4_printf("LR:   0x%X \n", cc->LR);
+	uart4_printf("R12:  0x%X \n", cc->R12);
+	uart4_printf("R3:   0x%X \n", cc->R3);
+	uart4_printf("R2:   0x%X \n", cc->R2);
+	uart4_printf("R1:   0x%X \n", cc->R1);
+	uart4_printf("R0:   0x%X \n", cc->R0);
+
+	uart4_printf("R14:  0x%X \n", cc->R14);
+	uart4_printf("R11:  0x%X \n", cc->R11);
+	uart4_printf("R10:  0x%X \n", cc->R10);
+	uart4_printf("R9:   0x%X \n", cc->R9);
+	uart4_printf("R8:   0x%X \n", cc->R8);
+	uart4_printf("R7:   0x%X \n", cc->R7);
+	uart4_printf("R6:   0x%X \n", cc->R6);
+	uart4_printf("R5:   0x%X \n", cc->R5);
+	uart4_printf("R4:   0x%X \n\n", cc->R4);
+
+	uart4_printf("HFSR: 0x%X \n", SCB->HFSR);
+	uart4_printf("CFSR: 0x%X \n", SCB->CFSR);
+	
+	mfsr = ((SCB->CFSR) & 0x000000FF);
+	bfsr = ((SCB->CFSR) & 0x0000FF00) >> 8;
+	ufsr = ((SCB->CFSR) & 0xFFFF0000) >> 16;
+	uart4_printf("MFSR: 0x%X \n", mfsr);
+	uart4_printf("BFSR: 0x%X \n", bfsr);
+	uart4_printf("UFSR: 0x%X \n", ufsr);
+	
+	uart4_printf("MMAR: 0x%X \n", SCB->MMFAR);
+	uart4_printf("BFAR: 0x%X \n", SCB->BFAR);
+
 	
     watchdog_reset();
     while (1)
@@ -121,6 +159,7 @@ void MemManage_Handler(void)
 {
     /* Go to infinite loop when Memory Manage exception occurs */
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
+	uart4_printf("%s-%d \n", __func__, __LINE__);
     watchdog_reset();
     while (1)
     {
@@ -132,6 +171,8 @@ void BusFault_Handler(void)
 {
     /* Go to infinite loop when Bus Fault exception occurs */
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
+	uart4_printf("%s-%d \n", __func__, __LINE__);
+
     watchdog_reset();
     while (1)
     {
@@ -142,6 +183,8 @@ void UsageFault_Handler(void)
 {
     /* Go to infinite loop when Usage Fault exception occurs */
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
+	uart4_printf("%s-%d \n", __func__, __LINE__);
+
     watchdog_reset();
     while (1)
     {
@@ -151,16 +194,22 @@ void UsageFault_Handler(void)
 void SVC_Handler(void)
 {
   PRINT_EMG("%s-%d \n", __func__, __LINE__);
+  uart4_printf("%s-%d \n", __func__, __LINE__);
+
 }
  
 void DebugMon_Handler(void)
 {
   PRINT_EMG("%s-%d \n", __func__, __LINE__);
+  uart4_printf("%s-%d \n", __func__, __LINE__);
+
 }
  
 void PendSV_Handler(void)
 {
   PRINT_EMG("%s-%d \n", __func__, __LINE__);
+  uart4_printf("%s-%d \n", __func__, __LINE__);
+
 }
  
 void SysTick_Handler(void)
