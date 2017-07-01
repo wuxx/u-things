@@ -202,7 +202,7 @@ int uart_printf(const char *format, ...)
 
     return len;
 }
-
+int g_store_addr;
 void DEBUG_USART_IRQHandler(void)
 {
     static __u8 i, magic_cmd[6] = {0};
@@ -210,6 +210,7 @@ void DEBUG_USART_IRQHandler(void)
 	uint16_t ch;
 	ch = (__u8)USART_ReceiveData(DEBUG_USARTx);
 	//uart4_printf("%s-%d %x \n", __func__, __LINE__, ch);
+	//if (g_store_addr == 0x20009800) { uart4_printf("%s-%d %x\n", __func__, __LINE__, ch); }
 
     for(i = 0; i < 4; i++) {
         magic_cmd[i] = magic_cmd[i + 1];

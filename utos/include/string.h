@@ -12,5 +12,6 @@ void * memcpy(void *dst, void *src, __u32 size);
 __s32 memcmp(void *s1, void *s2, __u32 n);
 __u32 ffs(__u32 x);
 __u32 fls(__u32 x);
+char *strstr(char *haystack, char *needle);
 #endif /* __STRING_H__ */
 

@@ -159,6 +159,7 @@ int  uart_printf(const char *format, ...);
 
 int uart1_printf(const char *format, ...);
 int uart2_printf(const char *format, ...);
+int uart4_printf(const char *format, ...);
 
 
 #endif /* __USART_H */

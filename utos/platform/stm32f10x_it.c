@@ -23,8 +23,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h" 
+#include "usart.h"
 #include "log.h"
 #include "watchdog.h"
+#include "esp8266.h"
 
 #if 0
 /* CPU CONTEXT */
@@ -112,9 +114,7 @@ __attribute__((naked)) void HardFault_Handler(void)
 	
 	PRINT_EMG("MMAR: 0x%X \n", SCB->MMFAR);
 	PRINT_EMG("BFAR: 0x%X \n", SCB->BFAR);
-
-
-
+	
     uart4_printf("%s:\n", __func__);
 	uart4_printf("XPSR: 0x%X \n", cc->XPSR);
 	uart4_printf("PC:   0x%X \n", cc->PC);
@@ -219,9 +219,27 @@ void SysTick_Handler(void)
   TimingDelay_Decrement();
 }
 
-/******************************************************************************/
-/*                 STM32F10x Peripherals Interrupt Handlers                   */
-/*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
-/*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32f10x_xx.s).                                            */
-/******************************************************************************/
+void macESP8266_USART_INT_FUN ( void )
+{	
+    uint8_t ucCh;
+
+
+    if ( USART_GetITStatus ( macESP8266_USARTx, USART_IT_RXNE ) != RESET )
+    {
+        ucCh  = USART_ReceiveData( macESP8266_USARTx );
+
+        if ( strEsp8266_Fram_Record .InfBit .FramLength < ( RX_BUF_MAX_LEN - 1 ) )                       //预留1个字节写结束符
+            strEsp8266_Fram_Record .Data_RX_BUF [ strEsp8266_Fram_Record .InfBit .FramLength ++ ]  = ucCh;
+
+    }
+
+    if ( USART_GetITStatus( macESP8266_USARTx, USART_IT_IDLE ) == SET )                                         //数据帧接收完毕
+    {
+        strEsp8266_Fram_Record .InfBit .FramFinishFlag = 1;
+
+        ucCh = USART_ReceiveData( macESP8266_USARTx );                                                              //由软件序列清除中断标志位(先读USART_SR，然后读USART_DR)	
+
+    }	
+
+}
+

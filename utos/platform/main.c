@@ -82,12 +82,14 @@ __s32 main(void)
 	free_sram_base  = (__u32)(&_estack);
 
     PRINT_EMG("free flash memory [0x%X, 0x%X]\n", free_flash_base, FLASH_BASE + FLASH_SIZE);
+	udelay(1000000);
     PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE + SRAM_SIZE);
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
 	
-	uart4_init();
-	uart4_printf("uart4 ready\n");
+	//int uart4_printf(const char *format, ...);
+	//uart4_init();
+	//uart4_printf("uart4 ready\n");
 
 	//i2c_Stop();
 	//bmp180_main();
@@ -99,6 +101,10 @@ __s32 main(void)
 	//#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
     //EEPROM_I2C_SDA_0();
   	//EEPROM_I2C_SCL_0();
+#if 1
+  	ESP8266_Init();
+	ESP8266_StaTcpClient_UnvarnishTest();
+#endif
     while(1) {
 		if (shell_cmd != NULL) {
 			shell((char *)shell_cmd);

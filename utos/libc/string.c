@@ -161,3 +161,26 @@ __u32 fls(__u32 x)
 
 }
 
+char *strstr(char *haystack, char *needle)
+{
+
+	char *p;
+	char *q;
+	char *res = NULL;
+
+	while(*haystack != '\0')
+	{  
+		p = haystack;
+		q = needle;
+		if(*p == *q)
+		{
+			res = p;
+			while(*p && *q && (*p++ == *q++));
+
+			if(*q == '\0')
+				return res;
+		}  
+		haystack++;
+	}
+	return NULL;
+}

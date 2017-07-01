@@ -124,7 +124,6 @@ PUBLIC int vsnprintf(char *buf, __u32 size, const char *fmt, va_list args)
     return offset; /* FIXME: return the length of c string (strlen(string), not include the '\0') */
 }
 
-
 PUBLIC int snprintf(char *buf, __u32 size, const char *fmt, ...)
 {
     __u32 len;
