@@ -26,6 +26,7 @@
 #include "usart.h"
 #include "log.h"
 #include "watchdog.h"
+#include "systick.h"
 #include "esp8266.h"
 
 #if 0
@@ -215,8 +216,9 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   //PRINT_EMG("%s-%d \n", __func__, __LINE__);
-  void TimingDelay_Decrement(void);
-  TimingDelay_Decrement();
+  //void TimingDelay_Decrement(void);
+  //TimingDelay_Decrement();
+  systick += SYSTICK_FREQ_US;
 }
 
 void macESP8266_USART_INT_FUN ( void )

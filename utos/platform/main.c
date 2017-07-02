@@ -78,8 +78,6 @@ __s32 main(void)
 	USB_Config();
 #endif	
 
-#define CONFIG_ESP8266 1
-
 #if CONFIG_ESP8266
 		ESP8266_Init();
 		ESP8266_StaTcpClient_UnvarnishTest();
@@ -126,6 +124,7 @@ __s32 main(void)
             USB_TxWrite(buf, len);
         }
 #endif
+
 		if (g_flag == 0xf11dbeef) {
 			
 			void i2c_scl_write(int x);
@@ -143,7 +142,6 @@ __s32 main(void)
 			hcsr04();
 			mdelay(1000);
 		}
-		//uart1_printf("11111111111111\n");
 
     }
 

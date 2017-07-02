@@ -19,4 +19,8 @@
 /* FIXME: [addr, size] cover both flash and sram */
 #define IS_MEMSPACE(addr, size) (IS_MEMADDR(addr) && IS_MEMADDR(addr + size - 1))
 
+
+#define CONFIG_USB 		0
+#define CONFIG_ESP8266  0
+	
 #endif /* __CONFIG_H__ */

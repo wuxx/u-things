@@ -35,61 +35,61 @@ void mdelay(__u32 tick)
 
 }
 
-// 中断优先级配置
+// �ж����ȼ�����
 static void ADVANCE_TIM_NVIC_Config(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure; 
-    // 设置中断组为0
+    // �����ж���Ϊ0
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);		
-		// 设置中断来源
+		// �����ж���Դ
     NVIC_InitStructure.NVIC_IRQChannel = ADVANCE_TIM_IRQ ;	
-		// 设置主优先级为 0
+		// ���������ȼ�Ϊ 0
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;	 
-	  // 设置抢占优先级为3
+	  // ������ռ���ȼ�Ϊ3
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;	
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
 
 ///*
-// * 注意：TIM_TimeBaseInitTypeDef结构体里面有5个成员，TIM6和TIM7的寄存器里面只有
-// * TIM_Prescaler和TIM_Period，所以使用TIM6和TIM7的时候只需初始化这两个成员即可，
-// * 另外三个成员是通用定时器和高级定时器才有.
+// * ע�⣺TIM_TimeBaseInitTypeDef�ṹ��������5����Ա��TIM6��TIM7�ļĴ�������ֻ��
+// * TIM_Prescaler��TIM_Period������ʹ��TIM6��TIM7��ʱ��ֻ���ʼ����������Ա���ɣ�
+// * ����������Ա��ͨ�ö�ʱ���͸߼���ʱ������.
 // *-----------------------------------------------------------------------------
 // *typedef struct
-// *{ TIM_Prescaler            都有
-// *	TIM_CounterMode			     TIMx,x[6,7]没有，其他都有
-// *  TIM_Period               都有
-// *  TIM_ClockDivision        TIMx,x[6,7]没有，其他都有
-// *  TIM_RepetitionCounter    TIMx,x[1,8,15,16,17]才有
+// *{ TIM_Prescaler            ����
+// *	TIM_CounterMode			     TIMx,x[6,7]û�У���������
+// *  TIM_Period               ����
+// *  TIM_ClockDivision        TIMx,x[6,7]û�У���������
+// *  TIM_RepetitionCounter    TIMx,x[1,8,15,16,17]����
 // *}TIM_TimeBaseInitTypeDef; 
 // *-----------------------------------------------------------------------------
 // */
 static void ADVANCE_TIM_Mode_Config(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;		
-		// 开启定时器时钟,即内部时钟CK_INT=72M
+		// ������ʱ��ʱ��,���ڲ�ʱ��CK_INT=72M
     ADVANCE_TIM_APBxClock_FUN(ADVANCE_TIM_CLK, ENABLE);	
-		// 自动重装载寄存器的值，累计TIM_Period+1个频率后产生一个更新或者中断
+		// �Զ���װ�ؼĴ�����ֵ���ۼ�TIM_Period+1��Ƶ�ʺ����һ�����»����ж�
     TIM_TimeBaseStructure.TIM_Period=ADVANCE_TIM_Period;
-	  // 时钟预分频数
+	  // ʱ��Ԥ��Ƶ��
     TIM_TimeBaseStructure.TIM_Prescaler= ADVANCE_TIM_Prescaler;	
-		// 时钟分频因子 ，没用到不用管
+		// ʱ�ӷ�Ƶ���� ��û�õ����ù�
     TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1;		
-		// 计数器计数模式，设置为向上计数
+		// ����������ģʽ������Ϊ���ϼ���
     TIM_TimeBaseStructure.TIM_CounterMode=TIM_CounterMode_Up; 		
-		// 重复计数器的值，没用到不用管
+		// �ظ���������ֵ��û�õ����ù�
 		TIM_TimeBaseStructure.TIM_RepetitionCounter=0;	
-	  // 初始化定时器
+	  // ��ʼ����ʱ��
     TIM_TimeBaseInit(ADVANCE_TIM, &TIM_TimeBaseStructure);
 	
-		// 清除计数器中断标志位
+		// ����������жϱ�־λ
     TIM_ClearFlag(ADVANCE_TIM, TIM_FLAG_Update);
 	  
-		// 开启计数器中断
+		// �����������ж�
     TIM_ITConfig(ADVANCE_TIM,TIM_IT_Update,ENABLE);
 		
-		// 使能计数器
+		// ʹ�ܼ�����
     TIM_Cmd(ADVANCE_TIM, ENABLE);
 }
 
