@@ -10,7 +10,7 @@
 #include "hw_config.h"
 #include "systick.h"
 #include "ds18b20.h"
-
+#include "esp8266.h"
 
 #include "config.h"
 
@@ -50,29 +50,19 @@ int g_flag = 0xf00dbeef;
 __s32 main(void)
 {
 	__u32 free_flash_base, free_sram_base;
-	//static __u8 buf[200] = {0};
 
-    RCC_APB2ENR |= (1<<3);
-
-    GPIOB_CRL &= ~( 0x0F<< (4*0));  
-    GPIOB_CRL |= (1<<4*0);
-
-    GPIOB_ODR &= ~(1<<0);
+	/* PB0: the LED */
+	gpio_init(GROUPB, 0);
+	gpio_write(GROUPB, 0, 0);
 
     //USART_Config(); /* uart1 */
 
 	uart_init();
 	uart_printf("uart2 ready\n");
-    //extern int printf(const char *format, ...);
-    //printf("hello\n");
 
 	PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
     timer_init();
-
-#if CONFIG_USB
-	USB_Config();
-#endif
 
 	SysTick_Init();
 	DS18B20_Init();	
@@ -82,8 +72,19 @@ __s32 main(void)
 	free_sram_base  = (__u32)(&_estack);
 
     PRINT_EMG("free flash memory [0x%X, 0x%X]\n", free_flash_base, FLASH_BASE + FLASH_SIZE);
-	udelay(1000000);
-    PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE + SRAM_SIZE);
+    PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE  + SRAM_SIZE);
+
+#if CONFIG_USB
+	USB_Config();
+#endif	
+
+#define CONFIG_ESP8266 1
+
+#if CONFIG_ESP8266
+		ESP8266_Init();
+		ESP8266_StaTcpClient_UnvarnishTest();
+#endif
+
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
 	
@@ -101,10 +102,7 @@ __s32 main(void)
 	//#include "../driver/i2c_eeprom/bsp_i2c_gpio.h"
     //EEPROM_I2C_SDA_0();
   	//EEPROM_I2C_SCL_0();
-#if 1
-  	ESP8266_Init();
-	ESP8266_StaTcpClient_UnvarnishTest();
-#endif
+
     while(1) {
 		if (shell_cmd != NULL) {
 			shell((char *)shell_cmd);

@@ -141,7 +141,8 @@
 //#define  DEBUG_USART_IRQHandler         UART5_IRQHandler
 
 enum USART_WORK_MODE {
-    SHELL_MODE  = 0,
+    TSHELL_MODE  = 0, /* thread context shell */
+	ISHELL_MODE,      /* int    context shell */
     YMODEM_MODE,
 };
 

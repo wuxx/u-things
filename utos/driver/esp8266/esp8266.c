@@ -1,5 +1,5 @@
-#include "esp8266.h"
 #include <libc.h>  
+#include "esp8266.h"
 #include "systick.h"
 
 #define true    (1)
@@ -367,14 +367,10 @@ void ESP8266_AT_Test ( void )
     char count=0;
 
     macESP8266_RST_HIGH_LEVEL();
-    PRINT_EMG("%s-%d\n", __func__, __LINE__);
     Delay_ms ( 1000 );
-    PRINT_EMG("%s-%d\n", __func__, __LINE__);
     while ( count < 10 )
     {
-        PRINT_EMG("%s-%d\n", __func__, __LINE__);
         if( ESP8266_Cmd ( "AT", "OK", NULL, 500 ) ) return;
-        PRINT_EMG("%s-%d\n", __func__, __LINE__);
         ESP8266_Rst();
         ++ count;
     }
@@ -839,11 +835,11 @@ uint8_t ESP8266_CIPAP ( char * pApIp )
 /**************************************************/
 
 /********************************** 用户需要设置的参数**********************************/
-#define   macUser_ESP8266_BulitApSsid         "u-things-wifi"      //要建立的热点的名称
-#define   macUser_ESP8266_BulitApEcn           OPEN               //要建立的热点的加密方式
+#define   macUser_ESP8266_BulitApSsid         "utos-wifi"      //要建立的热点的名称
+#define   macUser_ESP8266_BulitApEcn           WPA2_PSK               //要建立的热点的加密方式
 #define   macUser_ESP8266_BulitApPwd           "wildfire"         //要建立的热点的密钥
 
-#define   macUser_ESP8266_TcpServer_IP         "192.168.123.169"      //服务器开启的IP地址
+#define   macUser_ESP8266_TcpServer_IP         "192.168.121.169"      //服务器开启的IP地址
 #define   macUser_ESP8266_TcpServer_Port       "8080"             //服务器开启的端口   
 
 #define   macUser_ESP8266_TcpServer_OverTime   "1800"             //服务器超时时间（单位：秒）
@@ -879,8 +875,8 @@ void ESP8266_StaTcpClient_UnvarnishTest ( void )
     while ( !	ESP8266_StartOrShutServer ( ENABLE, macUser_ESP8266_TcpServer_Port, macUser_ESP8266_TcpServer_OverTime ) );
 
     ESP8266_Inquire_ApIp ( cStr, 20 );
-    PRINT_EMG ( "\r\n本模块WIFI为%s，密码开放\r\nAP IP 为：%s，开启的端口为：%s\r\n手机网络助手连接该 IP 和端口，最多可连接5个客户端\r\n",
-            macUser_ESP8266_BulitApSsid, cStr, macUser_ESP8266_TcpServer_Port );
+    PRINT_EMG ( "\r\n本模块WIFI为%s，密码开放或者为%s\r\nAP IP 为：%s，开启的端口为：%s\r\n手机网络助手连接该 IP 和端口，最多可连接5个客户端\r\n",
+            macUser_ESP8266_BulitApSsid, macUser_ESP8266_BulitApPwd, cStr, macUser_ESP8266_TcpServer_Port );
 
 
     strEsp8266_Fram_Record.InfBit.FramLength = 0;

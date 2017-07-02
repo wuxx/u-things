@@ -5,13 +5,6 @@
 #include "log.h"
 
 
-
-#if defined ( __CC_ARM   )
-#pragma anon_unions
-#endif
-
-
-
 /******************************* ESP8266 Êý¾ÝÀàÐÍ¶¨Òå ***************************/
 typedef enum{
 	STA,
@@ -49,9 +42,9 @@ typedef enum{
 /******************************* ESP8266 Íâ²¿È«¾Ö±äÁ¿ÉùÃ÷ ***************************/
 #define RX_BUF_MAX_LEN     1024                                     //×î´ó½ÓÊÕ»º´æ×Ö½ÚÊý
 
-extern struct  STRUCT_USARTx_Fram                                  //´®¿ÚÊý¾ÝÖ¡µÄ´¦Àí½á¹¹Ìå
+struct  STRUCT_USARTx_Fram                                  //´®¿ÚÊý¾ÝÖ¡µÄ´¦Àí½á¹¹Ìå
 {
-	char  Data_RX_BUF [ RX_BUF_MAX_LEN ];
+	char Data_RX_BUF [ RX_BUF_MAX_LEN ];
 	
   union {
     __IO u16 InfAll;
@@ -62,8 +55,6 @@ extern struct  STRUCT_USARTx_Fram                                  //´®¿ÚÊý¾ÝÖ¡µ
   }; 
 	
 } strEsp8266_Fram_Record;
-
-
 
 /******************************** ESP8266 Á¬½ÓÒý½Å¶¨Òå ***********************************/
 #define      macESP8266_CH_PD_APBxClock_FUN                   RCC_APB2PeriphClockCmd
@@ -127,6 +118,8 @@ char *                   ESP8266_ReceiveString               ( FunctionalState e
 
 uint8_t                  ESP8266_CWLIF                       ( char * pStaIp );
 uint8_t                  ESP8266_CIPAP                       ( char * pApIp );
+
+void ESP8266_StaTcpClient_UnvarnishTest ( void );
 
 #endif  /* __ESP8266_H__ */
 

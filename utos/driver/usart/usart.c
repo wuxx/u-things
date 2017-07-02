@@ -22,7 +22,7 @@
 int uart1_printf(const char *format, ...);
 int uart4_printf(const char *format, ...);
 
-int uart_work_mode = SHELL_MODE;
+int uart_work_mode = TSHELL_MODE;
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC
@@ -229,7 +229,7 @@ void DEBUG_USART_IRQHandler(void)
 	/* uart_printf("enter %s-%d %x \n", __func__, __LINE__, ch); */
 
     switch (uart_work_mode) {
-        case (SHELL_MODE):
+        case (TSHELL_MODE):
             if (ch == '\n') {   /* sscom will send '\r\n' we ignore the '\n' */
                 return;
             }
@@ -257,6 +257,8 @@ void DEBUG_USART_IRQHandler(void)
             /* echo */
             uart_putc(ch);
             break;
+		case (ISHELL_MODE):	/* TODO */
+			break;
         case (YMODEM_MODE):
             if ((last + 1) % UART_IO_SIZE == first) {
                 uart_puts("buf full!\n");
