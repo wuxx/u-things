@@ -7,6 +7,7 @@
 #include "xyzmodem.h"
 #include "flash.h"
 #include "config.h"
+#include "systest.h"
 
 struct symbol_table_head
 {
@@ -39,6 +40,7 @@ __s32 cmd_write();
 __s32 cmd_exec();
 __s32 cmd_dump();
 __s32 cmd_loady();
+__s32 cmd_systest();
 __s32 cmd_help();
 
 struct shell_cmd_info ci[] = {
@@ -47,6 +49,7 @@ struct shell_cmd_info ci[] = {
     { .name = "x",       .func = cmd_exec,    .desc = "x     [addr]              execute any addr"},
     { .name = "dump",    .func = cmd_dump,    .desc = "dump  [addr] [word_num]   dump    any addr"},
     { .name = "loady",   .func = cmd_loady,   .desc = "loady [addr]              load data to any addr with ymodem"},
+	{ .name = "systest", .func = cmd_systest, .desc = "systest [module] [i]	     system test" 	  },
     { .name = "help",    .func = cmd_help,    .desc = "help                      print cmd info"  },
 };
 
@@ -209,7 +212,7 @@ PRIVATE __s32 cmd_loady()
     xyzModem_stream_terminate(false, &getcxmodem);
 
     uart_printf("## Total Size      = 0x%X = %d Bytes\n", size, size);
-	uart_work_mode = SHELL_MODE;
+	uart_work_mode = TSHELL_MODE;
 
     return offset;
 }
@@ -227,6 +230,11 @@ PRIVATE __s32 cmd_help()
         PRINT_EMG("%s:\t\t\t%s\n", ci[i].name, ci[i].desc);
     }
     return 0;
+}
+
+PRIVATE __s32 cmd_systest()
+{
+	return systest(argc, argv);
 }
 
 PRIVATE __s32 parse_cmd(char *cmd)

@@ -9,3 +9,8 @@ TODO: badusb
 参考资料
 1. ymodem 协议
 	http://www.cnblogs.com/hiker-blogs/archive/2013/03/17/stm32.html
+2. i2c
+	STM32F103VCT6驱动气压计芯片BMP180
+	http://www.openedv.com/posts/list/50192.htm 
+	I2C总线信号时序总结 
+	http://blog.csdn.net/chuckfql/article/details/19834137
