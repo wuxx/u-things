@@ -9,8 +9,8 @@
 volatile __u64 systick;
 
 void SysTick_Init(void);
-void udelay(volatile u32 nTime);         // 单位1us
-
-#define Delay_ms(x) udelay(1000*x)	 //单位ms
+void udelay(volatile u32 tus);         // 单位1us
+void mdelay(volatile u32 tms);
+__u64 get_systick();
 
 #endif /* __SYSTICK_H__ */

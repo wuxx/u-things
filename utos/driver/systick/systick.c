@@ -36,7 +36,7 @@ void udelay(volatile u32 tus)
 	//SysTick->CTRL |=  SysTick_CTRL_ENABLE_Msk;
 
 	//while(TimingDelay != 0);
-	u32 tick;
+	__u64 tick;
 	tus = tus <= 1000000 ? tus : 1000000;
 
 	tick = (systick + ((SysTick->LOAD - SysTick->VAL) / (SystemCoreClock / 1000000)));
@@ -46,6 +46,19 @@ void udelay(volatile u32 tus)
 			break;
 		}
 	}
+}
+
+void mdelay(volatile u32 tms)
+{
+	u32 i;
+	for(i = 0; i < tms; i++) {
+		udelay(1000);
+	}
+}
+
+__u64 get_systick()
+{
+	return ((systick + ((SysTick->LOAD - SysTick->VAL) / (SystemCoreClock / 1000000))));
 }
 
 /**

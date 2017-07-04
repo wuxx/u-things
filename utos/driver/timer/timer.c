@@ -20,7 +20,7 @@ void udelay(__u32 tick)
 	}
 }
 #endif
-
+#if 0
 void mdelay(__u32 tick)
 {
     __u32 old_time = time;
@@ -34,7 +34,7 @@ void mdelay(__u32 tick)
     }
 
 }
-
+#endif
 // 中断优先级配置
 static void ADVANCE_TIM_NVIC_Config(void)
 {

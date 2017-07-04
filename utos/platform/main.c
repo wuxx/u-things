@@ -62,7 +62,7 @@ __s32 main(void)
 
 	PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
-    timer_init();
+    //timer_init();
 
 	SysTick_Init();
 	DS18B20_Init();	
@@ -85,7 +85,6 @@ __s32 main(void)
 
 	//uart1_init();
 	//uart1_printf("uart1 ready\n");
-	
 	//int uart4_printf(const char *format, ...);
 	//uart4_init();
 	//uart4_printf("uart4 ready\n");
