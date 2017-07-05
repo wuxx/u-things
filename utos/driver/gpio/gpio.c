@@ -39,7 +39,7 @@ __u32 gpio_read(__u32 group, __u32 index)
 	return  GPIO_ReadInputDataBit(GPIO_ADDR(group), 0x1 << index);
 }
 
-__s32 gpio_init(__u32 group, __u32 index)
+__s32 gpio_init(__u32 group, __u32 index, __u32 mode)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -56,7 +56,7 @@ __s32 gpio_init(__u32 group, __u32 index)
 
 	GPIO_InitStructure.GPIO_Pin = (0x1 << index);
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;	/* ¿ªÂ©Êä³ö */
+	GPIO_InitStructure.GPIO_Mode = mode /* GPIO_Mode_Out_PP */;
 	GPIO_Init(GPIO_ADDR(group), &GPIO_InitStructure);
 	return 0;
 }

@@ -52,7 +52,7 @@ __s32 main(void)
 	__u32 free_flash_base, free_sram_base;
 
 	/* PB0: the LED */
-	gpio_init(GROUPB, 0);
+	gpio_init(GROUPB, 0, GPIO_Mode_Out_PP);
 	gpio_write(GROUPB, 0, 0);
 
     //USART_Config(); /* uart1 */
@@ -134,11 +134,12 @@ __s32 main(void)
 			g_flag = i2c_sda_read();
 
 			PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
-			gpio_init(GROUPA, 0x1);
+			gpio_init(GROUPA, 0x1, GPIO_Mode_Out_PP);
 			gpio_read(GROUPA, 0x1);
 			gpio_write(GROUPA, 0x1, 0x1);
 			extern __u32 hcsr04();
-			hcsr04();
+			void hcsr04_main();
+			hcsr04_main();
 			mdelay(1000);
 		}
 

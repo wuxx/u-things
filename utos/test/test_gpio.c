@@ -22,11 +22,11 @@ __s32 test_gpio_all()
 			gpio_index = atoi(argv[4]);
 			bit        = atoi(argv[5]);
 			PRINT_EMG("group: %d; index: %d; bit: %d\n", gpio_group, gpio_index, bit);
-			gpio_init (gpio_group, gpio_index);
+			gpio_init (gpio_group, gpio_index, GPIO_Mode_Out_PP);
 			gpio_write(gpio_group, gpio_index, bit);
 			break;
 		case (1):
-			gpio_init(0xB, 0x9);
+			gpio_init(0xB, 0x9, GPIO_Mode_Out_PP);
 			tick = atoi(argv[3]);
 			PRINT_EMG("tick: %d\n", tick);
 

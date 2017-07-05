@@ -16,6 +16,6 @@ enum GPIO_GROUP
 
 __s32 gpio_write(__u32 group, __u32 index, __u32 bit);
 __u32 gpio_read(__u32 group, __u32 index);
-__s32 gpio_init(__u32 group, __u32 index);
+__s32 gpio_init(__u32 group, __u32 index, __u32 mode);
 
 #endif /* __GPIO_H__ */
