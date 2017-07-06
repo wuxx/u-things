@@ -300,7 +300,7 @@ void ESP8266_Rst ( void )
 
 #else
     macESP8266_RST_LOW_LEVEL();
-    Delay_ms ( 500 ); 
+    mdelay( 500 ); 
     macESP8266_RST_HIGH_LEVEL();
 
 #endif
@@ -327,7 +327,7 @@ uint8_t ESP8266_Cmd ( char * cmd, char * reply1, char * reply2, u32 waittime )
     if ( ( reply1 == 0 ) && ( reply2 == 0 ) )                      //不需要接收数据
         return true;
 
-    Delay_ms ( waittime );                 //延时
+    mdelay( waittime );                 //延时
 
     strEsp8266_Fram_Record .Data_RX_BUF [ strEsp8266_Fram_Record .InfBit .FramLength ]  = '\0';
 
@@ -367,7 +367,7 @@ void ESP8266_AT_Test ( void )
     char count=0;
 
     macESP8266_RST_HIGH_LEVEL();
-    Delay_ms ( 1000 );
+    mdelay ( 1000 );
     while ( count < 10 )
     {
         if( ESP8266_Cmd ( "AT", "OK", NULL, 500 ) ) return;
