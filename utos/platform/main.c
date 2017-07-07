@@ -50,6 +50,8 @@ int g_flag = 0xf00dbeef;
 __s32 main(void)
 {
 	__u32 free_flash_base, free_sram_base;
+	__u32 i, len;
+	__u8 buf[200] = {0};
 
 	/* PB0: the LED */
 	gpio_init(GROUPB, 0, GPIO_Mode_Out_PP);
@@ -74,11 +76,11 @@ __s32 main(void)
     PRINT_EMG("free flash memory [0x%X, 0x%X]\n", free_flash_base, FLASH_BASE + FLASH_SIZE);
     PRINT_EMG("free sram  memory [0x%X, 0x%X]\n", free_sram_base,  SRAM_BASE  + SRAM_SIZE);
 
-#if CONFIG_USB
+#if defined(CONFIG_USB)
 	USB_Config();
 #endif	
 
-#if CONFIG_ESP8266
+#if defined(CONFIG_ESP8266)
 		ESP8266_Init();
 		ESP8266_StaTcpClient_UnvarnishTest();
 #endif

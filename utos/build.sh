@@ -9,12 +9,14 @@ help() {
 #default build config
 export cflags=""
 
-echo $REVISION
-
 while [ ! -z "$1" ]; do
     case "$1" in
         "--debug")
-            export cflags="-DDEBUG"
+            export cflags="${cflags} -DDEBUG"
+            shift
+            ;;
+        -D*)
+            export cflags="${cflags} $1"
             shift
             ;;
         "--help")
@@ -33,8 +35,9 @@ done
 
 export cflags="${cflags}"
 
-echo "cflags=$cflag"
+echo "cflags=${cflags}"
 
+make clean
 make -j $(nproc)
 
 if [ $? -eq 0 ]; then
@@ -43,6 +46,6 @@ else
     echo -e "\033[31mbuild failed!\033[0"
 fi
 
-./tools/build_symbol_table -i ./output/utos.map -o ./output/symbol_table.bin
+#./tools/build_symbol_table -i ./output/utos.map -o ./output/symbol_table.bin
 #cat output/utos.bin ./output/symbol_table.bin > output/utos.img
 
