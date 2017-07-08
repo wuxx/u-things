@@ -1,3 +1,9 @@
 *.o
+*.d
+*.crf
+*.hex
+*.axf
+*.map
+*.lst
 *.su
 utos/output/*
