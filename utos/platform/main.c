@@ -142,6 +142,7 @@ __s32 main(void)
 			extern __u32 hcsr04();
 			void hcsr04_main();
 			hcsr04_main();
+			dht11_main();
 			mdelay(1000);
 		}
 
