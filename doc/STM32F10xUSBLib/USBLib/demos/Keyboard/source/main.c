@@ -42,28 +42,34 @@ void __keyboard_send(u8 *Buffer)
 		UserToPMABufferCopy(Buffer, GetEPTxAddr(ENDP1), 8);
 		/* enable endpoint for transmission */
 		SetEPTxValid(ENDP1);
+		Delay(1000000);
 }
 
-u8 Buffer1[8] = {0, 0, 0x51, 0, 0, 0, 0, 0}; //Keyboard DownArrow
-u8 Buffer_Win[8] = {0x8, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Win
-u8 Buffer3[8]    = {0x8, 0, 0x15, 0, 0, 0, 0, 0}; //Keyboard R
+u8 Buffer_Shift[8]   = {0x2, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Shift
+u8 Buffer_Win[8]     = {0x8, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Win
+u8 Buffer_Win_R[8]   = {0x8, 0, 0x15, 0, 0, 0, 0, 0}; //Keyboard R
+u8 buffer_release[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
+#if 0
 u8 buffer_c[8] = {0, 0, 0x06, 0, 0, 0, 0, 0}; //Keyboard c
 u8 buffer_m[8] = {0, 0, 0x10, 0, 0, 0, 0, 0}; //Keyboard m
 u8 buffer_d[8] = {0, 0, 0x07, 0, 0, 0, 0, 0}; //Keyboard d
 
 u8 buffer_enter[8] = {0, 0, 0x28, 0, 0, 0, 0, 0}; //Keyboard d
-
-u8 buffer_release[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+#endif
 
 int keyboard_send_ascii(u8 c)
 {
-	int offset;
+	u8 capital = 0;
 	u8 hid_code;
 	u8 buffer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 	
 	if (c >= 'a' && c <= 'z') {
 		hid_code = 0x04 + (c - 'a');
+	} else if (c >= 'A' && c <= 'Z') {
+		buffer[0] = 0x2;
+		hid_code = 0x04 + (c - 'A');
+		capital = 1;
 	} else if (c >= '0' && c <= '9') {
 		if (c == '0') {
 			hid_code = 0x27;
@@ -71,14 +77,53 @@ int keyboard_send_ascii(u8 c)
 			hid_code = 0x1E + (c - '1');
 		}	
 	} else {
-		return -1;
+			
+		switch (c) {
+			case (':'): /* ':' = capital(';') */
+				hid_code = 0x33;
+				capital = 1;
+				break;			
+			case (' '):
+				hid_code = 0x2C;
+				break;
+			case ('='):
+				hid_code = 0x2E;
+				break;			
+			case ('/'):
+				hid_code = 0x38;
+				break;			
+			case ('\n'):
+				hid_code = 0x28;
+				break;
+			default:
+				return -1;
+		}
 	}
 	buffer[2] = hid_code;
+	if (capital) {
+		__keyboard_send(Buffer_Shift);
+	}
 	__keyboard_send(buffer);
+	
+	if (capital) {
+		__keyboard_send(Buffer_Shift);
+	}
+	
 	__keyboard_send(buffer_release);
 	return 0;
 }
 
+
+int keyboard_send_string(char *s)
+{
+	int i;
+	
+	for(i = 0; s[i] != '\0'; i++) {
+			keyboard_send_ascii(s[i]);
+	}
+	
+	return 0;
+}
 int main(void)
 {
 #ifdef DEBUG
@@ -98,37 +143,40 @@ int main(void)
   while (1)
   {
     Delay(10000);
-		//Joystick_Send(LEFT);
 		__keyboard_send(Buffer_Win);
-		Delay(1000000);
-		__keyboard_send(Buffer3);
-		Delay(1000000);
+
+		__keyboard_send(Buffer_Win_R);
+
 		__keyboard_send(Buffer_Win);
-		Delay(1000000);		
+
 		__keyboard_send(buffer_release);
-		Delay(1000000);
+		
+		//keyboard_send_string("cmd\n\n");
+		//keyboard_send_string("CMD\n\n");
+		//keyboard_send_string("cmd.exe /T:01 /K mode CON: COLS=16 LINES=1");
+		
+#if 0
 		__keyboard_send(buffer_c);
-		Delay(1000000);
+
 		__keyboard_send(buffer_release);
-		Delay(1000000);
+
 		__keyboard_send(buffer_m);
-		Delay(1000000);
+
 		__keyboard_send(buffer_release);
-		Delay(1000000);
+
 		__keyboard_send(buffer_d);
-		Delay(1000000);
+
 		__keyboard_send(buffer_release);
-		Delay(1000000);
+
 
 		__keyboard_send(buffer_enter);
-		Delay(1000000);
-		__keyboard_send(buffer_release);
-		Delay(1000000);
-		__keyboard_send(buffer_enter);
-		Delay(1000000);
-		__keyboard_send(buffer_release);
-		Delay(1000000);
 
+		__keyboard_send(buffer_release);
+
+		__keyboard_send(buffer_enter);
+
+		__keyboard_send(buffer_release);
+#endif
 		//Delay(10000);
 		//keyboard_send_ascii('c');
 		//Delay(10000);
