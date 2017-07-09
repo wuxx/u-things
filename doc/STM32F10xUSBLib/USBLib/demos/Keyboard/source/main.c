@@ -35,13 +35,8 @@ void Delay(vu32 nCount);
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void keyboard_send()
+void __keyboard_send(u8 *Buffer)
 {
-		u8 Buffer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-		u8 i;
-		i=2;
-
-		Buffer[i]=0x51; //Keyboard DownArrow
 
 		/*copy mouse position info in ENDP1 Tx Packet Memory Area*/
 		UserToPMABufferCopy(Buffer, GetEPTxAddr(ENDP1), 8);
@@ -49,9 +44,43 @@ void keyboard_send()
 		SetEPTxValid(ENDP1);
 }
 
+u8 Buffer1[8] = {0, 0, 0x51, 0, 0, 0, 0, 0}; //Keyboard DownArrow
+u8 Buffer_Win[8] = {0x8, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Win
+u8 Buffer3[8]    = {0x8, 0, 0x15, 0, 0, 0, 0, 0}; //Keyboard R
+
+u8 buffer_c[8] = {0, 0, 0x06, 0, 0, 0, 0, 0}; //Keyboard c
+u8 buffer_m[8] = {0, 0, 0x10, 0, 0, 0, 0, 0}; //Keyboard m
+u8 buffer_d[8] = {0, 0, 0x07, 0, 0, 0, 0, 0}; //Keyboard d
+
+u8 buffer_enter[8] = {0, 0, 0x28, 0, 0, 0, 0, 0}; //Keyboard d
+
+u8 buffer_release[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+int keyboard_send_ascii(u8 c)
+{
+	int offset;
+	u8 hid_code;
+	u8 buffer[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	
+	if (c >= 'a' && c <= 'z') {
+		hid_code = 0x04 + (c - 'a');
+	} else if (c >= '0' && c <= '9') {
+		if (c == '0') {
+			hid_code = 0x27;
+		} else {
+			hid_code = 0x1E + (c - '1');
+		}	
+	} else {
+		return -1;
+	}
+	buffer[2] = hid_code;
+	__keyboard_send(buffer);
+	__keyboard_send(buffer_release);
+	return 0;
+}
+
 int main(void)
 {
-  
 #ifdef DEBUG
   debug();
 #endif
@@ -63,12 +92,50 @@ int main(void)
   Set_USBClock();
 
   USB_Init();
-
+	
+  Delay(10000000);
+	
   while (1)
   {
     Delay(10000);
 		//Joystick_Send(LEFT);
-		keyboard_send();
+		__keyboard_send(Buffer_Win);
+		Delay(1000000);
+		__keyboard_send(Buffer3);
+		Delay(1000000);
+		__keyboard_send(Buffer_Win);
+		Delay(1000000);		
+		__keyboard_send(buffer_release);
+		Delay(1000000);
+		__keyboard_send(buffer_c);
+		Delay(1000000);
+		__keyboard_send(buffer_release);
+		Delay(1000000);
+		__keyboard_send(buffer_m);
+		Delay(1000000);
+		__keyboard_send(buffer_release);
+		Delay(1000000);
+		__keyboard_send(buffer_d);
+		Delay(1000000);
+		__keyboard_send(buffer_release);
+		Delay(1000000);
+
+		__keyboard_send(buffer_enter);
+		Delay(1000000);
+		__keyboard_send(buffer_release);
+		Delay(1000000);
+		__keyboard_send(buffer_enter);
+		Delay(1000000);
+		__keyboard_send(buffer_release);
+		Delay(1000000);
+
+		//Delay(10000);
+		//keyboard_send_ascii('c');
+		//Delay(10000);
+		//keyboard_send_ascii('m');
+		//Delay(10000);
+		//keyboard_send_ascii('d');
+
 #if 0
     if (JoyState() != 0)
     {
