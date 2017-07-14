@@ -1,0 +1,25 @@
+
+u-things version 0.1 硬件设计
+
+需求R1: 应该包含的电路模块
+1. 电源电路
+2. 复位电路
+3. 晶振电路
+4. 电源电路
+5. USB转串口
+6. ISP下载电路 	(软件系统的下载和USB转串口的使用都使用了内部的USART1进行数据传输)
+7. USB模块		(USB中的5V VBUS同时作为电源供电)
+8. WIFI ESP8266电路 (若过于复杂，可暂时不上)
+
+需求R2:
+整个PCB能否做成U盘大小 并且最终能够装入普通的U盘外壳 ? (STM32F103VET6 
+能否换一种更小型的封装，(但也要考虑方便手工焊接))
+
+需求R3:
+引出一定的GPIO管脚用于和外部传感器连接 (外部传感器考虑统一接口和u-things 
+对接，考虑能否使用 Micro USB 接口(即一般android手机上的USB充电口)，VBUS GND ID 
+D+ D- 可提供5根管脚) Micro USB - Micro USB
+1. I2C 需要 VCC GND SCL SDA 
+共四根管脚，考虑使用通用GPIO模拟，控制更方便，而不用STM32的硬件I2C
+2. SPI 需要 VCC GND CS CLK MISO MOSI 共六根管脚，需要考虑解决方法 (CS 
+是否可以恒为1或者0? 若可以则可以考虑和VCC 或 GND 直连)
