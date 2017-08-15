@@ -68,7 +68,7 @@ PRIVATE static __s32 get_cmd_index(char *cmd)
 
 PUBLIC __s32 systest(__u32 argc, char **argv)
 {
-    __u32 i;
+    __s32 i;
     __s32 ret;
 
     if ((i = get_cmd_index(argv[1])) == -1) {
