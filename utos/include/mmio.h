@@ -3,8 +3,8 @@
 
 #include <types.h>
 
-#define readb(addr)  (*((__u8*)addr))
-#define writeb(addr, data) (*((volatile __u8*)addr) = data)
+#define readb(addr)  (*((__u8*)(addr)))
+#define writeb(addr, data) (*((volatile __u8*)(addr)) = data)
 
 #define get_bit(x, bit_index) ((x >> bit_index) & 0x1)
 

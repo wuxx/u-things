@@ -124,7 +124,7 @@ __s32 flash_write(__u32 addr, void *buf, __u32 size)
 
 	page_start = PAGE_OFFSET(addr) == 0 ? addr : addr + (FLASH_PAGE_SIZE - PAGE_OFFSET(addr));
 	page_num   = (PAGE_BASE(addr + size) - page_start) / FLASH_PAGE_SIZE;
-	wpage  = (__u32 *)((__u32)buf + FLASH_PAGE_SIZE - PAGE_OFFSET(addr));
+    wpage  = PAGE_OFFSET(addr) == 0 ? (__u32 *)(buf) : (__u32 *)((__u32)buf + FLASH_PAGE_SIZE - PAGE_OFFSET(addr));
 	/* body */
 	for(x = 0; x < page_num; x++) {
 		/* erase */
