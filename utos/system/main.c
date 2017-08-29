@@ -118,6 +118,7 @@ int main (void)
 		mdelay(1000);
 		gpio_write(GROUPB, 1, 1);
 		mdelay(1000);
+		uart_puts("test\r\n");
 	}
 	
 #if 0	
