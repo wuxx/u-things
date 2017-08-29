@@ -30,6 +30,7 @@ uint32_t ram_load_base, ram_image_base, ram_image_size;
 
 char sys_banner[] = {"xxxx system buildtime [" __TIME__ " " __DATE__ "] " "rev " XXXX_REV};
 
+#if 0
 void thread_main(void const *argument);
 	
 osThreadId main_thread_id;
@@ -60,6 +61,8 @@ void thread_blink(void const *argument)
 		osDelay(1000);
 	}
 }
+
+#endif
 
 /*
  * main: initialize and start the system
