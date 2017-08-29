@@ -1,7 +1,7 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
-#include <libc.h>
+#include "stm32f10x.h"
 
 enum GPIO_GROUP
 {
@@ -14,8 +14,8 @@ enum GPIO_GROUP
 	GROUPG = 0xF + 1,
 };
 
-__s32 gpio_write(__u32 group, __u32 index, __u32 bit);
-__u32 gpio_read(__u32 group, __u32 index);
-__s32 gpio_init(__u32 group, __u32 index, __u32 mode);
+int32_t gpio_write(uint32_t group, uint32_t index, uint32_t bit);
+int32_t gpio_read(uint32_t group, uint32_t index);
+int32_t gpio_init(uint32_t group, uint32_t index, uint32_t mode);
 
 #endif /* __GPIO_H__ */

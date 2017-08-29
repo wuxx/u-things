@@ -1,45 +1,45 @@
-#include <libc.h>
+#include <stdlib.h>
 #include "log.h"
 #include "gpio.h"
-#include "systick.h"
+#include "timer.h"
 #include "systest.h"
 
-__s32 test_gpio_all()
+int32_t test_gpio_all()
 {
-	__u32 index, tick;
-	__u32 gpio_group, gpio_index;
-	__u32 bit;
+	uint32_t index, tick;
+	uint32_t gpio_group, gpio_index;
+	uint32_t bit;
 	
 
 	PRINT_EMG("enter %s-%d \n", __func__, __LINE__);
 
-	index = atoi(argv[2]);
+	index = strtol(argv[2], NULL, 0);
 	PRINT_EMG("index: %d\n", index);
 
 	switch (index) {
 		case (0):
-			gpio_group = atoi(argv[3]);
-			gpio_index = atoi(argv[4]);
-			bit        = atoi(argv[5]);
+			gpio_group = strtol(argv[3], NULL, 0);
+			gpio_index = strtol(argv[4], NULL, 0);
+			bit        = strtol(argv[5], NULL, 0);
 			PRINT_EMG("group: %d; index: %d; bit: %d\n", gpio_group, gpio_index, bit);
 			gpio_init (gpio_group, gpio_index, GPIO_Mode_Out_PP);
 			gpio_write(gpio_group, gpio_index, bit);
 			break;
 		case (1):
 			gpio_init(0xB, 0x9, GPIO_Mode_Out_PP);
-			tick = atoi(argv[3]);
+			tick = strtol(argv[3], NULL, 0);
 			PRINT_EMG("tick: %d\n", tick);
 
 			while(1) {
 				gpio_write(0xB, 0x9, 0);
-				udelay(tick);
+				mdelay(tick);
 				gpio_write(0xB, 0x9, 1);
-				udelay(tick);
+				mdelay(tick);
 			}
 			break;
 		case (10):
-			gpio_group = atoi(argv[3]);
-			gpio_index = atoi(argv[4]);
+			gpio_group = strtol(argv[3], NULL, 0);
+			gpio_index = strtol(argv[4], NULL, 0);
 			PRINT_EMG("group: %d; index: %d;\n", gpio_group, gpio_index);
 			bit = gpio_read(gpio_group, gpio_index);
 			PRINT_EMG("read bit %d\n", bit);

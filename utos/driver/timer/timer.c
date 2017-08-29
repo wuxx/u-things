@@ -1,29 +1,28 @@
-#include <libc.h>
 
 #include "timer.h"
 
 /* 1ms counter */
-volatile __u64 time = 0;
+volatile uint64_t time = 0;
 
 #if 0
-void udelay(__u32 tick)
+void udelay(uint32_t tick)
 {
-    volatile __u32 t, i, x;
+    volatile uint32_t t, i, x;
 
 	for(t = 0; t < tick; t++) {
 		for(i = 0; i < 1; i++) {
 
 			for(x = 0; x < 10; x++) {
-				asm volatile ("nop");
+				__asm volatile ("nop");
 			}
 		}
 	}
 }
 #endif
-#if 0
-void mdelay(__u32 tick)
+
+void mdelay(uint32_t tick)
 {
-    __u32 old_time = time;
+    uint64_t old_time = time;
 
     tick = tick <= 1000000 ? tick : 1000000;
 
@@ -34,7 +33,7 @@ void mdelay(__u32 tick)
     }
 
 }
-#endif
+
 // 中断优先级配置
 static void ADVANCE_TIM_NVIC_Config(void)
 {
@@ -102,7 +101,7 @@ void  ADVANCE_TIM_IRQHandler (void)
     }           
 }
 
-__u64 get_time()
+uint64_t get_time()
 {
 	return time;
 }

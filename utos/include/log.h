@@ -1,10 +1,11 @@
 #ifndef __LOG_H__
 #define __LOG_H__
-#include  <libc.h>
 
-#define FORMAT_BUF_SIZE 200
+#include "stm32f10x.h"
+#include <stdio.h>
+
 enum LOG_LEVEL_E {
-    LOG_EMG = 0,
+    LOG_EMG = 1,
     LOG_ERR,
     LOG_WARN,
     LOG_INFO,
@@ -12,19 +13,17 @@ enum LOG_LEVEL_E {
     LOG_MAX,
 };
 
-__s32 set_log_level(__u32 log_level);
-__s32 log(__u32 log_level, const char *format, ...);
-__s32 dump_log();
+extern uint32_t default_log_level;
 
-#define PRINT_EMG(fmt, ...)     log(LOG_EMG,   fmt, ##__VA_ARGS__)
-#define PRINT_ERR(fmt, ...)     log(LOG_ERR,   fmt, ##__VA_ARGS__)
-#define PRINT_WARN(fmt, ...)    log(LOG_WARN,  fmt, ##__VA_ARGS__)
-#define PRINT_INFO(fmt, ...)    log(LOG_INFO,  fmt, ##__VA_ARGS__)
-#define PRINT_DEBUG(fmt, ...)   log(LOG_DEBUG, fmt, ##__VA_ARGS__)
+uint32_t set_log_level(uint32_t log_level);
+
+#define PRINT_EMG(fmt, ...)     do { if ( default_log_level >= LOG_EMG   ) { printf(fmt, ##__VA_ARGS__); } } while (0)
+#define PRINT_ERR(fmt, ...)     do { if ( default_log_level >= LOG_ERR   ) { printf(fmt, ##__VA_ARGS__); } } while (0)
+#define PRINT_WARN(fmt, ...)    do { if ( default_log_level >= LOG_WARN  ) { printf(fmt, ##__VA_ARGS__); } } while (0)
+#define PRINT_INFO(fmt, ...)    do { if ( default_log_level >= LOG_INFO  ) { printf(fmt, ##__VA_ARGS__); } } while (0)
+#define PRINT_DEBUG(fmt, ...)   do { if ( default_log_level >= LOG_DEBUG ) { printf(fmt, ##__VA_ARGS__); } } while (0)
 
 #define PRINT_STAMP()           PRINT_EMG("%s:%s:%d\n", __FILE__, __func__, __LINE__)
-#define SHOW_VAR(var)           PRINT_EMG(#var"\t 0x%x\n", var)
-
-#define DUMP_VAR(v) PRINT_EMG(#v": 0x%X\n", v)
+#define DUMP_VAR4(var)          PRINT_EMG(#var":\t 0x%08x\n", var)
 
 #endif /* __LOG_H__ */

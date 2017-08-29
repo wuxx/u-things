@@ -1,11 +1,9 @@
-#include "stm32f10x.h"
-#include "libc.h"
-#include "log.h"
 #include "gpio.h"
+#include "log.h"
 
 #define GPIO_ADDR(group) ((GPIO_TypeDef *)(GPIOA_BASE + 0x400 * (group - GROUPA)))
 
-__s32 gpio_write(__u32 group, __u32 index, __u32 bit)
+int32_t gpio_write(uint32_t group, uint32_t index, uint32_t bit)
 {
 	if (group < GROUPA && group > GROUPG) {
 		PRINT_EMG("invalid group 0x%x\n", group);
@@ -25,7 +23,7 @@ __s32 gpio_write(__u32 group, __u32 index, __u32 bit)
 	return 0;
 }
 
-__u32 gpio_read(__u32 group, __u32 index)
+int32_t gpio_read(uint32_t group, uint32_t index)
 {
 	if (group < GROUPA && group > GROUPG) {
 		PRINT_EMG("invalid group 0x%x\n", group);
@@ -39,7 +37,7 @@ __u32 gpio_read(__u32 group, __u32 index)
 	return  GPIO_ReadInputDataBit(GPIO_ADDR(group), 0x1 << index);
 }
 
-__s32 gpio_init(__u32 group, __u32 index, __u32 mode)
+int32_t gpio_init(uint32_t group, uint32_t index, uint32_t mode)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -52,11 +50,11 @@ __s32 gpio_init(__u32 group, __u32 index, __u32 mode)
 		return -1;
 	}
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA << (group - GROUPA), ENABLE);	/* ´ò¿ªGPIOÊ±ÖÓ */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA << (group - GROUPA), ENABLE);	/* ??GPIO?? */
 
 	GPIO_InitStructure.GPIO_Pin = (0x1 << index);
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = mode /* GPIO_Mode_Out_PP */;
+	GPIO_InitStructure.GPIO_Mode = (GPIOMode_TypeDef)mode /* GPIO_Mode_Out_PP */;
 	GPIO_Init(GPIO_ADDR(group), &GPIO_InitStructure);
 	return 0;
 }

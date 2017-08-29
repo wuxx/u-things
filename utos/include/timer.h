@@ -1,6 +1,5 @@
 #ifndef __TIMER_H__
 #define __TIMER_H__
-#include <libc.h>
 #include "stm32f10x.h"
 
 #define ADVANCE_TIM                   TIM1
@@ -11,7 +10,8 @@
 #define ADVANCE_TIM_IRQ               TIM1_UP_IRQn
 #define ADVANCE_TIM_IRQHandler        TIM1_UP_IRQHandler
 
-void  timer_init();
-__u64 get_time();
+void  timer_init(void);
+void mdelay(uint32_t tick);
+uint64_t get_time(void);
 
 #endif /* __TIMER_H__ */
