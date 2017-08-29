@@ -117,12 +117,14 @@ int main (void)
 	gpio_write(GROUPB, 1, 0);
 
 	while(1) {
-		gpio_write(GROUPB, 1, 0);
+		//gpio_write(GROUPB, 1, 0);
 		mdelay(1000);
-		gpio_write(GROUPB, 1, 1);
+		//gpio_write(GROUPB, 1, 1);
 		mdelay(1000);
-		uart_puts("test\r\n");
+		//uart_puts("test\r\n");
 	}
+	
+	shell_init();
 	
 #if 0	
 	osKernelInitialize ();                    // initialize CMSIS-RTOS

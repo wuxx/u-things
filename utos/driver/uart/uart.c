@@ -8,7 +8,7 @@
 
 extern osMailQId  shell_mailbox_id;
 
-int uart_work_mode = TSHELL_MODE;
+int uart_work_mode = ISHELL_MODE;
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC
