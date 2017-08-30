@@ -36,7 +36,7 @@ int main (void)
 	timer_init();
 	
 	/* ·¢ËÍÒ»¸ö×Ö·û´® */
-	PRINT_EMG("%s\n", sys_banner);
+	PRINT_EMG("\n%s\n", sys_banner);
 
 	flash_load_base  = (uint32_t)&Load$$ER_IROM1$$Base;
 	flash_image_base = (uint32_t)&Image$$ER_IROM1$$Base;
@@ -73,12 +73,31 @@ int main (void)
 
 	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
 	gpio_write(GROUPB, 1, 0);
+	
 	USB_Config();
 	
+#if 0	
 	while(1) {
 		gpio_write(GROUPB, 1, 0);
 		mdelay(1000);
 		gpio_write(GROUPB, 1, 1);
 		mdelay(1000);
+	}
+#endif
+	
+	{
+		uint32_t i, len;
+		uint8_t buf[200] = {0};
+		
+		while (1) {
+				len = USB_RxRead(buf, sizeof(buf));
+								for(i = 0; i < len; i++) {
+										PRINT_EMG("read [0x%x][%c]\n", buf[i], buf[i]);
+								}
+				if (len > 0)
+				{
+						USB_TxWrite(buf, len);
+				}
+		}	
 	}
 }
