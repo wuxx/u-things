@@ -1,4 +1,3 @@
-#include <libc.h>
 #include "timer.h"
 
 #include "log.h"
@@ -21,17 +20,17 @@ extern uint8_t ee_ReadByte(uint8_t device_addr, uint16_t _usAddress);
 
 void i2c_Start(void);
 void i2c_Stop(void);
-void i2c_SendByte(__u8 _ucByte);
-__u8 i2c_ReadByte(void);
-__u8 i2c_WaitAck(void);
+void i2c_SendByte(uint8_t _ucByte);
+uint8_t i2c_ReadByte(void);
+uint8_t i2c_WaitAck(void);
 void i2c_Ack(void);
 void i2c_NAck(void);
-__u8 i2c_CheckDevice(__u8 _Address);
+uint8_t i2c_CheckDevice(uint8_t _Address);
 
 
-__u8 i2c_checkdevice(__u8 _Address)
+uint8_t i2c_checkdevice(uint8_t _Address)
 {
-	__u8 ucAck;
+	uint8_t ucAck;
 	void i2c_CfgGpio(void);
 
 	i2c_CfgGpio();		/* ≈‰÷√GPIO */
@@ -48,9 +47,9 @@ __u8 i2c_checkdevice(__u8 _Address)
 	return ucAck;
 }
 
-__u8 i2c_read(__u8 device_addr, __u8 reg_addr)
+uint8_t i2c_read(uint8_t device_addr, uint8_t reg_addr)
 {
-	__u8 data;
+	uint8_t data;
 
 	i2c_Start();
 	
@@ -90,7 +89,7 @@ cmd_fail:
 
 }
 
-__u8 i2c_write(__u8 device_addr, __u8 addr, __u8 data)
+uint8_t i2c_write(uint8_t device_addr, uint8_t addr, uint8_t data)
 {
 
     i2c_Start();
@@ -128,7 +127,7 @@ cmd_fail:
 
 }
 
-__u32 i2c_am2321_dump()
+uint32_t i2c_am2321_dump()
 {
 	/* step 1. wakeup am2321 */
 	i2c_Start();
@@ -180,9 +179,9 @@ cmd_fail:
 
 }
 
-__u32 i2c_test()
+uint32_t i2c_test()
 {
-	__u8 data;
+	uint8_t data;
 	
 	/* EEPROM */
 	if (i2c_checkdevice(0xA0) == 0)
@@ -249,9 +248,9 @@ __u32 i2c_test()
 		i2c_Stop();
 		i2c_read(0xEE, 0xAA);
 		{
-			__u16 AC1, AC2, AC3, AC4, AC5, AC6;
-			__u16 B1, B2;
-			__u16 MB, MC, MD;
+			uint16_t AC1, AC2, AC3, AC4, AC5, AC6;
+			uint16_t B1, B2;
+			uint16_t MB, MC, MD;
 			
 			mdelay(500);
 			
