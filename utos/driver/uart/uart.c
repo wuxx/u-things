@@ -6,8 +6,6 @@
 #include "shell.h"
 #include "log.h"
 
-extern osMailQId  shell_mailbox_id;
-
 int uart_work_mode = ISHELL_MODE;
 
  /**
@@ -177,15 +175,6 @@ void DEBUG_USART_IRQHandler(void)
 
 						break;
 					case (TSHELL_MODE):
-						cmd = osMailAlloc(shell_mailbox_id, 0);
-						if (cmd != NULL) {
-							memcpy(cmd, uart_recv_buf, uart_recv_buf_index + 1);
-							if (osMailPut(shell_mailbox_id, cmd) != osOK) {
-								uart_puts("osMailPut fail!\n");
-							}
-						} else {
-							uart_puts("osMailAlloc fail!\n");
-						}
 						break;
 					default:
 						break;

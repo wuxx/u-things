@@ -2,9 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define osObjectsPublic                     // define objects in main module
-#include "osObjects.h"                      // RTOS object definitions
-
 #include "common.h"
 #include "mmio.h"
 #include "uart.h"
@@ -25,14 +22,6 @@ static int32_t cmd_exec(void);
 static int32_t cmd_dump(void);
 static int32_t cmd_systest(void);
 static int32_t cmd_help(void);
-
-osMailQId  shell_mailbox_id;
-osMailQDef(shell_mailbox_id, 2, UART_IO_SIZE);
-
-void thread_shell(void const *argument);
-osThreadId shell_thread_id;
-osThreadDef(thread_shell, osPriorityNormal, 1, 0);  
-
 
 struct shell_cmd_info ci[] = {
     {"r",       cmd_read,    "r     [addr]              read    any addr"},
@@ -207,34 +196,3 @@ exit:
     return ret;
 }
 
-void thread_shell(void const *argument)
-{
-	char *mail;
-	char *cmd;
-	
-	osEvent event;
-	PRINT_EMG("in %s %d \n", __func__, __LINE__);
-	uart_puts("thread_shell !\n");
-
-	while (1) {
-		event = osMailGet(shell_mailbox_id, osWaitForever);		
-		if (event.status == osEventMail) {
-			mail = (char *)(event.value.p);
-			cmd  = mail;
-			PRINT_DEBUG("execute [%s]\n", cmd);
-			shell(cmd);
-			osMailFree(shell_mailbox_id, mail);
-		}
-	}	
-}
-
-void shell_init()
-{
-	
-	shell_mailbox_id = osMailCreate(osMailQ(shell_mailbox_id), NULL);
-	ASSERT(shell_mailbox_id != NULL);
-	
-	shell_thread_id = osThreadCreate(osThread(thread_shell),  NULL);
-	ASSERT(shell_thread_id != NULL);
-
-}
