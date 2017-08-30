@@ -6,7 +6,7 @@
 #include "shell.h"
 #include "log.h"
 
-int uart_work_mode = ISHELL_MODE;
+int uart_work_mode = TSHELL_MODE;
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC
@@ -171,9 +171,11 @@ void DEBUG_USART_IRQHandler(void)
 				switch (uart_work_mode) {
 					case (ISHELL_MODE):
 						shell(uart_recv_buf);
-
 						break;
 					case (TSHELL_MODE):
+						if (shell_cmd == NULL) {
+							shell_cmd = uart_recv_buf;
+						}
 						break;
 					default:
 						break;

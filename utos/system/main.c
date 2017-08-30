@@ -4,11 +4,14 @@
 #include <stdio.h>
 #include "config.h"
 #include "common.h"
+#include "mmio.h"
 #include "uart.h"
 #include "shell.h"
 #include "log.h"
 #include "gpio.h"
 #include "timer.h"
+#include "systick.h"
+
 #include "hw_config.h"
 
 extern unsigned char  Load$$ER_IROM1$$Base;
@@ -27,6 +30,12 @@ uint32_t ram_load_base, ram_image_base, ram_image_size;
 
 char sys_banner[] = {"utos system buildtime [" __TIME__ " " __DATE__ "] " "rev " XXXX_REV};
 
+void print_chipid()
+{
+	PRINT_EMG("chipid: %X%X%X\n",
+					 __REV(readl(0X1FFFF7E8)), __REV(readl(0X1FFFF7EC)), __REV(readl(0X1FFFF7F0)));
+}
+
 /*
  * main: initialize and start the system
  */
@@ -34,10 +43,12 @@ int main (void)
 {
 	uart_init();
 	timer_init();
+	SysTick_Init();
 	
 	/* ·¢ËÍÒ»¸ö×Ö·û´® */
 	PRINT_EMG("\n%s\n", sys_banner);
-
+	print_chipid();
+	
 	flash_load_base  = (uint32_t)&Load$$ER_IROM1$$Base;
 	flash_image_base = (uint32_t)&Image$$ER_IROM1$$Base;
 	flash_image_size = (uint32_t)&Image$$ER_IROM1$$Length;
@@ -91,9 +102,14 @@ int main (void)
 		uint8_t buf[200] = {0};
 		
 		while (1) {
+				if (shell_cmd != NULL) {
+					shell((char *)shell_cmd);
+					shell_cmd = NULL;				
+				}
+				
 				len = USB_RxRead(buf, sizeof(buf));
 								for(i = 0; i < len; i++) {
-										PRINT_EMG("read [0x%x][%c]\n", buf[i], buf[i]);
+										PRINT_EMG("usb read [0x%x][%c]\n", buf[i], buf[i]);
 								}
 				if (len > 0)
 				{
