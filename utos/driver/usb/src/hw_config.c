@@ -173,6 +173,7 @@ void USB_Interrupts_Config(void)
 *******************************************************************************/
 void USB_Cable_Config (FunctionalState NewState)
 {
+#if 0
 /*
   if (NewState == DISABLE)
   {
@@ -200,7 +201,7 @@ void USB_Cable_Config (FunctionalState NewState)
   {
     GPIO_SetBits(GPIOD, GPIO_Pin_6);	//??USB
   }	
-	
+#endif
 }
 
 /*******************************************************************************

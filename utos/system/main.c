@@ -43,8 +43,8 @@ int main (void)
 	flash_image_size = (uint32_t)&Image$$ER_IROM1$$Length;
 
 	ram_load_base  = (uint32_t)&Load$$RW_IRAM1$$Base;
-  ram_image_base = (uint32_t)&Image$$RW_IRAM1$$Base;
-  ram_image_size = (uint32_t)&Image$$RW_IRAM1$$Length;
+	ram_image_base = (uint32_t)&Image$$RW_IRAM1$$Base;
+	ram_image_size = (uint32_t)&Image$$RW_IRAM1$$Length;
 	
 	PRINT_EMG("flash memory [0x%08x, 0x%08x]\n", flash_base, flash_base + flash_size);
 	PRINT_EMG("ram   memory [0x%08x, 0x%08x]\n", ram_base, ram_base + ram_size);
@@ -74,27 +74,11 @@ int main (void)
 	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
 	gpio_write(GROUPB, 1, 0);
 	USB_Config();
+	
 	while(1) {
 		gpio_write(GROUPB, 1, 0);
 		mdelay(1000);
 		gpio_write(GROUPB, 1, 1);
 		mdelay(1000);
 	}
-	
-#if 0	
-	osKernelInitialize ();                    // initialize CMSIS-RTOS
-	
-  // initialize peripherals here
-	
-  // create 'thread' functions that start executing,
-  // example: tid_name = osThreadCreate (osThread(name), NULL);
-	main_thread_id  = osThreadCreate(osThread(thread_main),  NULL);
-	blink_thread_id = osThreadCreate(osThread(thread_blink), NULL);
-	DUMP_VAR4(main_thread_id);
-	DUMP_VAR4(blink_thread_id);
-	
-	shell_init();
-
-	osKernelStart ();                         // start thread execution 
-#endif
 }
