@@ -1,5 +1,4 @@
 #include <string.h>
-#include <cmsis_os.h>
 
 #include "watchdog.h"
 #include "uart.h"
@@ -137,25 +136,28 @@ char uart_recv_buf[UART_IO_SIZE] = {0};
 
 void DEBUG_USART_IRQHandler(void)
 {
-	static uint8_t i, magic_cmd[6] = {0};
+	static uint8_t i;
+	static char magic_cmd[7] = {0};
 	uint16_t ch;
 	ch = (uint8_t)USART_ReceiveData(DEBUG_USARTx);
 
-    for(i = 0; i < 4; i++) {
+    for(i = 0; i < 5; i++) {
         magic_cmd[i] = magic_cmd[i + 1];
     }
-    magic_cmd[4] = ch;
+    magic_cmd[5] = ch;
 
-    if (magic_cmd[0] == 'r' && 
-        magic_cmd[1] == 'e' &&
-        magic_cmd[2] == 's' &&
-        magic_cmd[3] == 'e' &&
-        magic_cmd[4] == 't') {
-        uart_puts("magic cmd [reset]!\n");
+		if (strcmp(magic_cmd, "sreset") == 0) {
+				uart_puts("magic_cmd: system reset!\n");
         watchdog_reset();
-    }
-
-	/* uart_printf("enter %s-%d %x \n", __func__, __LINE__, ch); */
+		}
+		if (strcmp(magic_cmd, "tshell") == 0) {
+			  uart_puts("magic_cmd: switch to thread shell!\n");        
+				uart_work_mode = TSHELL_MODE;
+		}
+		if (strcmp(magic_cmd, "ishell") == 0) {
+				uart_puts("magic_cmd: switch to int shell!\n");
+				uart_work_mode = ISHELL_MODE;
+		}
 
 		if (ch == '\n') {   /* sscom will send '\r\n' we ignore the '\n' */
 				return;

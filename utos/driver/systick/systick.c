@@ -62,6 +62,14 @@ uint64_t get_systick()
 	return ((systick + ((SysTick->LOAD - SysTick->VAL) / (SystemCoreClock / 1000000))));
 }
 
+void SysTick_Handler(void)
+{
+  //PRINT_EMG("%s-%d \n", __func__, __LINE__);
+  //void TimingDelay_Decrement(void);
+  //TimingDelay_Decrement();
+  systick += SYSTICK_FREQ_US;
+}
+
 /**
   * @brief  获取节拍程序
   * @param  无

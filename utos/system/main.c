@@ -36,6 +36,8 @@ void print_chipid()
 					 __REV(readl(0X1FFFF7E8)), __REV(readl(0X1FFFF7EC)), __REV(readl(0X1FFFF7F0)));
 }
 
+uint32_t g_flag = 0xf00dbeef;
+
 /*
  * main: initialize and start the system
  */
@@ -114,6 +116,11 @@ int main (void)
 				if (len > 0)
 				{
 						USB_TxWrite(buf, len);
+				}
+				
+				if (g_flag == 0xf11dbeef) {
+					extern void dht11_main();
+					dht11_main();
 				}
 		}	
 	}

@@ -192,7 +192,17 @@ int32_t shell(char *cmd)
     PRINT_EMG("return 0x%x\n", ret);
 
 exit:
-    PRINT_EMG("\nutos>");
+    PRINT_EMG("\nutos");
+		switch(uart_work_mode) {
+			case (ISHELL_MODE):
+				PRINT_EMG(">");
+				break;
+			case (TSHELL_MODE):
+				PRINT_EMG("$");
+				break;
+			default:
+				break;
+		}
     return ret;
 }
 

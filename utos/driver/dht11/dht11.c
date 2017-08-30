@@ -16,10 +16,10 @@ typedef struct
 
 /************************** DHT11 鑺??杌婅景y???鈥滆景?********************************/
 #define      DHT11_Dout_SCK_APBxClock_FUN              RCC_APB2PeriphClockCmd
-#define      DHT11_Dout_GPIO_CLK                       RCC_APB2Periph_GPIOC
+#define      DHT11_Dout_GPIO_CLK                       RCC_APB2Periph_GPIOA
 
-#define      DHT11_Dout_GPIO_PORT                      GPIOC
-#define      DHT11_Dout_GPIO_PIN                       GPIO_Pin_8
+#define      DHT11_Dout_GPIO_PORT                      GPIOA
+#define      DHT11_Dout_GPIO_PIN                       GPIO_Pin_6
 
 #define      DHT11_Dout_0	                            GPIO_ResetBits ( DHT11_Dout_GPIO_PORT, DHT11_Dout_GPIO_PIN ) 
 #define      DHT11_Dout_1	                            GPIO_SetBits ( DHT11_Dout_GPIO_PORT, DHT11_Dout_GPIO_PIN ) 

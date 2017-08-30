@@ -146,6 +146,7 @@ enum  UART_WORK_MODE {
 };
 
 #define UART_IO_SIZE 	(256)
+extern int uart_work_mode;
 
 void USART_Config(void);
 void Usart_SendByte( USART_TypeDef * pUSARTx, uint8_t ch);
