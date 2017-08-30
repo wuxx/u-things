@@ -1,5 +1,6 @@
 
 #include "timer.h"
+#include "gpio.h"
 
 /* 1ms counter */
 volatile uint64_t time = 0;
@@ -97,6 +98,12 @@ void  ADVANCE_TIM_IRQHandler (void)
     if ( TIM_GetITStatus( ADVANCE_TIM, TIM_IT_Update) != RESET ) 
     {   
         time++;
+		
+		/* led blink */
+		if (time % 1000) {
+			gpio_write(GROUPB, 1, (time / 1000) % 2);
+		}
+		
         TIM_ClearITPendingBit(ADVANCE_TIM , TIM_FLAG_Update);        
     }           
 }

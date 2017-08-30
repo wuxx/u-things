@@ -71,6 +71,7 @@ int main (void)
 	gpio_write(GROUPA, 6, 0);
 	gpio_write(GROUPA, 7, 1);
 
+	/* the LED blink in timer irq handler */
 	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
 	gpio_write(GROUPB, 1, 0);
 	
