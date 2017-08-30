@@ -140,26 +140,43 @@ Reset_Handler    PROC
 
 NMI_Handler     PROC
                 EXPORT  NMI_Handler                [WEAK]
+								IMPORT  __NMI_Handler
+                LDR     R0, =__NMI_Handler
+                BLX     R0
                 B       .
                 ENDP
 HardFault_Handler\
                 PROC
                 EXPORT  HardFault_Handler          [WEAK]
+								IMPORT  __HardFault_Handler
+								PUSH {R4-R11, R14}
+								MOV     R0,SP
+                LDR     R1, =__HardFault_Handler
+                BLX     R1
                 B       .
                 ENDP
 MemManage_Handler\
                 PROC
                 EXPORT  MemManage_Handler          [WEAK]
+								IMPORT  __MemManage_Handler
+                LDR     R0, =__MemManage_Handler
+                BLX     R0
                 B       .
                 ENDP
 BusFault_Handler\
                 PROC
                 EXPORT  BusFault_Handler           [WEAK]
+								IMPORT  __BusFault_Handler
+                LDR     R0, =__BusFault_Handler
+                BLX     R0
                 B       .
                 ENDP
 UsageFault_Handler\
                 PROC
                 EXPORT  UsageFault_Handler         [WEAK]
+								IMPORT  __UsageFault_Handler
+                LDR     R0, =__UsageFault_Handler
+                BLX     R0
                 B       .
                 ENDP
 SVC_Handler     PROC
@@ -169,6 +186,9 @@ SVC_Handler     PROC
 DebugMon_Handler\
                 PROC
                 EXPORT  DebugMon_Handler           [WEAK]
+								IMPORT  __DebugMon_Handler
+                LDR     R0, =__DebugMon_Handler
+                BLX     R0
                 B       .
                 ENDP
 PendSV_Handler  PROC

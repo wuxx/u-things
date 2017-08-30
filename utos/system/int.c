@@ -112,7 +112,7 @@ void __HardFault_Handler(unsigned int *sp)
 	PRINT_EMG("MMAR: 0x%08X \n", SCB->MMFAR);
 	PRINT_EMG("BFAR: 0x%08X \n", SCB->BFAR);
 
-	//watchdog_reset();
+	watchdog_reset();
 	while (1)
 	{
 	}
@@ -123,7 +123,8 @@ void __MemManage_Handler(void)
 {
     /* Go to infinite loop when Memory Manage exception occurs */
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
-    //watchdog_reset();
+	
+    watchdog_reset();
     while (1)
     {
     }
@@ -134,7 +135,7 @@ void __BusFault_Handler(void)
     /* Go to infinite loop when Bus Fault exception occurs */
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
 
-    //watchdog_reset();
+    watchdog_reset();
     while (1)
     {
     }
@@ -145,7 +146,7 @@ void __UsageFault_Handler(void)
     /* Go to infinite loop when Usage Fault exception occurs */
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
 
-    //watchdog_reset();
+    watchdog_reset();
     while (1)
     {
     }
@@ -157,26 +158,3 @@ void __DebugMon_Handler(void)
 	while(1);
 
 }
- 
-#if 0 /* rtx already use these int */
-void SVC_Handler(void)
-{
-  PRINT_EMG("%s-%d \n", __func__, __LINE__);
-
-}
- 
-void PendSV_Handler(void)
-{
-  PRINT_EMG("%s-%d \n", __func__, __LINE__);
-
-}
-
-void SysTick_Handler(void)
-{
-  //PRINT_EMG("%s-%d \n", __func__, __LINE__);
-  //void TimingDelay_Decrement(void);
-  //TimingDelay_Decrement();
-  systick += SYSTICK_FREQ_US;
-}
-#endif
-

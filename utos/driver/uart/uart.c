@@ -137,7 +137,6 @@ char uart_recv_buf[UART_IO_SIZE] = {0};
 
 void DEBUG_USART_IRQHandler(void)
 {
-	char *cmd;
 	static uint8_t i, magic_cmd[6] = {0};
 	uint16_t ch;
 	ch = (uint8_t)USART_ReceiveData(DEBUG_USARTx);

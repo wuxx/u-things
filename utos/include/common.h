@@ -10,9 +10,9 @@
 #define FLASH_BASE  (0x08000000)
 #endif
 
-#define SRAM_SIZE   (64 * 1024)
-
-#define FLASH_SIZE  (512 * 1024)
+/* stm32f103c8t6 */
+#define SRAM_SIZE   (20 * 1024)
+#define FLASH_SIZE  (64 * 1024)
 
 
 #define IS_FLASHADDR(addr) (((addr) >= FLASH_BASE) && ((addr) < (FLASH_BASE + FLASH_SIZE)))

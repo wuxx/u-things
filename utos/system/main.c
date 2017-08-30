@@ -28,41 +28,7 @@ uint32_t ram_base = SRAM_BASE, ram_size = SRAM_SIZE;
 uint32_t flash_load_base, flash_image_base, flash_image_size;
 uint32_t ram_load_base, ram_image_base, ram_image_size;
 
-char sys_banner[] = {"xxxx system buildtime [" __TIME__ " " __DATE__ "] " "rev " XXXX_REV};
-
-#if 0
-void thread_main(void const *argument);
-	
-osThreadId main_thread_id;
-osThreadDef(thread_main, osPriorityNormal, 1, 0);  
-
-void thread_main(void const *argument)
-{
-	PRINT_EMG("in %s %d \n", __func__, __LINE__);
-	uart_puts("thread_main !\n");
-	while(1);
-}
-
-void thread_blink(void const *argument);
-	
-osThreadId blink_thread_id;
-osThreadDef(thread_blink, osPriorityNormal, 1, 0);  
-
-void thread_blink(void const *argument)
-{
-	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
-	gpio_write(GROUPB, 1, 0);
-
-	PRINT_EMG("in %s %d \n", __func__, __LINE__);	
-	while(1) {
-		gpio_write(GROUPB, 1, 0);
-		osDelay(1000);
-		gpio_write(GROUPB, 1, 1);
-		osDelay(1000);
-	}
-}
-
-#endif
+char sys_banner[] = {"utos system buildtime [" __TIME__ " " __DATE__ "] " "rev " XXXX_REV};
 
 /*
  * main: initialize and start the system
@@ -73,13 +39,8 @@ int main (void)
 	timer_init();
 	
 	/* ·¢ËÍÒ»¸ö×Ö·û´® */
-	uart_puts("test\n");
 	PRINT_EMG("%s\n", sys_banner);
-	PRINT_EMG("hello123 %f\n", 1.234);
-	
-	uart_puts("UUUUUUUUUUUUUUUUUUUUUUUUUUUU\n");
-	uart_puts("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\n");
-	
+
 	flash_load_base  = (uint32_t)&Load$$ER_IROM1$$Base;
 	flash_image_base = (uint32_t)&Image$$ER_IROM1$$Base;
 	flash_image_size = (uint32_t)&Image$$ER_IROM1$$Length;
@@ -123,8 +84,6 @@ int main (void)
 		mdelay(1000);
 		//uart_puts("test\r\n");
 	}
-	
-	shell_init();
 	
 #if 0	
 	osKernelInitialize ();                    // initialize CMSIS-RTOS
