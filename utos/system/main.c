@@ -1,10 +1,6 @@
 /*----------------------------------------------------------------------------
  * CMSIS-RTOS 'main' function template
  *---------------------------------------------------------------------------*/
-
-#define osObjectsPublic                     // define objects in main module
-#include "osObjects.h"                      // RTOS object definitions
-
 #include <stdio.h>
 #include "config.h"
 #include "common.h"
@@ -13,6 +9,7 @@
 #include "log.h"
 #include "gpio.h"
 #include "timer.h"
+#include "hw_config.h"
 
 extern unsigned char  Load$$ER_IROM1$$Base;
 extern unsigned char Image$$ER_IROM1$$Base;
@@ -76,13 +73,12 @@ int main (void)
 
 	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
 	gpio_write(GROUPB, 1, 0);
-
+	USB_Config();
 	while(1) {
-		//gpio_write(GROUPB, 1, 0);
+		gpio_write(GROUPB, 1, 0);
 		mdelay(1000);
-		//gpio_write(GROUPB, 1, 1);
+		gpio_write(GROUPB, 1, 1);
 		mdelay(1000);
-		//uart_puts("test\r\n");
 	}
 	
 #if 0	
