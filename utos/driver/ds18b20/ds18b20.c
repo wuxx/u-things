@@ -1,25 +1,7 @@
-/**
-  ******************************************************************************
-  * @file    bsp_ds18b20.c
-  * @author  fire
-  * @version V1.0
-  * @date    2015-xx-xx
-  * @brief   DS18B20温度传感器应用函数接口
-  ******************************************************************************
-  * @attention
-  *
-  * 实验平台:秉火  STM32 指南者 开发板  
-  * 论坛    :http://www.firebbs.cn
-  * 淘宝    :https://fire-stm32.taobao.com
-  *
-  ******************************************************************************
-  */
-
+#include "int.h"
 #include "ds18b20.h"
 #include "log.h"
 #include "systick.h"
-
-
 
 static void                           DS18B20_GPIO_Config                       ( void );
 static void                           DS18B20_Mode_IPU                          ( void );
@@ -461,5 +443,19 @@ float DS18B20_GetTemp_MatchRom ( uint8_t * ds18b20_id )
 	
 }
 
-
-/*************************************END OF FILE******************************/
+void ds18b20_main()
+{
+	static int init = 0;
+	
+	if (init == 0) {
+		DS18B20_Init();
+		init = 1;
+	}
+	
+	while (1) {
+		//__local_irq_disable(); /* FIXME: udelay depend the irq */
+		PRINT_EMG("ds18b20 temp: %d\n",DS18B20_GetTemp());
+		//__local_irq_enable();  /* FIXME: udelay depend the irq */
+		mdelay(2000);
+	}
+}

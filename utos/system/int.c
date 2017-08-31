@@ -26,6 +26,7 @@
 #include "uart.h"
 #include "log.h"
 #include "watchdog.h"
+#include "int.h"
 
 #if 0
 /* CPU CONTEXT */
@@ -62,10 +63,19 @@ struct cpu_context
     uint32_t XPSR;
 };
 
+void __local_irq_disable(void)
+{
+	__asm { cpsid i };
+}
+
+void __local_irq_enable(void)
+{
+	__asm { cpsie i };
+}
+
 void __NMI_Handler(void)
 {
     PRINT_EMG("%s-%d \n", __func__, __LINE__);
-
     watchdog_reset();
 }
 
@@ -78,7 +88,8 @@ void __HardFault_Handler(unsigned int *sp)
 	unsigned int mfsr, bfsr, ufsr;
 
 	cc = (struct cpu_context *)sp;
-
+	__local_irq_disable();
+	
   PRINT_EMG("%s:\n", __func__);
 	PRINT_EMG("XPSR: 0x%08X \n", cc->XPSR);
 	PRINT_EMG("PC:   0x%08X \n", cc->PC);
