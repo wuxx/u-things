@@ -122,9 +122,11 @@ int main (void)
 					extern void dht11_main();
 					extern void hcsr04_main();
 					extern void ds18b20_main();
+					extern void bmp180_main();
 					dht11_main();
 					hcsr04_main();
 					ds18b20_main();
+					bmp180_main();
 				}
 		}	
 	}

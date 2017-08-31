@@ -8,16 +8,16 @@
 //#include <math.h>
  
 #define I2C_SCL_PIN		GPIO_Pin_6
-#define I2C_SDA_PIN		GPIO_Pin_7 
+#define I2C_SDA_PIN		GPIO_Pin_5
 
 //SCL -> PC1
 //SDA -> PC2
-#define SCL_H()  GPIO_SetBits(GPIOB, I2C_SCL_PIN)
-#define SCL_L()  GPIO_ResetBits(GPIOB, I2C_SCL_PIN)
-#define SDA_H()  GPIO_SetBits(GPIOB, I2C_SDA_PIN)
-#define SDA_L()  GPIO_ResetBits(GPIOB, I2C_SDA_PIN)
+#define SCL_H()  GPIO_SetBits(GPIOA, I2C_SCL_PIN)
+#define SCL_L()  GPIO_ResetBits(GPIOA, I2C_SCL_PIN)
+#define SDA_H()  GPIO_SetBits(GPIOA, I2C_SDA_PIN)
+#define SDA_L()  GPIO_ResetBits(GPIOA, I2C_SDA_PIN)
  
-#define SDA  GPIO_ReadInputDataBit(GPIOB,I2C_SDA_PIN)
+#define SDA  GPIO_ReadInputDataBit(GPIOA,I2C_SDA_PIN)
 
 #if 0
 #define EEPROM_I2C_SCL_1()	GPIO_SetBits(EEPROM_GPIO_PORT_I2C, EEPROM_I2C_SCL_PIN)		/* SCL = 1 */
@@ -455,7 +455,8 @@ void am2321_wakeup()
 		PRINT_EMG("%s-%d fail\n", __func__, __LINE__);	/* expected */
 	}
 
-	mdelay(2);
+	mdelay(2);
+
 	IIC_Stop();
 }
 

