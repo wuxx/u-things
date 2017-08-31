@@ -3,8 +3,14 @@
 #include "timer.h"
 #include "systick.h"
 
-#define HCSR04_TRIG		(0xC8)	/* GPIOC pin8 */
-#define HCSR04_ECHO		(0xB9)	/* GPIOB pin9 */
+/* 	HCSR04 plus 
+		VCC 3-5.5V
+		distance 3.3V 2cm-400cm
+		distance 5V   2cm-450cm
+*/
+
+#define HCSR04_TRIG		(0xA5/*0xC8*/)	/* GPIOC pin8 */
+#define HCSR04_ECHO		(0xA6/*0xB9*/)	/* GPIOB pin9 */
 
 uint32_t hcsr04()
 {

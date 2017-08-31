@@ -1,4 +1,4 @@
 #ifndef __CONFIG_H__                
 #define __CONFIG_H__               
-#define XXXX_REV   "21a78cd"   
+#define XXXX_REV   "953113d"   
 #endif  /* __CONFIG_H__ */         

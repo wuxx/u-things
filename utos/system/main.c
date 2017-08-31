@@ -120,7 +120,9 @@ int main (void)
 				
 				if (g_flag == 0xf11dbeef) {
 					extern void dht11_main();
+					extern void hcsr04_main();
 					dht11_main();
+					hcsr04_main();
 				}
 		}	
 	}
