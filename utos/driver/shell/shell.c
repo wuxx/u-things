@@ -30,7 +30,7 @@ struct shell_cmd_info ci[] = {
     {"w",       cmd_write,   "w     [addr] [data]                   write   any addr"},
     {"x",       cmd_exec,    "x     [addr]                          execute any addr"},
     {"dump",    cmd_dump,    "dump  [addr] [word_num]               dump    any addr"},
-		
+
     {"fw",      cmd_fwrite,  "fw    [addr] [word_num](1-4) data...  write flash addr"},
 		{"cksum",   cmd_cksum,   "cksum [addr] [word_num]               calc memory checksum"},
     {"stest",   cmd_systest, "stest [module] args...	              system test" },
@@ -52,12 +52,26 @@ static int32_t cmd_read()
 
 static int32_t cmd_write()
 {
-    uint32_t addr, data;
-
+		uint32_t i;
+    uint32_t addr;
+		uint32_t word_num;
+		uint32_t data;
+	
+		if (argc <= 2) {
+			return -1;
+		}
+		
+		word_num = argc - 2;
+		
+		word_num = word_num <= 16 ? word_num : 16;
+		PRINT_EMG("argc: %d; word_num: %d\n", argc, word_num);
     addr = strtoul(argv[1], NULL, 0);
-    data = strtoul(argv[2], NULL, 0);
-    writel(addr, data);
-    PRINT_EMG("(0x%08x) ->[0x%08x]\n", data, addr);
+		for(i = 0; i < word_num; i++) {
+			data = strtoul(argv[2 + i], NULL, 0);
+			writel(addr + i * 4, data);		
+			//PRINT_EMG("[0x%08x] <- (0x%08x)\n", addr + i * 4, data);
+		}
+		
     return 0;
 }
 
@@ -171,20 +185,20 @@ static int32_t cmd_systest()
 
 static int32_t parse_cmd(char *cmd)
 {
-    uint32_t i,j;
+    uint32_t i,x;
 
     memset(argv, 0, SHELL_ARGS_MAX*sizeof(argv[0]));
 
     /* first, set the argv */
-    j = 0;
+    x = 0;
     for(i = 0; cmd[i] != '\0';) {
 
         while(cmd[i] == ' ') {
             i++;
         }
 
-        argv[j++] = &cmd[i];
-        if (j == SHELL_ARGS_MAX) {
+        argv[x++] = &cmd[i];
+        if (x == SHELL_ARGS_MAX) {
             break;  /* not gonna to process the left args */
         }
 
@@ -194,7 +208,9 @@ static int32_t parse_cmd(char *cmd)
         }
 
     }
-
+		
+		argc = x;
+		
     /* replace all ' ' to '\0' */
     for(i = 0; cmd[i] != '\0'; i++) {
         if (cmd[i] == ' ') {

@@ -6,7 +6,7 @@
 typedef int32_t (*func_0)();
 typedef int32_t (*func_4)(uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4);
 
-#define SHELL_ARGS_MAX  (7)
+#define SHELL_ARGS_MAX  (32)
 struct shell_cmd_info {
     char *name;
     func_0 func;
