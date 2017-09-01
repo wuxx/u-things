@@ -21,6 +21,7 @@ static int32_t cmd_write(void);
 static int32_t cmd_exec(void);
 static int32_t cmd_dump(void);
 static int32_t cmd_fwrite(void);
+static int32_t cmd_cksum(void);
 static int32_t cmd_systest(void);
 static int32_t cmd_help(void);
 
@@ -31,8 +32,9 @@ struct shell_cmd_info ci[] = {
     {"dump",    cmd_dump,    "dump  [addr] [word_num]               dump    any addr"},
 		
     {"fw",      cmd_fwrite,  "fw    [addr] [word_num](1-4) data...  write flash addr"},
-    {"systest", cmd_systest, "systest [module] [i]	     system test" },
-    {"help",    cmd_help,    "help                      print cmd info"  },
+		{"cksum",   cmd_cksum,   "cksum [addr] [word_num]               calc memory checksum"},
+    {"stest",   cmd_systest, "stest [module] args...	              system test" },
+    {"help",    cmd_help,    "help                                  print cmd info"  },
 };
 
 
@@ -56,41 +58,6 @@ static int32_t cmd_write()
     data = strtoul(argv[2], NULL, 0);
     writel(addr, data);
     PRINT_EMG("(0x%08x) ->[0x%08x]\n", data, addr);
-    return 0;
-}
-
-static int32_t cmd_fwrite()
-{
-		int32_t ret;
-		uint32_t i;
-    uint32_t addr, word_num;
-		uint32_t buf[4] = {0};
-		
-    addr = strtoul(argv[1], NULL, 0);
-    word_num = strtoul(argv[2], NULL, 0);
-		
-		if (word_num == 0) {
-			return 0;
-		}
-		
-		word_num = word_num <= 4 ? word_num : word_num % 4;
-		
-		for(i = 0; i < word_num; i++) {
-			buf[i] = strtoul(argv[3 + i], NULL, 0);
-		}
-		
-    ret = flash_write(addr, buf, word_num * 4);
-		
-		if (ret != 0) {
-			PRINT_EMG("flash write 0x%08x fail\n", addr);
-		}
-		
-    PRINT_EMG("[0x%08x]:", addr);
-		for(i = 0; i < word_num; i++) {
-			PRINT_EMG("0x%08x ", readl(addr + i * 4));
-		}
-		PRINT_EMG("\n");
-
     return 0;
 }
 
@@ -135,6 +102,57 @@ static int32_t cmd_dump()
 	PRINT_EMG("\n");
 
     return 0;
+}
+	
+static int32_t cmd_fwrite()
+{
+		int32_t ret;
+		uint32_t i;
+    uint32_t addr, word_num;
+		uint32_t buf[4] = {0};
+		
+    addr = strtoul(argv[1], NULL, 0);
+    word_num = strtoul(argv[2], NULL, 0);
+		
+		if (word_num == 0) {
+			return 0;
+		}
+		
+		word_num = word_num <= 4 ? word_num : word_num % 4;
+		
+		for(i = 0; i < word_num; i++) {
+			buf[i] = strtoul(argv[3 + i], NULL, 0);
+		}
+		
+    ret = flash_write(addr, buf, word_num * 4);
+		
+		if (ret != 0) {
+			PRINT_EMG("flash write 0x%08x fail\n", addr);
+		}
+		
+    PRINT_EMG("[0x%08x]:", addr);
+		for(i = 0; i < word_num; i++) {
+			PRINT_EMG("0x%08x ", readl(addr + i * 4));
+		}
+		PRINT_EMG("\n");
+
+    return 0;
+}
+
+static int32_t cmd_cksum()
+{
+		uint32_t i;
+		uint32_t addr, word_num;
+		uint32_t checksum = 0;
+	
+		addr = strtoul(argv[1], NULL, 0);
+    word_num = strtoul(argv[2], NULL, 0);
+
+		for(i = 0; i < word_num; i++) {
+			checksum += readl(addr + i * 4);
+		}
+		PRINT_EMG("[0x%08x, 0x%08x] checksum: 0x%08x\n", addr, addr + word_num * 4, checksum);
+		return 0;
 }
 
 static int32_t cmd_help()

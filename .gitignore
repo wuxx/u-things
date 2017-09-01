@@ -2,8 +2,11 @@
 *.d
 *.crf
 *.hex
+*.bin
+*.disasm
 *.axf
 *.map
 *.lst
 *.su
+JLinkLog.txt
 utos/Objects/*

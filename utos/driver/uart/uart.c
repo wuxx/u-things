@@ -90,7 +90,11 @@ void USART_Config(void)
 /*****************  发送一个字符 **********************/
 void Usart_SendByte( USART_TypeDef * pUSARTx, uint8_t ch)
 {
-	/* 发送一个字节数据到USART */
+	if (ch == '\n') {
+		USART_SendData(pUSARTx, '\r');			
+		while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);
+	}
+	
 	USART_SendData(pUSARTx,ch);
 		
 	/* 等待发送数据寄存器为空 */
@@ -213,10 +217,7 @@ void uart_init()
 int fputc(int ch, FILE *f)
 {
 		/* 发送一个字节数据到串口 */
-		USART_SendData(DEBUG_USARTx, (uint8_t) ch);
-		
-		/* 等待发送完毕 */
-		while (USART_GetFlagStatus(DEBUG_USARTx, USART_FLAG_TXE) == RESET);		
+		Usart_SendByte(DEBUG_USARTx, (uint8_t) ch);
 	
 		return (ch);
 }

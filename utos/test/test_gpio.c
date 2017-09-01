@@ -20,10 +20,9 @@ int32_t test_gpio_all()
 		case (0):
 			gpio_group = strtoul(argv[3], NULL, 0);
 			gpio_index = strtoul(argv[4], NULL, 0);
-			bit        = strtoul(argv[5], NULL, 0);
-			PRINT_EMG("group: %d; index: %d; bit: %d\n", gpio_group, gpio_index, bit);
+			PRINT_EMG("group: 0x%x; index: %d;\n", gpio_group, gpio_index);
 			gpio_init (gpio_group, gpio_index, GPIO_Mode_Out_PP);
-			gpio_write(gpio_group, gpio_index, bit);
+			//gpio_write(gpio_group, gpio_index, bit);
 			break;
 		case (1):
 			gpio_init(0xB, 0x9, GPIO_Mode_Out_PP);
@@ -48,7 +47,6 @@ int32_t test_gpio_all()
 		default:
 			break;
 	}
-
 
 	return 0;
 }

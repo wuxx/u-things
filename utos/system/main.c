@@ -28,6 +28,8 @@ uint32_t ram_base = SRAM_BASE, ram_size = SRAM_SIZE;
 uint32_t flash_load_base, flash_image_base, flash_image_size;
 uint32_t ram_load_base, ram_image_base, ram_image_size;
 
+uint32_t bss_image_base, bss_image_size;
+
 char sys_banner[] = {"utos system buildtime [" __TIME__ " " __DATE__ "] " "rev " XXXX_REV};
 
 void print_chipid()
@@ -50,6 +52,7 @@ int main (void)
 	/* 发送一个字符串 */
 	PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
+	PRINT_EMG("uart_baudrate %d\n", DEBUG_USART_BAUDRATE);
 	
 	flash_load_base  = (uint32_t)&Load$$ER_IROM1$$Base;
 	flash_image_base = (uint32_t)&Image$$ER_IROM1$$Base;
@@ -58,17 +61,26 @@ int main (void)
 	ram_load_base  = (uint32_t)&Load$$RW_IRAM1$$Base;
 	ram_image_base = (uint32_t)&Image$$RW_IRAM1$$Base;
 	ram_image_size = (uint32_t)&Image$$RW_IRAM1$$Length;
+
+	bss_image_base = ram_image_base + ram_image_size;
+	bss_image_size = readl(ram_load_base - 8);	/* just binary guess. */
 	
 	PRINT_EMG("flash memory [0x%08x, 0x%08x]\n", flash_base, flash_base + flash_size);
 	PRINT_EMG("ram   memory [0x%08x, 0x%08x]\n", ram_base, ram_base + ram_size);
 
+	PRINT_EMG("flash image [0x%08x, 0x%08x] ((text & rodata & data))\n", flash_image_base, flash_image_base + flash_image_size);
 	DUMP_VAR4(flash_load_base);
 	DUMP_VAR4(flash_image_base);
 	DUMP_VAR4(flash_image_size);
-
+	
+	PRINT_EMG("data image [0x%08x, 0x%08x]\n", ram_image_base, ram_image_base + ram_image_size);
 	DUMP_VAR4(ram_load_base);
 	DUMP_VAR4(ram_image_base);
 	DUMP_VAR4(ram_image_size);
+	
+	PRINT_EMG("bss image [0x%08x, 0x%08x]\n", bss_image_base, bss_image_base + bss_image_size);
+	DUMP_VAR4(bss_image_base);
+	DUMP_VAR4(bss_image_size);
 
  /* micro usb线说明： 
 		GND-黑色 : GND
@@ -87,9 +99,11 @@ int main (void)
 	/* the LED blink in timer irq handler */
 	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
 	gpio_write(GROUPB, 1, 0);
-	
+
+#ifdef CONFIG_USB
 	USB_Config();
-	
+#endif
+
 #if 0	
 	while(1) {
 		gpio_write(GROUPB, 1, 0);
@@ -100,8 +114,6 @@ int main (void)
 #endif
 	
 	{
-		uint32_t i, len;
-		uint8_t buf[200] = {0};
 		
 		while (1) {
 				if (shell_cmd != NULL) {
@@ -109,15 +121,21 @@ int main (void)
 					shell_cmd = NULL;				
 				}
 				
-				len = USB_RxRead(buf, sizeof(buf));
-								for(i = 0; i < len; i++) {
-										PRINT_EMG("usb read [0x%x][%c]\n", buf[i], buf[i]);
-								}
-				if (len > 0)
+#ifdef CONFIG_USB
 				{
-						USB_TxWrite(buf, len);
-				}
-				
+					uint32_t i, len;
+					uint8_t buf[200] = {0};
+
+					len = USB_RxRead(buf, sizeof(buf));
+									for(i = 0; i < len; i++) {
+											PRINT_EMG("usb read [0x%x][%c]\n", buf[i], buf[i]);
+									}
+					if (len > 0)
+					{
+							USB_TxWrite(buf, len);
+					}
+				}				
+#endif				
 				if (g_flag == 0xf11dbeef) {
 					extern void dht11_main();
 					extern void hcsr04_main();
