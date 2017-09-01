@@ -15,8 +15,8 @@ int32_t test_dma_all()
 	
 	PRINT_EMG("enter %s-%d \n", __func__, __LINE__);
 
-	index = strtol(argv[2], NULL, 0);
-	arg1  = strtol(argv[3], NULL, 0);
+	index = strtoul(argv[2], NULL, 0);
+	arg1  = strtoul(argv[3], NULL, 0);
 	PRINT_EMG("index: %d; arg1: %d\n", index, arg1);
 
 	switch (index) {

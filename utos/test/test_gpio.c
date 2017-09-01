@@ -13,21 +13,21 @@ int32_t test_gpio_all()
 
 	PRINT_EMG("enter %s-%d \n", __func__, __LINE__);
 
-	index = strtol(argv[2], NULL, 0);
+	index = strtoul(argv[2], NULL, 0);
 	PRINT_EMG("index: %d\n", index);
 
 	switch (index) {
 		case (0):
-			gpio_group = strtol(argv[3], NULL, 0);
-			gpio_index = strtol(argv[4], NULL, 0);
-			bit        = strtol(argv[5], NULL, 0);
+			gpio_group = strtoul(argv[3], NULL, 0);
+			gpio_index = strtoul(argv[4], NULL, 0);
+			bit        = strtoul(argv[5], NULL, 0);
 			PRINT_EMG("group: %d; index: %d; bit: %d\n", gpio_group, gpio_index, bit);
 			gpio_init (gpio_group, gpio_index, GPIO_Mode_Out_PP);
 			gpio_write(gpio_group, gpio_index, bit);
 			break;
 		case (1):
 			gpio_init(0xB, 0x9, GPIO_Mode_Out_PP);
-			tick = strtol(argv[3], NULL, 0);
+			tick = strtoul(argv[3], NULL, 0);
 			PRINT_EMG("tick: %d\n", tick);
 
 			while(1) {
@@ -38,8 +38,8 @@ int32_t test_gpio_all()
 			}
 			break;
 		case (10):
-			gpio_group = strtol(argv[3], NULL, 0);
-			gpio_index = strtol(argv[4], NULL, 0);
+			gpio_group = strtoul(argv[3], NULL, 0);
+			gpio_index = strtoul(argv[4], NULL, 0);
 			PRINT_EMG("group: %d; index: %d;\n", gpio_group, gpio_index);
 			bit = gpio_read(gpio_group, gpio_index);
 			PRINT_EMG("read bit %d\n", bit);
