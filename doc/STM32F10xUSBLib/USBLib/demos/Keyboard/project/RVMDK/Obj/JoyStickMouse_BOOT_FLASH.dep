@@ -19,7 +19,7 @@ I (..\..\..\..\library\inc\usb_core.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_init.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_mem.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_int.h)(0x59A52D4E)
-F (..\..\source\main.c)(0x59AA23AA)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I..\..\include -I..\..\..\..\library\inc -I..\..\..\..\..\FWLib\library\inc-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="515" -DSTM32F10X_MD -DVECT_TAB_FLASH-o .\obj\main.o --omf_browse .\obj\main.crf --depend .\obj\main.d)
+F (..\..\source\main.c)(0x59AA29A2)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I..\..\include -I..\..\..\..\library\inc -I..\..\..\..\..\FWLib\library\inc-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="515" -DSTM32F10X_MD -DVECT_TAB_FLASH-o .\obj\main.o --omf_browse .\obj\main.crf --depend .\obj\main.d)
 I (..\..\..\..\..\FWLib\library\inc\stm32f10x_lib.h)(0x59A52D4E)
 I (..\..\..\..\..\FWLib\library\inc\stm32f10x_map.h)(0x59A52D4E)
 I (..\..\include\stm32f10x_conf.h)(0x59A52D4E)

@@ -41,6 +41,62 @@ void print_chipid()
 
 uint32_t g_flag = 0xf00dbeef;
 
+uint32_t get_sysconfig()
+{
+	static uint32_t init = 0;
+	uint32_t config;
+ /* micro usb线说明： 
+		GND-黑色 : GND
+		VBUS-红色: VCC 3.3
+		DM-白色  : GPIOA.5
+		DP-绿色  : GPIOA.6
+ */
+	if (init == 0) {
+		gpio_init(GROUPA, 5, GPIO_Mode_Out_PP);	/* SPI SCK  */
+		gpio_init(GROUPA, 6, GPIO_Mode_Out_PP); /* SPI MISO */
+		gpio_init(GROUPA, 7, GPIO_Mode_Out_PP);/*  SPI MOSI */	
+		init = 1;
+	}
+
+/*	
+	gpio_write(GROUPA, 5, 1);
+	gpio_write(GROUPA, 6, 0);
+	gpio_write(GROUPA, 7, 1);
+*/
+	config = gpio_read(GROUPA, 6) << 1 | gpio_read(GROUPA, 5);
+	return config;
+}
+
+/*
+memory config:
+utos 
+56K flash 	[0x08000000, 0x0800e000]
+16K sram		[0x20000000, 0x20004000]
+
+badusb
+8K   flash 	[0x0800e000, 0x08010000]
+(4 flash pages)
+
+4K   sram 	[0x20004000, 0x20005000]
+
+*/
+/* we treat utos as main system */
+void enter_subsystem()
+{
+	uint32_t config;
+	
+	config = get_sysconfig();
+	PRINT_EMG("system config: %d\n", config);
+	switch(config) {
+		case (0):
+			break;
+		default:
+			break;
+	}
+	
+	//shell("boot 0x20002000");
+}
+
 /*
  * main: initialize and start the system
  */
@@ -83,7 +139,8 @@ int main (void)
 	PRINT_EMG("bss image [0x%08x, 0x%08x]\n", bss_image_base, bss_image_base + bss_image_size);
 	DUMP_VAR4(bss_image_base);
 	DUMP_VAR4(bss_image_size);
-
+	
+#if 0
  /* micro usb线说明： 
 		GND-黑色 : GND
 		VBUS-红色: VCC 3.3
@@ -97,10 +154,8 @@ int main (void)
 	gpio_write(GROUPA, 5, 1);
 	gpio_write(GROUPA, 6, 0);
 	gpio_write(GROUPA, 7, 1);
-
-	/* the LED blink in timer irq handler */
-	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
-	gpio_write(GROUPB, 1, 0);
+#endif
+	enter_subsystem();
 
 #ifdef CONFIG_USB
 	USB_Config();

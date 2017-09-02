@@ -115,6 +115,10 @@ uint64_t get_time()
 
 void timer_init()
 {
+	/* the LED blink in timer irq handler */
+	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
+	gpio_write(GROUPB, 1, 0);
+	
 	ADVANCE_TIM_NVIC_Config();
 	ADVANCE_TIM_Mode_Config();		
 }

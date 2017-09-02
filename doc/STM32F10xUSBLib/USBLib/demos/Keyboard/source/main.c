@@ -409,6 +409,9 @@ int keyboard_send_string(char *s)
 	
 	return 0;
 }
+
+char sys_banner[] = {"badusb system buildtime [" __TIME__ " " __DATE__ "] "};
+
 int main(void)
 {
 #ifdef DEBUG
@@ -417,15 +420,10 @@ int main(void)
 
 	USART_Config();
 	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
-  while(1)
-	{	
-		Usart_SendString( DEBUG_USARTx,"test...\r\n");
-		gpio_write(GROUPB, 1, 0);
-		delay(1000);
-		gpio_write(GROUPB, 1, 1);
-		delay(1000);
-	}	
 	
+	Usart_SendString( DEBUG_USARTx,"test...\r\n");
+	printf("%s\n", sys_banner);
+
   Set_System();
 
   USB_Interrupts_Config();
@@ -462,6 +460,15 @@ int main(void)
 		
 		break;
   }
+
+	while(1)
+	{	
+		gpio_write(GROUPB, 1, 0);
+		delay(1000);
+		gpio_write(GROUPB, 1, 1);
+		delay(1000);
+	}
+	
 }
 
 /*******************************************************************************
