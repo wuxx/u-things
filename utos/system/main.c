@@ -80,21 +80,27 @@ badusb
 4K   sram 	[0x20004000, 0x20005000]
 
 */
-/* we treat utos as main system */
+/* we treat utos as the main system */
 void enter_subsystem()
 {
 	uint32_t config;
-	
+	char cmd[] = { "boot 0x0800E000" };
 	config = get_sysconfig();
 	PRINT_EMG("system config: %d\n", config);
 	switch(config) {
 		case (0):
 			break;
+		case (1):
+			break;
+		case (2):
+			break;
+		case (3):
+				PRINT_EMG("booting the badusb system...\n");
+				shell(cmd); /* boot the badusb system */
 		default:
 			break;
 	}
-	
-	//shell("boot 0x20002000");
+
 }
 
 /*
@@ -104,6 +110,7 @@ int main (void)
 {
 	__local_irq_enable();
 	uart_init();
+	enter_subsystem();
 	timer_init();
 	SysTick_Init();
 	
@@ -155,7 +162,7 @@ int main (void)
 	gpio_write(GROUPA, 6, 0);
 	gpio_write(GROUPA, 7, 1);
 #endif
-	enter_subsystem();
+
 
 #ifdef CONFIG_USB
 	USB_Config();

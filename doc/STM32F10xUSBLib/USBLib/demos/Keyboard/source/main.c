@@ -248,10 +248,11 @@ void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
 void DEBUG_USART_IRQHandler(void)
 {
   uint8_t ucTemp;
-	Usart_SendString( DEBUG_USARTx,"enter uart irq handler!\n");
+	Usart_SendString( DEBUG_USARTx,"enter uart irq handler!\r\n");
 	if(USART_GetITStatus(DEBUG_USARTx,USART_IT_RXNE)!=RESET)
 	{		
 		ucTemp = USART_ReceiveData(DEBUG_USARTx);
+		printf("get [%c]\r\n", ucTemp);
     USART_SendData(DEBUG_USARTx,ucTemp);    
 	}	 
 }
@@ -410,23 +411,68 @@ int keyboard_send_string(char *s)
 	return 0;
 }
 
+void __local_irq_disable(void)
+{
+	__asm { cpsid i };
+}
+
+void __local_irq_enable(void)
+{
+	__asm { cpsie i };
+}
+
 char sys_banner[] = {"badusb system buildtime [" __TIME__ " " __DATE__ "] "};
 
+extern unsigned char  Load$$ER_IROM1$$Base;
+extern unsigned char Image$$ER_IROM1$$Base;
+extern unsigned char Image$$ER_IROM1$$Length;
+
+extern unsigned char  Load$$RW_IRAM1$$Base;
+extern unsigned char Image$$RW_IRAM1$$Base;
+extern unsigned char Image$$RW_IRAM1$$Length;
+
+uint32_t flash_load_base, flash_image_base, flash_image_size;
+uint32_t ram_load_base, ram_image_base, ram_image_size;
+
+#define DUMP_VAR4(var)          printf(#var":\t 0x%08x\n", var)
 int main(void)
 {
 #ifdef DEBUG
   debug();
 #endif
+#if 0
+	flash_load_base  = (uint32_t)&Load$$ER_IROM1$$Base;
+	flash_image_base = (uint32_t)&Image$$ER_IROM1$$Base;
+	flash_image_size = (uint32_t)&Image$$ER_IROM1$$Length;
 
+	ram_load_base  = (uint32_t)&Load$$RW_IRAM1$$Base;
+	ram_image_base = (uint32_t)&Image$$RW_IRAM1$$Base;
+	ram_image_size = (uint32_t)&Image$$RW_IRAM1$$Length;
+
+	DUMP_VAR4(flash_load_base);
+	DUMP_VAR4(flash_image_base);
+	DUMP_VAR4(flash_image_size);
+	DUMP_VAR4(ram_load_base);
+	DUMP_VAR4(ram_image_base);
+	DUMP_VAR4(ram_image_size);
+#endif
+	__local_irq_disable();
+	*((volatile int *)(0xe000ed08)) = 0x0800e000;
+	__local_irq_enable();
+	
+  Set_System();
+
+  USB_Interrupts_Config();
+#if 0
 	USART_Config();
 	gpio_init(GROUPB, 1, GPIO_Mode_Out_PP);
 	
 	Usart_SendString( DEBUG_USARTx,"test...\r\n");
 	printf("%s\n", sys_banner);
+	printf("");
+#endif
+	//while(1);
 
-  Set_System();
-
-  USB_Interrupts_Config();
 
   Set_USBClock();
 

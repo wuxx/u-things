@@ -175,7 +175,7 @@ typedef struct
 
 /* Vector Table Base ---------------------------------------------------------*/
 #define NVIC_VectTab_RAM             ((u32)0x20000000)
-#define NVIC_VectTab_FLASH           ((u32)0x08000000)
+#define NVIC_VectTab_FLASH           ((u32)0x0800e000)
 
 #define IS_NVIC_VECTTAB(VECTTAB) ((VECTTAB == NVIC_VectTab_RAM) || \
                                   (VECTTAB == NVIC_VectTab_FLASH))

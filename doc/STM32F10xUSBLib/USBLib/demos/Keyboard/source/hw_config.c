@@ -42,7 +42,7 @@ ErrorStatus HSEStartUpStatus;
 void Set_System(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
-
+	//while(1);  
   /* SYSCLK, HCLK, PCLK2 and PCLK1 configuration -----------------------------*/   
   /* RCC system reset(for debug purpose) */
   RCC_DeInit();
@@ -92,7 +92,7 @@ void Set_System(void)
     {
     }
   }
-  
+
   /* Enable GPIOD and GPIOE clock */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE);
   
