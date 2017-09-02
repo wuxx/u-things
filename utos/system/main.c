@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "config.h"
 #include "common.h"
+#include "int.h"
 #include "mmio.h"
 #include "uart.h"
 #include "shell.h"
@@ -45,6 +46,7 @@ uint32_t g_flag = 0xf00dbeef;
  */
 int main (void)
 {
+	__local_irq_enable();
 	uart_init();
 	timer_init();
 	SysTick_Init();

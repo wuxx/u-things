@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <stm32f10x.h>
+#include <core_cm3.h>
 #include "common.h"
+#include "int.h"
 #include "mmio.h"
 #include "uart.h"
 #include "log.h"
@@ -22,6 +24,7 @@ static int32_t cmd_exec(void);
 static int32_t cmd_dump(void);
 static int32_t cmd_fwrite(void);
 static int32_t cmd_cksum(void);
+static int32_t cmd_boot(void);
 static int32_t cmd_systest(void);
 static int32_t cmd_help(void);
 
@@ -33,6 +36,7 @@ struct shell_cmd_info ci[] = {
 
     {"fw",      cmd_fwrite,  "fw    [addr] [word_num](1-4) data...  write flash addr"},
 		{"cksum",   cmd_cksum,   "cksum [addr] [word_num]               calc memory checksum"},
+		{"boot",    cmd_boot,    "boot  [addr]                          boot from memory"},
     {"stest",   cmd_systest, "stest [module] args...	              system test" },
     {"help",    cmd_help,    "help                                  print cmd info"  },
 };
@@ -64,7 +68,6 @@ static int32_t cmd_write()
 		word_num = argc - 2;
 		
 		word_num = word_num <= 16 ? word_num : 16;
-		PRINT_EMG("argc: %d; word_num: %d\n", argc, word_num);
     addr = strtoul(argv[1], NULL, 0);
 		for(i = 0; i < word_num; i++) {
 			data = strtoul(argv[2 + i], NULL, 0);
@@ -169,6 +172,30 @@ static int32_t cmd_cksum()
 		return 0;
 }
 
+static int32_t cmd_boot()
+{
+		uint32_t i;
+		uint32_t addr;
+		uint32_t msp, pc;
+		void (*bootcode)();	
+	
+		addr = strtoul(argv[1], NULL, 0);
+		msp = readl(addr);
+		pc  = readl(addr + 4);
+		PRINT_EMG("boot from 0x%08x, sp: 0x%08x; pc: 0x%08x\n", addr, msp, pc);
+	/* TODO: check the current control register to make sure r13 is banked to MSP */
+		__set_MSP(msp);
+		bootcode = (void (*)())(pc);
+	
+		/* disable all irq */
+		for(i = 0; i < 128; i++) {
+			NVIC_DisableIRQ(i);
+		}	
+		__local_irq_disable();
+		bootcode();
+		ASSERT(0);
+		return 0;	
+}
 static int32_t cmd_help()
 {
     uint32_t i;
