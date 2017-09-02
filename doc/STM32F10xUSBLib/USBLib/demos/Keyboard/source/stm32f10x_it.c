@@ -575,10 +575,11 @@ void USART1_IRQHandler(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
+#if 0
 void USART2_IRQHandler(void)
 {
 }
-
+#endif
 /*******************************************************************************
 * Function Name  : USART3_IRQHandler
 * Description    : This function handles USART3 global interrupt request.

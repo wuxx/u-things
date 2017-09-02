@@ -507,6 +507,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\FWLib\library\src\stm32f10x_flash.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f10x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\FWLib\library\src\stm32f10x_usart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

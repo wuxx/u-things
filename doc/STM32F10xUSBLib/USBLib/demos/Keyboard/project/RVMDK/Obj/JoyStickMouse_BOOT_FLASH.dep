@@ -19,7 +19,7 @@ I (..\..\..\..\library\inc\usb_core.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_init.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_mem.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_int.h)(0x59A52D4E)
-F (..\..\source\main.c)(0x59A7FEDF)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I..\..\include -I..\..\..\..\library\inc -I..\..\..\..\..\FWLib\library\inc-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="515" -DSTM32F10X_MD -DVECT_TAB_FLASH-o .\obj\main.o --omf_browse .\obj\main.crf --depend .\obj\main.d)
+F (..\..\source\main.c)(0x59AA23AA)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I..\..\include -I..\..\..\..\library\inc -I..\..\..\..\..\FWLib\library\inc-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="515" -DSTM32F10X_MD -DVECT_TAB_FLASH-o .\obj\main.o --omf_browse .\obj\main.crf --depend .\obj\main.d)
 I (..\..\..\..\..\FWLib\library\inc\stm32f10x_lib.h)(0x59A52D4E)
 I (..\..\..\..\..\FWLib\library\inc\stm32f10x_map.h)(0x59A52D4E)
 I (..\..\include\stm32f10x_conf.h)(0x59A52D4E)
@@ -39,7 +39,9 @@ I (..\..\..\..\library\inc\usb_init.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_mem.h)(0x59A52D4E)
 I (..\..\..\..\library\inc\usb_int.h)(0x59A52D4E)
 I (..\..\include\hw_config.h)(0x59A52D4E)
-F (..\..\source\stm32f10x_it.c)(0x59A52D4E)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I..\..\include -I..\..\..\..\library\inc -I..\..\..\..\..\FWLib\library\inc-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="515" -DSTM32F10X_MD -DVECT_TAB_FLASH-o .\obj\stm32f10x_it.o --omf_browse .\obj\stm32f10x_it.crf --depend .\obj\stm32f10x_it.d)
+I (..\..\..\..\..\FWLib\library\inc\stm32f10x_usart.h)(0x59A52D4E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x54C245B8)
+F (..\..\source\stm32f10x_it.c)(0x59AA23A5)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I..\..\include -I..\..\..\..\library\inc -I..\..\..\..\..\FWLib\library\inc-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="515" -DSTM32F10X_MD -DVECT_TAB_FLASH-o .\obj\stm32f10x_it.o --omf_browse .\obj\stm32f10x_it.crf --depend .\obj\stm32f10x_it.d)
 I (..\..\include\stm32f10x_it.h)(0x59A52D4E)
 I (..\..\..\..\..\FWLib\library\inc\stm32f10x_lib.h)(0x59A52D4E)
 I (..\..\..\..\..\FWLib\library\inc\stm32f10x_map.h)(0x59A52D4E)
@@ -196,5 +198,12 @@ I (..\..\..\..\..\FWLib\library\inc\stm32f10x_map.h)(0x59A52D4E)
 I (..\..\include\stm32f10x_conf.h)(0x59A52D4E)
 I (..\..\..\..\..\FWLib\library\inc\stm32f10x_type.h)(0x59A52D4E)
 I (..\..\..\..\..\FWLib\library\inc\cortexm3_macro.h)(0x59A52D4E)
+F (..\..\..\..\..\FWLib\library\src\stm32f10x_usart.c)(0x59A52D4E)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I..\..\include -I..\..\..\..\library\inc -I..\..\..\..\..\FWLib\library\inc-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="515" -DSTM32F10X_MD -DVECT_TAB_FLASH-o .\obj\stm32f10x_usart.o --omf_browse .\obj\stm32f10x_usart.crf --depend .\obj\stm32f10x_usart.d)
+I (..\..\..\..\..\FWLib\library\inc\stm32f10x_usart.h)(0x59A52D4E)
+I (..\..\..\..\..\FWLib\library\inc\stm32f10x_map.h)(0x59A52D4E)
+I (..\..\include\stm32f10x_conf.h)(0x59A52D4E)
+I (..\..\..\..\..\FWLib\library\inc\stm32f10x_type.h)(0x59A52D4E)
+I (..\..\..\..\..\FWLib\library\inc\cortexm3_macro.h)(0x59A52D4E)
+I (..\..\..\..\..\FWLib\library\inc\stm32f10x_rcc.h)(0x59A52D4E)
 F (.\cortexm3_macro.s)(0x59A52D4E)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1"-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 515" --pd "STM32F10X_MD SETA 1"--list .\list\cortexm3_macro.lst --xref -o .\obj\cortexm3_macro.o --depend .\obj\cortexm3_macro.d)
 F (.\stm32f10x_vector.s)(0x59A52D4E)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1"-I D:\20170809\u-things\doc\STM32F10xUSBLib\USBLib\demos\Keyboard\project\RVMDK\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 515" --pd "STM32F10X_MD SETA 1"--list .\list\stm32f10x_vector.lst --xref -o .\obj\stm32f10x_vector.o --depend .\obj\stm32f10x_vector.d)

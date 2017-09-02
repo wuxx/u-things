@@ -16,6 +16,7 @@
 ".\obj\stm32f10x_lib.o"
 ".\obj\stm32f10x_nvic.o"
 ".\obj\stm32f10x_flash.o"
+".\obj\stm32f10x_usart.o"
 ".\obj\cortexm3_macro.o"
 ".\obj\stm32f10x_vector.o"
 --library_type=microlib --strict --scatter ".\Obj\JoyStickMouse.sct"
