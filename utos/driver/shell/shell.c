@@ -21,7 +21,8 @@ char *argv[SHELL_ARGS_MAX] = {NULL};
 static int32_t cmd_read(void);
 static int32_t cmd_write(void);
 static int32_t cmd_exec(void);
-static int32_t cmd_dump(void);
+static int32_t cmd_dumpw(void);
+static int32_t cmd_dumpb(void);
 static int32_t cmd_fwrite(void);
 static int32_t cmd_cksum(void);
 static int32_t cmd_boot(void);
@@ -32,7 +33,8 @@ struct shell_cmd_info ci[] = {
     {"r",       cmd_read,    "r     [addr]                          read    any addr"},
     {"w",       cmd_write,   "w     [addr] [data]                   write   any addr"},
     {"x",       cmd_exec,    "x     [addr]                          execute any addr"},
-    {"dump",    cmd_dump,    "dump  [addr] [word_num]               dump    any addr"},
+    {"dumpw",   cmd_dumpw,   "dumpw [addr] [word_num]               dump    any addr"},
+    {"dumpb",   cmd_dumpb,   "dumpb [addr] [byte_num]               dump    any addr"},
 
     {"fw",      cmd_fwrite,  "fw    [addr] [word_num](1-4) data...  write flash addr"},
 		{"cksum",   cmd_cksum,   "cksum [addr] [word_num]               calc memory checksum"},
@@ -98,7 +100,7 @@ static int32_t cmd_exec()
     return ret;
 }
 
-static int32_t cmd_dump()
+static int32_t cmd_dumpw()
 {
     uint32_t i;
     uint32_t *p;
@@ -120,7 +122,68 @@ static int32_t cmd_dump()
 
     return 0;
 }
+
+uint8_t cook(uint8_t c)
+{
+	/* please check the ascii code table */
+	if (c >= 0x20 && c <= 0x7E) {
+		return c;
+	} else {
+		return '.';
+	}
+}
+
+static int32_t cmd_dumpb()
+{
+    uint32_t i, x;
+    uint8_t *p;
+		uint8_t buf[16];
+    uint32_t addr, byte_nr;
+		uint32_t count, left;
+
+    addr    = strtoul(argv[1], NULL, 0);
+    byte_nr = strtoul(argv[2], NULL, 0);
+    p       = (uint8_t*)addr;
 	
+		count = byte_nr / 16;
+		left  = byte_nr % 16;
+	
+    PRINT_EMG("[0x%08x]: ", &p[0]);
+    for(i = 0; i < count; i++) {
+				for(x = 0; x < 16; x++) {
+					buf[x] = p[i * 16 + x];
+					PRINT_EMG("%02x ", buf[x]);
+				}
+				PRINT_EMG("  ");
+				for(x = 0; x < 16; x++) {
+					PRINT_EMG("%c", cook(buf[x]));
+				}
+				
+        PRINT_EMG("\n[0x%08x]: ", &p[(i + 1) * 16]);
+    }
+
+		if (left != 0) {
+			for(x = 0; x < 16; x++) {
+				if (x < left) {
+					buf[x] = p[i * 16 + x];
+					PRINT_EMG("0x%02x ", buf[x]);
+				} else {
+					buf[x] = ' ';
+					PRINT_EMG("   ");
+				}
+			}
+			PRINT_EMG("  ");
+			for(x = 0; x < 16; x++) {
+				PRINT_EMG("%c", cook(buf[x]));
+			}
+		
+		}
+					
+	PRINT_EMG("\n");
+
+    return 0;
+}
+
 static int32_t cmd_fwrite()
 {
 		int32_t ret;

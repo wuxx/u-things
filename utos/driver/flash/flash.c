@@ -17,8 +17,15 @@ int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
 
     uint8_t  *bbuf;
     uint32_t offset, page_start, page_num;
+	
+		uint32_t head_size, body_size, tail_size;
+	
+    PRINT_EMG("%s-%d 0x%08x 0x%08x 0x%08x 0x%08x\n", __func__, __LINE__, addr, buf, size, page);
 
-    PRINT_EMG("%s-%d 0x%08x 0x%08x 0x%08x\n", __func__, __LINE__, addr, buf, size);
+		if (size == 0) {
+			PRINT_ERR("size must > 0\n");
+			return -1;
+		}
 
 #if 0
     if ((size % 4) != 0) {
@@ -38,14 +45,14 @@ int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
 
 	/* we always cut the addr interval in 3 part: head, body, tail */
 	/* TODO: DRY. there is too much duplicate code */
-	
+
 	/* head */
 	if ((offset = PAGE_OFFSET(addr)) != 0) {
-		PRINT_EMG("head\n");
+		PRINT_EMG("head offest 0x%08x\n", offset);
 		/* read */
 		wpage = (uint32_t *)&page[0];
 		bpage = (uint8_t  *)&page[0];
-		bbuf = (uint8_t  *)buf;
+		bbuf  = (uint8_t  *)buf;
 
 		for(i = 0; i < (FLASH_PAGE_SIZE / 4); i++) {
 			wpage[i] = readl(PAGE_BASE(addr) + i * 4);
@@ -53,8 +60,13 @@ int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
 		//PRINT_EMG("%s-%d %x\n", __func__, __LINE__, PAGE_BASE(addr));	
 		/* erase */
 		status = FLASH_ErasePage(PAGE_BASE(addr));
+#if 0
+		PRINT_EMG("earse page 0x%08x return \n", PAGE_BASE(addr));
+		return;
+#endif
 		/* merge */
-		for(i = 0; i < (FLASH_PAGE_SIZE - offset); i++) {
+		head_size = size <= (FLASH_PAGE_SIZE - offset) ? size : FLASH_PAGE_SIZE - offset;
+		for(i = 0; i < head_size; i++) {
 			bpage[offset + i] = bbuf[i];
 		}
 
@@ -75,11 +87,14 @@ int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
 			}
 		}
 
+		if (PAGE_BASE(addr) == PAGE_BASE(addr + size - 1)) {
+			return 0;
+		}
 	}
 
 	/* tail */
 	if ((offset = PAGE_OFFSET(addr + size)) != 0) {
-		PRINT_EMG("tail\n");
+		PRINT_EMG("tail offset 0x%08x\n", offset);
 		/* read */
 		wpage = (uint32_t *)&page[0];
 		bpage = (uint8_t  *)&page[0];

@@ -3,10 +3,9 @@
 
 #include "stm32f10x.h"
 
-#define FLASH_PAGE_SIZE   ((uint16_t)0x800)	//2048
-
-#define WRITE_START_ADDR  ((uint32_t)0x08008000)
-#define WRITE_END_ADDR    ((uint32_t)0x0800C000)
+/* stm32f103vet6 flash page: 2048 bytes */
+/* stm32f103c8t6 flash page: 1024 bytes */
+#define FLASH_PAGE_SIZE   ((uint16_t)0x400)	//1024
 
 #define PAGE_BASE(addr)   ((addr) - ((addr) % FLASH_PAGE_SIZE))
 #define PAGE_OFFSET(addr) ((addr) % FLASH_PAGE_SIZE)
