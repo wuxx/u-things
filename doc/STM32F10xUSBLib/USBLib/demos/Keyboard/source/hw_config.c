@@ -27,7 +27,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-ErrorStatus HSEStartUpStatus;
+
 
 /* Extern variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -41,6 +41,7 @@ ErrorStatus HSEStartUpStatus;
 *******************************************************************************/
 void Set_System(void)
 {
+	ErrorStatus HSEStartUpStatus;
   GPIO_InitTypeDef GPIO_InitStructure;
 	//while(1);  
   /* SYSCLK, HCLK, PCLK2 and PCLK1 configuration -----------------------------*/   

