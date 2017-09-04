@@ -3,7 +3,7 @@
 #include "log.h"
 #include "common.h"
 
-static uint8_t  page[FLASH_PAGE_SIZE];
+static uint8_t page[FLASH_PAGE_SIZE];
 
 int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
 {

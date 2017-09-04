@@ -1,11 +1,15 @@
 #include <string.h>
 
+#include "common.h"
 #include "watchdog.h"
 #include "uart.h"
 #include "shell.h"
 #include "log.h"
 
 int uart_work_mode = TSHELL_MODE;
+
+uint32_t uart_recv_buf_index = 0;
+char uart_recv_buf[UART_IO_SIZE] = {0};
 
  /**
   * @brief  配置嵌套向量中断控制器NVIC
@@ -135,9 +139,6 @@ void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
 	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);	
 }
 
-uint32_t uart_recv_buf_index = 0;
-char uart_recv_buf[UART_IO_SIZE] = {0};
-
 void DEBUG_USART_IRQHandler(void)
 {
 	static uint8_t i;
@@ -212,22 +213,3 @@ void uart_init()
 {
 	USART_Config();
 }
-
-///重定向c库函数printf到串口，重定向后可使用printf函数
-int fputc(int ch, FILE *f)
-{
-		/* 发送一个字节数据到串口 */
-		Usart_SendByte(DEBUG_USARTx, (uint8_t) ch);
-	
-		return (ch);
-}
-
-///重定向c库函数scanf到串口，重写向后可使用scanf、getchar等函数
-int fgetc(FILE *f)
-{
-		/* 等待串口输入数据 */
-		while (USART_GetFlagStatus(DEBUG_USARTx, USART_FLAG_RXNE) == RESET);
-
-		return (int)USART_ReceiveData(DEBUG_USARTx);
-}
-

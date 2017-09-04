@@ -20,6 +20,13 @@
 
 #define IS_MEMADDR(addr)  (IS_FLASHADDR(addr) || IS_SRAMADDR(addr))
 
+enum IO_TYPE_E
+{
+	UART = 0,
+	USB,
+};
+extern uint32_t io_type;
+
 int __assert(const char *file_name, const char *func_name, unsigned int line_num, char *desc);
 
 #define ASSERT(exp) ((exp) ? 0 : __assert(__FILE__, __func__, __LINE__, "assert (" #exp ") failed!\n"))

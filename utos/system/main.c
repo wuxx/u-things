@@ -23,6 +23,12 @@ extern unsigned char  Load$$RW_IRAM1$$Base;
 extern unsigned char Image$$RW_IRAM1$$Base;
 extern unsigned char Image$$RW_IRAM1$$Length;
 
+#define USB_IO_SIZE	(256)
+uint32_t usb_recv_buf_index = 0;
+char usb_recv_buf[USB_IO_SIZE] = {0};
+
+uint32_t io_type = UART;
+
 uint32_t flash_base = FLASH_BASE, flash_size = FLASH_SIZE;
 uint32_t ram_base = SRAM_BASE, ram_size = SRAM_SIZE;
 
@@ -32,6 +38,36 @@ uint32_t ram_load_base, ram_image_base, ram_image_size;
 uint32_t bss_image_base, bss_image_size;
 
 char sys_banner[] = {"utos system buildtime [" __TIME__ " " __DATE__ "] " "rev " XXXX_REV};
+
+
+void usb_vcom_handler(uint8_t ch)
+{
+
+		if (ch == '\n') {   /* sscom will send '\r\n' we ignore the '\n' */
+				return;
+		}
+		
+		if (usb_recv_buf_index == (USB_IO_SIZE - 1) && ch != '\r') {
+				printf("cmd too long!\n");
+				usb_recv_buf_index = 0;
+				return;
+		}
+
+		if (ch == '\r') {
+				usb_recv_buf[usb_recv_buf_index] = '\0';  /* terminate the string. */
+				shell(usb_recv_buf);
+
+				usb_recv_buf_index = 0;
+				return;
+		} else {
+				usb_recv_buf[usb_recv_buf_index] = ch;
+				usb_recv_buf_index++;
+		}
+		
+		/* echo */
+		printf("%c", ch);
+
+}
 
 void print_chipid()
 {
@@ -110,13 +146,14 @@ int main (void)
 {
 	__local_irq_enable();
 	uart_init();
-	enter_subsystem();
+	//enter_subsystem();
 	timer_init();
 	SysTick_Init();
 	
 	/* 发送一个字符串 */
 	PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
+	PRINT_EMG("io_type: %d\n", io_type);
 	PRINT_EMG("uart_baudrate %d\n", DEBUG_USART_BAUDRATE);
 	
 	flash_load_base  = (uint32_t)&Load$$ER_IROM1$$Base;
@@ -163,9 +200,11 @@ int main (void)
 	gpio_write(GROUPA, 7, 1);
 #endif
 
+#define CONFIG_USB
 
 #ifdef CONFIG_USB
 	USB_Config();
+	//io_type = USB;
 #endif
 
 #if 0	
@@ -184,21 +223,30 @@ int main (void)
 					shell((char *)shell_cmd);
 					shell_cmd = NULL;				
 				}
-				
+#if 1				
 #ifdef CONFIG_USB
 				{
 					uint32_t i, len;
-					uint8_t buf[200] = {0};
+					uint8_t ch;
 
-					len = USB_RxRead(buf, sizeof(buf));
-									for(i = 0; i < len; i++) {
-											PRINT_EMG("usb read [0x%x][%c]\n", buf[i], buf[i]);
-									}
+					len = USB_RxRead(&ch, 1);
+					if (len == 1) {
+						usb_vcom_handler(ch);
+					}
+#if 0					
+					for(i = 0; i < len; i++) {
+							PRINT_EMG("usb read [0x%x][%c]\n", buf[i], buf[i]);
+					}
+#endif
+					
+#if 0
 					if (len > 0)
 					{
 							USB_TxWrite(buf, len);
 					}
+#endif
 				}				
+#endif	/* CONFIG_USB */
 #endif				
 				if (g_flag == 0xf11dbeef) {
 					extern void dht11_main();
@@ -213,3 +261,32 @@ int main (void)
 		}	
 	}
 }
+
+
+int fputc(int ch, FILE *f)
+{
+	switch (io_type) {
+		case (UART):
+			Usart_SendByte(DEBUG_USARTx, (uint8_t) ch);
+			break;
+		case (USB):
+			USB_TxWrite((uint8_t *)&ch, 1);
+			break;
+		default:
+			break;
+	}
+
+		return (ch);
+}
+
+#if 0
+///重定向c库函数scanf到串口，重写向后可使用scanf、getchar等函数
+int fgetc(FILE *f)
+{
+		/* 等待串口输入数据 */
+		while (USART_GetFlagStatus(DEBUG_USARTx, USART_FLAG_RXNE) == RESET);
+
+		return (int)USART_ReceiveData(DEBUG_USARTx);
+}
+#endif
+
