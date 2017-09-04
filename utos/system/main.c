@@ -149,6 +149,13 @@ int main (void)
 	//enter_subsystem();
 	timer_init();
 	SysTick_Init();
+
+#define CONFIG_USB
+
+#ifdef CONFIG_USB
+	USB_Config();
+	io_type |= IO_USB;
+#endif
 	
 	/* ·¢ËÍÒ»¸ö×Ö·û´® */
 	PRINT_EMG("\n%s\n", sys_banner);
@@ -200,12 +207,6 @@ int main (void)
 	gpio_write(GROUPA, 7, 1);
 #endif
 
-#define CONFIG_USB
-
-#ifdef CONFIG_USB
-	USB_Config();
-	io_type |= IO_USB;
-#endif
 
 #if 0	
 	while(1) {
