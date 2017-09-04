@@ -204,7 +204,7 @@ int main (void)
 
 #ifdef CONFIG_USB
 	USB_Config();
-	//io_type = USB;
+	io_type = USB;
 #endif
 
 #if 0	
