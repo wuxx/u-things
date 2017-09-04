@@ -195,7 +195,7 @@ void DEBUG_USART_IRQHandler(void)
 		}
 		
 		/* echo */
-		uart_putc(ch);
+		printf("%c", ch);
 
 }
 

@@ -22,8 +22,8 @@
 
 enum IO_TYPE_E
 {
-	UART = 0,
-	USB,
+	IO_UART = 1 << 0,
+	IO_USB  = 1 << 1,
 };
 extern uint32_t io_type;
 

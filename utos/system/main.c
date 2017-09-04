@@ -27,7 +27,7 @@ extern unsigned char Image$$RW_IRAM1$$Length;
 uint32_t usb_recv_buf_index = 0;
 char usb_recv_buf[USB_IO_SIZE] = {0};
 
-uint32_t io_type = UART;
+uint32_t io_type = IO_UART;
 
 uint32_t flash_base = FLASH_BASE, flash_size = FLASH_SIZE;
 uint32_t ram_base = SRAM_BASE, ram_size = SRAM_SIZE;
@@ -204,7 +204,7 @@ int main (void)
 
 #ifdef CONFIG_USB
 	USB_Config();
-	io_type = USB;
+	io_type |= IO_USB;
 #endif
 
 #if 0	
@@ -223,7 +223,7 @@ int main (void)
 					shell((char *)shell_cmd);
 					shell_cmd = NULL;				
 				}
-#if 1				
+
 #ifdef CONFIG_USB
 				{
 					uint32_t i, len;
@@ -238,7 +238,7 @@ int main (void)
 							PRINT_EMG("usb read [0x%x][%c]\n", buf[i], buf[i]);
 					}
 #endif
-					
+
 #if 0
 					if (len > 0)
 					{
@@ -247,7 +247,7 @@ int main (void)
 #endif
 				}				
 #endif	/* CONFIG_USB */
-#endif				
+
 				if (g_flag == 0xf11dbeef) {
 					extern void dht11_main();
 					extern void hcsr04_main();
@@ -265,15 +265,12 @@ int main (void)
 
 int fputc(int ch, FILE *f)
 {
-	switch (io_type) {
-		case (UART):
-			Usart_SendByte(DEBUG_USARTx, (uint8_t) ch);
-			break;
-		case (USB):
-			USB_TxWrite((uint8_t *)&ch, 1);
-			break;
-		default:
-			break;
+	if (io_type & IO_UART) {
+		Usart_SendByte(DEBUG_USARTx, (uint8_t) ch);
+	}
+
+	if (io_type & IO_USB) {
+		USB_TxWrite((uint8_t *)&ch, 1);
 	}
 
 		return (ch);
