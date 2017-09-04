@@ -146,7 +146,7 @@ int main (void)
 {
 	__local_irq_enable();
 	uart_init();
-	//enter_subsystem();
+	enter_subsystem();
 	timer_init();
 	SysTick_Init();
 
