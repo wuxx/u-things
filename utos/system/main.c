@@ -238,9 +238,6 @@ int main (void)
 					for(i = 0; i < len; i++) {
 							PRINT_EMG("usb read [0x%x][%c]\n", buf[i], buf[i]);
 					}
-#endif
-
-#if 0
 					if (len > 0)
 					{
 							USB_TxWrite(buf, len);
@@ -266,11 +263,19 @@ int main (void)
 
 int fputc(int ch, FILE *f)
 {
+	
+	uint8_t c = '\r';
+	
 	if (io_type & IO_UART) {
 		Usart_SendByte(DEBUG_USARTx, (uint8_t) ch);
 	}
 
 	if (io_type & IO_USB) {
+		
+		if (ch == '\n') {
+			USB_TxWrite(&c, 1);
+		}
+		
 		USB_TxWrite((uint8_t *)&ch, 1);
 	}
 
