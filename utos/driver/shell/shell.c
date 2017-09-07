@@ -23,7 +23,8 @@ static int32_t cmd_write(void);
 static int32_t cmd_exec(void);
 static int32_t cmd_dumpw(void);
 static int32_t cmd_dumpb(void);
-static int32_t cmd_fwrite(void);
+static int32_t cmd_fmset(void);
+static int32_t cmd_fmcpy(void);
 static int32_t cmd_cksum(void);
 static int32_t cmd_boot(void);
 static int32_t cmd_systest(void);
@@ -36,7 +37,8 @@ struct shell_cmd_info ci[] = {
     {"dumpw",   cmd_dumpw,   "dumpw [addr] [word_num]               dump    any addr"},
     {"dumpb",   cmd_dumpb,   "dumpb [addr] [byte_num]               dump    any addr"},
 
-    {"fw",      cmd_fwrite,  "fw    [addr] [word_num](1-4) data...  write flash addr"},
+    {"fmset",   cmd_fmset,   "fmset [addr] [word_num](1-4) data...  flash memory set"},
+    {"fmcpy",   cmd_fmcpy,   "fmcpy [dst_addr] [src_addr] [size]    flash memory copy"},
 		{"cksum",   cmd_cksum,   "cksum [addr] [word_num]               calc memory checksum"},
 		{"boot",    cmd_boot,    "boot  [addr]                          boot from memory"},
     {"stest",   cmd_systest, "stest [module] args...	              system test" },
@@ -184,7 +186,7 @@ static int32_t cmd_dumpb()
     return 0;
 }
 
-static int32_t cmd_fwrite()
+static int32_t cmd_fmset()
 {
 		int32_t ret;
 		uint32_t i;
@@ -217,6 +219,25 @@ static int32_t cmd_fwrite()
 		PRINT_EMG("\n");
 
     return 0;
+}
+
+static int32_t cmd_fmcpy()
+{
+		int32_t ret;
+    uint32_t dst_addr, src_addr, size;
+
+    dst_addr = strtoul(argv[1], NULL, 0);
+    src_addr = strtoul(argv[2], NULL, 0);
+		size 		 = strtoul(argv[3], NULL, 0);
+
+		PRINT_EMG("flash_write 0x%08x 0x%08x 0x%08x\n", dst_addr, src_addr, size);
+    ret = flash_write(dst_addr, (void *)(src_addr), size);
+
+		if (ret != 0) {
+			PRINT_EMG("flash write fail\n");
+		}
+
+		return 0;
 }
 
 static int32_t cmd_cksum()

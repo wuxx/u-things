@@ -34,14 +34,14 @@ int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
     }
 #endif
 
-    if (!((addr >= FLASH_BASE) && ((addr + size) < (FLASH_BASE + FLASH_SIZE)))) {
+    if (!((addr >= FLASH_BASE) && ((addr + size) <= (FLASH_BASE + FLASH_SIZE)))) {
         PRINT_ERR("illegal addr interval [%x, %x], must belong to [%x, %x]\n", 
                 addr, addr + size, FLASH_BASE, FLASH_BASE + FLASH_SIZE);
-        return -1;    
+        return -1;
     }
 
     FLASH_Unlock();
-	FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPRTERR);	
+		FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPRTERR);	
 
 	/* we always cut the addr interval in 3 part: head, body, tail */
 	/* TODO: DRY. there is too much duplicate code */
@@ -135,14 +135,17 @@ int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
 	page_num   = (PAGE_BASE(addr + size) - page_start) / FLASH_PAGE_SIZE;
 	wpage      = PAGE_OFFSET(addr) == 0 ? (uint32_t *)(buf) : (uint32_t *)((uint32_t)buf + FLASH_PAGE_SIZE - PAGE_OFFSET(addr));
 	/* body */
+	PRINT_EMG("page_num: %d\n", page_num);
 	for(x = 0; x < page_num; x++) {
 		PRINT_EMG("body %d\n", x);
 		/* erase */
+		//PRINT_EMG("erase1 0x%08x\n", page_start + x * FLASH_PAGE_SIZE);
 		status = FLASH_ErasePage(page_start + x * FLASH_PAGE_SIZE);
+		//PRINT_EMG("erase2 0x%08x\n", page_start + x * FLASH_PAGE_SIZE);
 		for(i = 0; i < (FLASH_PAGE_SIZE / 4); i++) {
-			//PRINT_EMG("program: 0x%08x: 0x%08x\n", page_start + x * FLASH_PAGE_SIZE + i * 4, wpage[x * FLASH_PAGE_SIZE + i]);
-			status = FLASH_ProgramWord(page_start + x * FLASH_PAGE_SIZE + i * 4, wpage[x * FLASH_PAGE_SIZE + i]);
-		
+			//PRINT_EMG("program1: 0x%08x: 0x%08x\n", page_start + x * FLASH_PAGE_SIZE + i * 4, &wpage[(x * FLASH_PAGE_SIZE) / 4 + i]);
+			status = FLASH_ProgramWord(page_start + x * FLASH_PAGE_SIZE + i * 4, wpage[(x * FLASH_PAGE_SIZE) / 4 + i]);
+			//PRINT_EMG("program2: 0x%08x: 0x%08x\n", page_start + x * FLASH_PAGE_SIZE + i * 4, &wpage[(x * FLASH_PAGE_SIZE) / 4 + i]);
 			if (status != FLASH_COMPLETE) {
 				PRINT_ERR("program fail [%x]:%x (status %x)\n", 
 					page_start + x * FLASH_PAGE_SIZE + i * 4,  wpage[x * FLASH_PAGE_SIZE + i], status);
@@ -151,9 +154,9 @@ int32_t flash_write(uint32_t addr, void *buf, uint32_t size)
 		
 			//PRINT_EMG("%d: %x %x\n", __LINE__, page_start + x * FLASH_PAGE_SIZE + i * 4, wpage[x * FLASH_PAGE_SIZE + i]);
 			
-			if ((wdata = readl(page_start + x * FLASH_PAGE_SIZE + i * 4)) != wpage[x * FLASH_PAGE_SIZE + i]) {
+			if ((wdata = readl(page_start + x * FLASH_PAGE_SIZE + i * 4)) != wpage[(x * FLASH_PAGE_SIZE) / 4 + i]) {
 				PRINT_ERR("%d: check fail [0x%08x]:0x%08x (expect 0x%08x:0x%08x)\n", 
-					__LINE__, page_start + x * FLASH_PAGE_SIZE + i * 4,  wdata, &wpage[x * FLASH_PAGE_SIZE + i], wpage[x * FLASH_PAGE_SIZE + i]);
+					__LINE__, page_start + x * FLASH_PAGE_SIZE + i * 4,  wdata, &wpage[(x * FLASH_PAGE_SIZE) / 4 + i], wpage[(x * FLASH_PAGE_SIZE) / 4 + i]);
 				goto error;
 			}
 
