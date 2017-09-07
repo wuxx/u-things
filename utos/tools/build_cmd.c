@@ -60,9 +60,10 @@ int main(int argc, char **argv)
             checksum += buf[x];
         }
     }
+
     printf("cksum 0x%08x 0x%08x\n", oaddr, len / 4);
 
-    printf("fmcpy 0x%08x 0x%08x 0x%08x\n", flash_addr, oaddr, len / 4);
+    printf("fmcpy 0x%08x 0x%08x 0x%08x\n", flash_addr, oaddr, len);
     printf("cksum 0x%08x 0x%08x\n", flash_addr, len / 4);
 
     printf("checksum: 0x%08x\n", checksum);

@@ -150,11 +150,11 @@ int main (void)
 	timer_init();
 	SysTick_Init();
 
-#define CONFIG_USB
+//#define CONFIG_USB
 
 #ifdef CONFIG_USB
 	USB_Config();
-	io_type |= IO_USB;
+	io_type |= IO_USB;	/* FIXME: fix the concurrent problem, such as argc, argv. */
 #endif
 	
 	/* ·¢ËÍÒ»¸ö×Ö·û´® */

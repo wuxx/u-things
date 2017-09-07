@@ -71,15 +71,22 @@ int main(int argc, char **argv)
     
     if (argv[1] != NULL) {
         printf("send [%s] \n", argv[1]);
+
         len = strlen(argv[1]);
         memcpy((void*)&ibuf[1], argv[1], len);
 
         posm->writable = 1; /* it means put output in obuf */
         posm->offset   = 0;
-
-        ibuf[0] = 1; /* it means the cmd is ready */
+#if 0
         ibuf[1 + len + 0] = '\r';
         ibuf[1 + len + 1] = '\n';
+	for(i = 0; i < (len + 3); i++) {
+		printf("[%d]: (%c)(0x%02x)\n", i, ibuf[i], ibuf[i]);
+	}
+#endif
+
+        ibuf[0] = 1; /* it means the cmd is ready */
+
     }
     while (ibuf[0] == 1); /* 1. wait cmd send */
     posm->writable = 0;

@@ -27,11 +27,13 @@ int main(int argc, char **argv)
     fseek(fp, 0L, SEEK_END);
     len = ftell(fp);
 
-    size = padsize - (len % padsize);
+    if (len % padsize != 0) {
+        size = padsize - (len % padsize);
 
-    printf("len: %d\n", len);
-    for(i = 0; i < size; i++) {
-        fwrite(&paddata, sizeof(char), 1, fp);
+	printf("len: %d\n", len);
+	for(i = 0; i < size; i++) {
+	    fwrite(&paddata, sizeof(char), 1, fp);
+	}
     }
 
     fclose(fp);

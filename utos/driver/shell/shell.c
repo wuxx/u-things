@@ -347,7 +347,7 @@ int32_t shell(char *cmd)
     int32_t i;
 	  uint32_t len;
     int32_t ret = 0;
-	
+		
 		len = strlen(cmd);
     if (len == 0) {
         ret = 0;
@@ -364,6 +364,7 @@ int32_t shell(char *cmd)
     for(i = 0; i < SHELL_ARGS_MAX; i++) {
         PRINT_EMG("argv[%d]: 0x%x [%s]\n", i, argv[i], argv[i]);
     }
+		PRINT_EMG("[%s]\n", cmd);
 #endif
 
     if ((i = get_cmd_index(argv[0])) == -1) {
