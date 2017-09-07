@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Obj\JoyStickMouse.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Obj\JoyStickMouse.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050169: Last Updated: Mon Sep 04 11:02:46 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050169: Last Updated: Thu Sep 07 10:36:26 2017
 <BR><P>
 <H3>Maximum Stack Usage =        128 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -861,8 +861,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART2_IRQHandler
 </UL>
 
-<P><STRONG><a name="[97]"></a>__keyboard_send</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, main.o(i.__keyboard_send))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = __keyboard_send &rArr; Delay
+<P><STRONG><a name="[97]"></a>__keyboard_send</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, main.o(i.__keyboard_send))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = __keyboard_send &rArr; Delay
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay
 <LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UserToPMABufferCopy
@@ -901,7 +901,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[9d]"></a>keyboard_send_ascii</STRONG> (Thumb, 218 bytes, Stack size 16 bytes, main.o(i.keyboard_send_ascii))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = keyboard_send_ascii &rArr; __keyboard_send &rArr; Delay
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = keyboard_send_ascii &rArr; __keyboard_send &rArr; Delay
 </UL>
 <BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__keyboard_send
 </UL>
@@ -909,7 +909,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[9e]"></a>keyboard_send_string</STRONG> (Thumb, 22 bytes, Stack size 16 bytes, main.o(i.keyboard_send_string))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = keyboard_send_string &rArr; keyboard_send_ascii &rArr; __keyboard_send &rArr; Delay
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = keyboard_send_string &rArr; keyboard_send_ascii &rArr; __keyboard_send &rArr; Delay
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;keyboard_send_ascii
 </UL>
@@ -917,7 +917,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[40]"></a>main</STRONG> (Thumb, 158 bytes, Stack size 0 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = main &rArr; keyboard_send_string &rArr; keyboard_send_ascii &rArr; __keyboard_send &rArr; Delay
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = main &rArr; keyboard_send_string &rArr; keyboard_send_ascii &rArr; __keyboard_send &rArr; Delay
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USB_Init
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;keyboard_send_string
