@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <signal.h>
 #include <assert.h>
+#include <getopt.h>
 #include <Windows.h>
 
 char *sm_ibuf_name = "putty_share_memory_in";
@@ -16,6 +17,19 @@ struct sm_obuf_struct {
 	int offset;
 	char buf[0];
 };
+
+void usage(char *program_name)
+{
+    printf("usage: %s: [OPTION] -s [STRING] \n", program_name);
+    fputs (("\
+             -c           add carriage ret    \n\
+             -d           open debug          \n\
+             -s [string]  send string         \n\
+             -h           display help info   \n\
+"), stdout);
+    exit(0);
+}
+
 
 LPCTSTR create_sm(char *sm_name, int size)
 {
@@ -55,34 +69,68 @@ int main(int argc, char **argv)
     volatile char *ibuf, *obuf;
     int i;
     int len = 0;
-/*
-    ibuf = create_sm(sm_ibuf_name, SM_INPUT_BUF_SIZE);
-    obuf = create_sm(sm_obuf_name, SM_OUTPUT_BUF_SIZE);
-*/
+    int c = 0;
+    int car_ret = 0;
+    int debug = 0;
+    char *s;
+
     ibuf = (char *)get_sm(sm_ibuf_name, SM_INPUT_BUF_SIZE);
     obuf = (char *)get_sm(sm_obuf_name, SM_OUTPUT_BUF_SIZE);
 
     posm = (struct sm_obuf_struct *)obuf;
     
+    if (argc == 1) {
+	usage(argv[0]);
+	return 0;
+    }
+
+    while ((c = getopt(argc, argv, "cds:")) != -1) {
+	switch (c) {
+	    case ('c'):	/* carriage ret */
+	    	car_ret = 1;
+		break;
+	    case ('d'):
+	    	debug = 1;
+		break;
+	    case ('s'):
+	    	s = optarg;
+	    	break;
+	    default:
+	    	usage(argv[0]);
+	    	return 0;
+	    	break;
+	
+	}
+    }
+
+
     printf("ibuf: %x; obuf: %x\n", ibuf, obuf);
-    printf("size: %d\n", sizeof(struct sm_obuf_struct));
+    //printf("size: %d\n", sizeof(struct sm_obuf_struct));
     assert(ibuf != NULL);
     assert(obuf != NULL);
     
-    if (argv[1] != NULL) {
-        printf("send [%s] \n", argv[1]);
+    if (s != NULL) {
+        printf("send [%s] \n", s);
 
-        len = strlen(argv[1]);
-        memcpy((void*)&ibuf[1], argv[1], len);
+        len = strlen(s);
+        memcpy((void*)&ibuf[1], s, len);
 
         posm->writable = 1; /* it means put output in obuf */
         posm->offset   = 0;
-#if 0
-        ibuf[1 + len + 0] = '\r';
-        ibuf[1 + len + 1] = '\n';
-	for(i = 0; i < (len + 3); i++) {
-		printf("[%d]: (%c)(0x%02x)\n", i, ibuf[i], ibuf[i]);
+
+
+	if (car_ret) {
+            ibuf[1 + len + 0] = '\r';
+	    len++;
 	}
+
+	if (debug) {
+		for(i = 0; i < len; i++) {
+			printf("[%d]: (%c)(0x%02x)\n", i, ibuf[1+i], ibuf[1+i]);
+		}
+	}
+#if 0
+        ibuf[1 + len + 1] = '\n';
 #endif
 
         ibuf[0] = 1; /* it means the cmd is ready */
