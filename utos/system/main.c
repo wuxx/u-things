@@ -150,17 +150,17 @@ int main (void)
 	timer_init();
 	SysTick_Init();
 
-//#define CONFIG_USB
+#define CONFIG_USB
 
 #ifdef CONFIG_USB
 	USB_Config();
-	io_type |= IO_USB;	/* FIXME: fix the concurrent problem, such as argc, argv. */
+	io_type |= IO_USB;	/* FIXME: fix the concurrent problem, such as argc, argv. no need to fix, the another io is just display */
 #endif
 	
 	/* ·¢ËÍÒ»¸ö×Ö·û´® */
 	PRINT_EMG("\n%s\n", sys_banner);
 	print_chipid();
-	PRINT_EMG("io_type: %d\n", io_type);
+	PRINT_EMG("io_type [0x%08x]: %d\n", &io_type, io_type);
 	PRINT_EMG("uart_baudrate %d\n", DEBUG_USART_BAUDRATE);
 	
 	flash_load_base  = (uint32_t)&Load$$ER_IROM1$$Base;
