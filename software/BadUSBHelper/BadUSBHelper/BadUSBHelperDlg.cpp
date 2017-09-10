@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 #include "Resource.h"
 #include <fstream>
+#include <stdarg.h>
 
 using namespace std;
 
@@ -28,28 +29,51 @@ CBadUSBHelperDlg::CBadUSBHelperDlg(CWnd* pParent /*=NULL*/)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
     m_Serial = Serial::GetInstance();
+
+    logFile.open("BadUSBHelper.log");
+    logFile << "enter construct function\n" << endl;
+    logFile << __TIME__ << " " << __DATE__ << endl;
+    Log(_T("Hello, BadUSBHelper! buildtime 0x%08x\n"), 0x12345678);
+    Log(_T("Hello, BadUSBHelper! buildtime [%s %s]\n"), __TIME__, __DATE__);
 }
 
-void CBadUSBHelperDlg::Log(LPCTSTR  pstrFormat, ...)
+CBadUSBHelperDlg::~CBadUSBHelperDlg()
 {
+    Log(_T("GoodBye, BadUSBHelper!\n"));
+    logFile.close();
+}
+
+void CBadUSBHelperDlg::Log(LPCTSTR pstrFormat, ...)
+{
+#if 1
+    CString str;
+    va_list args;
+
+    va_start(args, pstrFormat);
+    str.FormatV(pstrFormat, args);
+
 #if 0
-    static int init = 0;
-    static std::ofstream logFile;
-    CTime timeWrite;
-    timeWrite = CTime::GetCurrentTime();
-    if (init == 0) {
-        logFile.open("BadUSBHelper.log");
-    }
+    const size_t strsize=(str.GetLength()+1)*2; // 宽字符的长度;
+    char * pstr= new char[strsize]; //分配空间;
+    size_t sz=0;
+    wcstombs_s(&sz,pstr,strsize,str,_TRUNCATE);
 
-    CString str = timeWrite.Format("%d %b %y %H:%M:%S - ");
+    logFile.write(pstr, strlen(pstr));
+#endif
+#if 0
+    int num = WideCharToMultiByte(CP_OEMCP,NULL,pstrFormat,-1,NULL,0,NULL,FALSE);
+    char *pchar = new char[num];
+    WideCharToMultiByte (CP_OEMCP,NULL,pstrFormat,-1,pchar,num,NULL,FALSE);
+    logFile.write(pchar, strlen(pchar));
+#endif
+ 
+    logFile.write((const char *)str.GetBuffer(), str.GetLength());
 
-    logFile.write(str, str.GetLength());
+    //logFile.write((LPCSTR)(LPCTSTR)str, str.GetLength()); /* FIXME: output like H e l l o ,...  */
+    //logFile.write((LPCSTR)(LPCTSTR)str, str.GetLength());
 
-   // format and write the data we were given
-   va_list args;
-   va_start(args, pstrFormat);
-   str.FormatV(pstrFormat, args);
-   logFile.write(str, str.GetLength());
+    logFile.flush();
+
 #endif
 }
 

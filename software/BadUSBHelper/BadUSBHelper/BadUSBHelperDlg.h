@@ -4,6 +4,7 @@
 
 #pragma once
 #include "Serial.h"
+#include <fstream>
 
 // CBadUSBHelperDlg dialog
 class CBadUSBHelperDlg : public CDialogEx
@@ -11,6 +12,7 @@ class CBadUSBHelperDlg : public CDialogEx
 // Construction
 public:
 	CBadUSBHelperDlg(CWnd* pParent = NULL);	// standard constructor
+    ~CBadUSBHelperDlg();
 
 // Dialog Data
 	enum { IDD = IDD_BADUSBHELPER_DIALOG };
@@ -31,6 +33,8 @@ public:
 	CString m_sSerialPort;
 	CString m_sFilePath;
     Serial*  m_Serial;
+    ofstream logFile;
+
 	afx_msg void OnBnClickedButtonBrawse();
 	afx_msg void OnBnClickedOk();
     void Log(LPCTSTR pstrFormat, ...);
