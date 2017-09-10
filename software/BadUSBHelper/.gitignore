@@ -1,0 +1,8 @@
+Release
+BadUSBHelper/Release
+Debug
+ipch
+*.pdb
+*.pch
+*.obj
+*.tlog
