@@ -30,6 +30,29 @@ CBadUSBHelperDlg::CBadUSBHelperDlg(CWnd* pParent /*=NULL*/)
     m_Serial = Serial::GetInstance();
 }
 
+void CBadUSBHelperDlg::Log(LPCTSTR  pstrFormat, ...)
+{
+#if 0
+    static int init = 0;
+    static std::ofstream logFile;
+    CTime timeWrite;
+    timeWrite = CTime::GetCurrentTime();
+    if (init == 0) {
+        logFile.open("BadUSBHelper.log");
+    }
+
+    CString str = timeWrite.Format("%d %b %y %H:%M:%S - ");
+
+    logFile.write(str, str.GetLength());
+
+   // format and write the data we were given
+   va_list args;
+   va_start(args, pstrFormat);
+   str.FormatV(pstrFormat, args);
+   logFile.write(str, str.GetLength());
+#endif
+}
+
 void CBadUSBHelperDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);

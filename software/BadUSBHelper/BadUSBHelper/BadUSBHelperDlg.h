@@ -33,4 +33,5 @@ public:
     Serial*  m_Serial;
 	afx_msg void OnBnClickedButtonBrawse();
 	afx_msg void OnBnClickedOk();
+    void Log(LPCTSTR pstrFormat, ...);
 };
