@@ -30,10 +30,8 @@ CBadUSBHelperDlg::CBadUSBHelperDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
     m_Serial = Serial::GetInstance();
 
-    logFile.open("BadUSBHelper.log");
     logFile << "enter construct function\n" << endl;
-    logFile << __TIME__ << " " << __DATE__ << endl;
-    Log(_T("Hello, BadUSBHelper! buildtime 0x%08x\n"), 0x12345678);
+    logFile.open("BadUSBHelper.log");
     Log(_T("Hello, BadUSBHelper! buildtime [%s %s]\n"), __TIME__, __DATE__);
 }
 
@@ -165,24 +163,22 @@ void CBadUSBHelperDlg::OnBnClickedOk()
     //    return;
     //}
 
-    std::ofstream outFile; 
-    outFile.open("debug_log.txt");
-    outFile << "This is a debug log!" << endl;
+    Log(_T("debug log start"));
 
     if(m_Serial->InitPort(m_sSerialPort))
     {
-        outFile << "The port is successfully initialized !" << endl;
+        Log(_T("port [%s] init succ!\n"), m_sSerialPort);
     }
     else
     {
-        outFile << "The port is failed to initialize!" << endl;
+        Log(_T("port [%s] init fail!\n"), m_sSerialPort); 
     }
 
     if( m_Serial->m_hCom != INVALID_HANDLE_VALUE )
 	{
 		int* buffer = new int[16];
-        char *commnd = new char[1024];
-        char *readCmd = new char[1024];
+        char *sendBuf = new char[1024];
+        char *recvBuf = new char[1024];
 		std::ifstream inFile;  
 		inFile.open(m_sFilePath, std::ios::binary); 
 		int iAddr = 0x20002000;
@@ -194,39 +190,32 @@ void CBadUSBHelperDlg::OnBnClickedOk()
         fileSize = inFile.tellg();
         inFile.seekg (0, ios::beg);
         groupNum = fileSize / 64;
+        
+        Log(_T("data send start\n"));
 
 		while(count < groupNum)
 		{
 			inFile.read((char *)buffer, 64);
   
-#if 0
-            if (count == 0) {
-                checksum = buffer[0];            
-            }
-#endif
-			memset(commnd, 0, 1024);
-			len = sprintf(commnd, "w 0x%08x  ", iAddr);
+			memset(sendBuf, 0, 1024);
+			len = sprintf(sendBuf, "w 0x%08x  ", iAddr);
 
 			for(int i = 0; i < 16; i++) 
 			{
-				len += sprintf(&commnd[len - 1], " 0x%08x ", buffer[i]);
+				len += sprintf(&sendBuf[len - 1], " 0x%08x ", buffer[i]);
                 checksum += buffer[i];
 			}
-			sprintf(&commnd[len - 1], "\r\n");
+			sprintf(&sendBuf[len - 1], "\r\n");
 
-            sprintf((char *)buffer, "[%d]--sent data: checksum: 0x%x\n", count, checksum);
-            outFile.write((char *)buffer, strlen((char *)buffer));
-			outFile.write(commnd, strlen(commnd));
+            Log(_T("[%d] send: [%s] (checksum: 0x%x)\n"), count, sendBuf, checksum);
 
-            m_Serial->WriteToPort(commnd, strlen(commnd));
+            m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
 
-            memset(readCmd, 0, 1024);
+            memset(recvBuf, 0, 1024);
             Sleep(500);
-            m_Serial->ReadFromPort(readCmd, 1024);
 
-            sprintf((char *)buffer, "[%d]--received data:", count);
-            outFile.write((char *)buffer, strlen((char *)buffer));
-			outFile.write(readCmd, strlen(readCmd));
+            m_Serial->ReadFromPort(recvBuf, 1024);
+            Log(_T("[%d] recv: [%s]\n"), count, recvBuf);
 
 			iAddr += 64;
             count ++;
@@ -234,52 +223,42 @@ void CBadUSBHelperDlg::OnBnClickedOk()
 
 		inFile.close();
 
-        sprintf(commnd, "cksum 0x20002000 0x00000800\r\n");
-		m_Serial->WriteToPort(commnd, strlen(commnd));
-        sprintf((char *)buffer, "[%d]--sent data:", count);
-        outFile.write((char *)buffer, strlen((char *)buffer));
-		outFile.write(commnd, strlen(commnd));
-        memset(commnd, 0, 1024);
+        sprintf(sendBuf, "cksum 0x20002000 0x00000800\r\n");
+		m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
+        Log(_T("[%d] send: [%s]\n"), count, sendBuf);
+        memset(sendBuf, 0, 1024);
         Sleep(400);
-		
-        m_Serial->ReadFromPort(commnd,1024);
-        sprintf((char *)buffer, "[%d]--received data:", count++);
-        outFile.write((char *)buffer, strlen((char *)buffer));
-		outFile.write(commnd, strlen(commnd));
 
-        sprintf(commnd, "fmcpy 0x0800e000 0x20002000 0x00002000\r\n");
-		m_Serial->WriteToPort(commnd, strlen(commnd));
-        sprintf((char *)buffer, "[%d]--sent data:", count);
-        outFile.write((char *)buffer, strlen((char *)buffer));
-		outFile.write(commnd, strlen(commnd));
-        memset(commnd, 0, 1024);
+        memset(recvBuf, 0, 1024);
+        m_Serial->ReadFromPort(recvBuf, 1024);
+        Log(_T("[%d] recv: [%s]\n"), count, recvBuf);
+
+
+        sprintf(sendBuf, "fmcpy 0x0800e000 0x20002000 0x00002000\r\n");
+        Log(_T("[%d] send: [%s]\n"), count, sendBuf);
+		m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
+        memset(sendBuf, 0, 1024);
         Sleep(1000);
 		
-        m_Serial->ReadFromPort(commnd, 1024);
-        sprintf((char *)buffer, "[%d]--received data:", count ++);
-        outFile.write((char *)buffer, strlen((char *)buffer));
-		outFile.write(commnd, strlen(commnd));
+        memset(recvBuf, 0, 1024);
+        m_Serial->ReadFromPort(recvBuf, 1024);
+        Log(_T("[%d] recv: [%s]\n"), count, recvBuf);
 
-        sprintf(commnd, "cksum 0x0800e000 0x00000800\r\n");
-		m_Serial->WriteToPort(commnd, strlen(commnd));
-        sprintf((char *)buffer, "[%d]--sent data:", count);
-        outFile.write((char *)buffer, strlen((char *)buffer));
-		outFile.write(commnd, strlen(commnd));
-        memset(commnd, 0, 200);
+        sprintf(sendBuf, "cksum 0x0800e000 0x00000800\r\n");
+        Log(_T("[%d] send: [%s]\n"), count, sendBuf);
+		m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
+        memset(sendBuf, 0, 1024);
         Sleep(400);
 		
-        m_Serial->ReadFromPort(commnd, 200);
-        sprintf((char *)buffer, "[%d]--received data:", count ++);
-        outFile.write((char *)buffer, strlen((char *)buffer));
-		outFile.write(commnd, strlen(commnd));
+        memset(recvBuf, 0, 1024);
+        m_Serial->ReadFromPort(recvBuf, 1024);
+        Log(_T("[%d] recv: [%s]\n"), count, recvBuf);
 
-        sprintf((char *)buffer, "file checksum : 0x%x\n", checksum);
-        outFile.write((char *)buffer, strlen((char *)buffer));
+        Log(_T("file checksum : 0x%x\n"), checksum);
+        Log(_T("data send end\n"));
 
-        outFile << "The data has been all sent!" << endl;
         m_Serial->ClosePort();
     }
-    outFile.close();
 
     CDialogEx::OnOK();
 }
