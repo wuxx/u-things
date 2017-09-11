@@ -269,8 +269,14 @@ void CBadUSBHelperDlg::OnBnClickedOk()
         Log(_T("checksum_flash: 0x%08x\n"), checksum_flash);
 
         Log(_T("checksum_file: 0x%08x\n"), checksum_file);
-        if ((checksum_file != checksum_sram) || checksum_file != checksum_flash) {
+        if ((checksum_file != checksum_sram) || checksum_file != checksum_flash) 
+        {
             Log(_T("checksum error: 0x%08x 0x%08x 0x%08x\n"), checksum_file, checksum_sram, checksum_flash);
+            MessageBox(_T("升级失败！"),_T("提示"), MB_OK);
+        }
+        else
+        {
+            MessageBox(_T("升级成功！"),_T("提示"), MB_OK);
         }
         Log(_T("data send end\n"));
 
