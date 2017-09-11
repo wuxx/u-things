@@ -176,9 +176,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>404</LineNumber>
+          <LineNumber>573</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134281520</Address>
+          <Address>134281440</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -187,7 +187,23 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\..\source\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\JoyStickMouse\../../source/main.c\404</Expression>
+          <Expression>\\JoyStickMouse\../../source/main.c\573</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>404</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\..\source\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>

