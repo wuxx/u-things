@@ -179,11 +179,14 @@ void CBadUSBHelperDlg::OnBnClickedOk()
 		int* buffer = new int[16];
         char *sendBuf = new char[1024];
         char *recvBuf = new char[1024];
+        char *dummys  = new char[1024];
+        unsigned int dummyw;
+
 		std::ifstream inFile;  
 		inFile.open(m_sFilePath, std::ios::binary); 
 		int iAddr = 0x20002000;
 		int len, count = 0;
-		unsigned int checksum = 0;
+        unsigned int checksum_file = 0, checksum_sram = 0, checksum_flash = 0;
         int fileSize;
         int groupNum;
         inFile.seekg(0, ios::end);
@@ -203,11 +206,11 @@ void CBadUSBHelperDlg::OnBnClickedOk()
 			for(int i = 0; i < 16; i++) 
 			{
 				len += sprintf(&sendBuf[len - 1], " 0x%08x ", buffer[i]);
-                checksum += buffer[i];
+                checksum_file += buffer[i];
 			}
 			sprintf(&sendBuf[len - 1], "\r\n");
 
-            Log(_T("[%d] send: [%s] (checksum: 0x%x)\n"), count, sendBuf, checksum);
+            Log(_T("[%d] send: [%s] (checksum: 0x%x)\n"), count, sendBuf, checksum_file);
 
             m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
 
@@ -225,6 +228,7 @@ void CBadUSBHelperDlg::OnBnClickedOk()
 
         sprintf(sendBuf, "cksum 0x20002000 0x00000800\r\n");
 		m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
+        count++;
         Log(_T("[%d] send: [%s]\n"), count, sendBuf);
         memset(sendBuf, 0, 1024);
         Sleep(400);
@@ -232,11 +236,17 @@ void CBadUSBHelperDlg::OnBnClickedOk()
         memset(recvBuf, 0, 1024);
         m_Serial->ReadFromPort(recvBuf, 1024);
         Log(_T("[%d] recv: [%s]\n"), count, recvBuf);
-
+        /*
+        [128] recv: [cksum 0x0800e000 0x00000800 [0x0800e000, 0x08010000] checksum: 0xba4628b3 return 0x0  utos$]
+        */
+        sscanf(recvBuf, "cksum %x %x\r\r\n[%x, %x] checksum: %x\r\r\nreturn 0x0\r\r\n\r\r\nutos$",
+              &dummyw, &dummyw, &dummyw, &dummyw, &checksum_sram);
+        Log(_T("checksum_sram: 0x%08x\n"), checksum_sram);
 
         sprintf(sendBuf, "fmcpy 0x0800e000 0x20002000 0x00002000\r\n");
         Log(_T("[%d] send: [%s]\n"), count, sendBuf);
 		m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
+        count++;
         memset(sendBuf, 0, 1024);
         Sleep(1000);
 		
@@ -246,15 +256,22 @@ void CBadUSBHelperDlg::OnBnClickedOk()
 
         sprintf(sendBuf, "cksum 0x0800e000 0x00000800\r\n");
         Log(_T("[%d] send: [%s]\n"), count, sendBuf);
-		m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
+        count++;
+        m_Serial->WriteToPort(sendBuf, strlen(sendBuf));
         memset(sendBuf, 0, 1024);
         Sleep(400);
 		
         memset(recvBuf, 0, 1024);
         m_Serial->ReadFromPort(recvBuf, 1024);
         Log(_T("[%d] recv: [%s]\n"), count, recvBuf);
+        sscanf(recvBuf, "cksum %x %x\r\r\n[%x, %x] checksum: %x\r\r\nreturn 0x0\r\r\n\r\r\nutos$",
+              &dummyw, &dummyw, &dummyw, &dummyw, &checksum_flash);
+        Log(_T("checksum_flash: 0x%08x\n"), checksum_flash);
 
-        Log(_T("file checksum : 0x%x\n"), checksum);
+        Log(_T("checksum_file: 0x%08x\n"), checksum_file);
+        if ((checksum_file != checksum_sram) || checksum_file != checksum_flash) {
+            Log(_T("checksum error: 0x%08x 0x%08x 0x%08x\n"), checksum_file, checksum_sram, checksum_flash);
+        }
         Log(_T("data send end\n"));
 
         m_Serial->ClosePort();
