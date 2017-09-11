@@ -32,7 +32,9 @@ bool Serial::OpenPort(CString sSerialPort)
         return true;
     }
 
-    m_hCom =CreateFile(sSerialPort.GetBuffer(sSerialPort.GetLength()), GENERIC_READ |GENERIC_WRITE, 0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+    char* buffer = new char[20];
+    sprintf(buffer, "\\\\.\\%s", sSerialPort.GetBuffer(sSerialPort.GetLength()));
+    m_hCom =CreateFile((LPCSTR)buffer, GENERIC_READ |GENERIC_WRITE, 0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
 
     if (m_hCom ==INVALID_HANDLE_VALUE)
     {
