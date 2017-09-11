@@ -34,7 +34,7 @@ bool Serial::OpenPort(CString sSerialPort)
 
     char* buffer = new char[20];
     sprintf(buffer, "\\\\.\\%s", sSerialPort.GetBuffer(sSerialPort.GetLength()));
-    m_hCom =CreateFile((LPCSTR)buffer, GENERIC_READ |GENERIC_WRITE, 0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+    m_hCom =CreateFileA(buffer, GENERIC_READ |GENERIC_WRITE, 0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
 
     if (m_hCom ==INVALID_HANDLE_VALUE)
     {

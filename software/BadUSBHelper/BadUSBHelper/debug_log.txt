@@ -1,4 +1,0 @@
-This is a debug log!
-The port is failed to initialize!
-test count
-8

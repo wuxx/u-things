@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "Serial.h"
-#include <fstream>
+#include "KeyboardSequencePage.h"
+#include "SystemUpgradePage.h"
 
 // CBadUSBHelperDlg dialog
 class CBadUSBHelperDlg : public CDialogEx
@@ -29,13 +29,8 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
-public:
-	CString m_sSerialPort;
-	CString m_sFilePath;
-    Serial*  m_Serial;
-    ofstream logFile;
 
-	afx_msg void OnBnClickedButtonBrawse();
-	afx_msg void OnBnClickedOk();
-    void Log(LPCTSTR pstrFormat, ...);
+    CPropertySheet*          m_sheet;
+    SystemUpgradePage*       m_page1;
+    KeyboardSequencePage*    m_page2;
 };

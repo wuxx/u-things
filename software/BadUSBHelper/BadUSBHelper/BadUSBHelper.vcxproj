@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6B97B934-28C5-4C4C-BCC1-5BFCD1E97BC4}</ProjectGuid>
+    <ProjectGuid>{2C3D4605-5CA4-4887-8454-137D01B59168}</ProjectGuid>
     <RootNamespace>BadUSBHelper</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -101,19 +101,23 @@
   <ItemGroup>
     <ClInclude Include="BadUSBHelper.h" />
     <ClInclude Include="BadUSBHelperDlg.h" />
+    <ClInclude Include="KeyboardSequencePage.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Serial.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SystemUpgradePage.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BadUSBHelper.cpp" />
     <ClCompile Include="BadUSBHelperDlg.cpp" />
+    <ClCompile Include="KeyboardSequencePage.cpp" />
     <ClCompile Include="Serial.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SystemUpgradePage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BadUSBHelper.rc" />

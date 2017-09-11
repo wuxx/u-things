@@ -1,7 +1,8 @@
 BadUSBHelper/Release
-Debug
+BadUSBHelper/Debug
 ipch
 *.pdb
+*.ilk
 *.pch
 *.obj
 *.tlog

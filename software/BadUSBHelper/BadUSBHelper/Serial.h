@@ -25,6 +25,6 @@ protected:
 
     static Serial* m_pSerial;
 	string m_sSerialPort;
-	//int m_iSerialRate;
+
 
 };

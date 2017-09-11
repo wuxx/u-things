@@ -14,6 +14,7 @@
 // CBadUSBHelperApp:
 // See BadUSBHelper.cpp for the implementation of this class
 //
+void Log(LPCTSTR pstrFormat, ...);
 
 class CBadUSBHelperApp : public CWinApp
 {

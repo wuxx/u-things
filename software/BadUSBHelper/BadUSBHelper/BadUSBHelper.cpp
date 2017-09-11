@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "BadUSBHelper.h"
 #include "BadUSBHelperDlg.h"
+#include <fstream>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,7 +31,7 @@ CBadUSBHelperApp::CBadUSBHelperApp()
 // The one and only CBadUSBHelperApp object
 
 CBadUSBHelperApp theApp;
-
+std::ofstream logFile;
 
 // CBadUSBHelperApp initialization
 
@@ -48,6 +49,8 @@ BOOL CBadUSBHelperApp::InitInstance()
 
 	CWinApp::InitInstance();
 
+    logFile.open("BadUSBHelper.log");
+    Log(_T("Hello, BadUSBHelper! buildtime [%s %s]\n"), __TIME__, __DATE__);
 
 	// Create the shell manager, in case the dialog contains
 	// any shell tree view or shell list view controls.
@@ -82,8 +85,65 @@ BOOL CBadUSBHelperApp::InitInstance()
 		delete pShellManager;
 	}
 
+    Log(_T("GoodBye, BadUSBHelper!\n"));
+    logFile.close();
+
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
 	return FALSE;
 }
 
+// SystemUpgradePage message handlers
+void Log(LPCTSTR pstrFormat, ...)
+{
+#if 1
+    CString str;
+    va_list args;
+
+    va_start(args, pstrFormat);
+    str.FormatV(pstrFormat, args);
+
+#if 0
+    const size_t strsize=(str.GetLength()+1)*2; // 宽字符的长度;
+    char * pstr= new char[strsize]; //分配空间;
+    size_t sz=0;
+    wcstombs_s(&sz,pstr,strsize,str,_TRUNCATE);
+
+    logFile.write(pstr, strlen(pstr));
+#endif
+#if 0
+    int num = WideCharToMultiByte(CP_OEMCP,NULL,pstrFormat,-1,NULL,0,NULL,FALSE);
+    char *pchar = new char[num];
+    WideCharToMultiByte (CP_OEMCP,NULL,pstrFormat,-1,pchar,num,NULL,FALSE);
+    logFile.write(pchar, strlen(pchar));
+#endif
+#if 0
+    time_t tNowTime;
+    char szTime[30] = {'\0'};
+    time(&tNowTime);    
+    tm* tLocalTime = localtime(&tNowTime);    
+    strftime(szTime, 30, "[%Y-%m-%d %H:%M:%S] ", tLocalTime);    
+    string strTime = szTime;    
+
+    logFile << strTime << endl;
+#endif
+    SYSTEMTIME st;
+    char chBuf[128] = {0};
+    int len;
+    GetLocalTime( &st );
+
+    len = sprintf(chBuf,_T("[%u-%u-%u %02u:%02u:%02u:%03u] "),
+        st.wYear, st.wMonth, st.wDay,
+        st.wHour, st.wMinute, st.wSecond,
+        st.wMilliseconds);
+    logFile.write(chBuf, len);
+
+    logFile.write((const char *)str.GetBuffer(), str.GetLength());
+
+    //logFile.write((LPCSTR)(LPCTSTR)str, str.GetLength()); /* FIXME: output like H e l l o ,...  */
+    //logFile.write((LPCSTR)(LPCTSTR)str, str.GetLength());
+
+    //logFile.flush();
+
+#endif
+}
