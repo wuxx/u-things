@@ -27,6 +27,7 @@ static int32_t cmd_fmset(void);
 static int32_t cmd_fmcpy(void);
 static int32_t cmd_cksum(void);
 static int32_t cmd_boot(void);
+static int32_t cmd_find(void);
 static int32_t cmd_systest(void);
 static int32_t cmd_help(void);
 
@@ -41,6 +42,7 @@ struct shell_cmd_info ci[] = {
     {"fmcpy",   cmd_fmcpy,   "fmcpy [dst_addr] [src_addr] [size]    flash memory copy"},
 		{"cksum",   cmd_cksum,   "cksum [addr] [word_num]               calc memory checksum"},
 		{"boot",    cmd_boot,    "boot  [addr]                          boot from memory"},
+		{"find",    cmd_find,    "find  [saddr] [eaddr] [word]          find word in memory"},
     {"stest",   cmd_systest, "stest [module] args...	              system test" },
     {"help",    cmd_help,    "help                                  print cmd info"  },
 };
@@ -287,6 +289,25 @@ static int32_t cmd_help()
         PRINT_EMG("%s:\t\t%s\n", ci[i].name, ci[i].desc);
     }
     return 0;
+}
+
+static int32_t cmd_find()
+{
+		uint32_t addr;
+		uint32_t saddr, eaddr;
+		uint32_t word;
+	
+		saddr = strtoul(argv[1], NULL, 0);
+    eaddr = strtoul(argv[2], NULL, 0);
+		word  = strtoul(argv[3], NULL, 0);
+	
+		for(addr = saddr; addr < eaddr; addr += 4) {
+			if (readl(addr) == word) {
+				PRINT_EMG("[0x%08x]: 0x%08x\n", addr, word);
+			}
+		}
+		
+		return 0;
 }
 
 static int32_t cmd_systest()
